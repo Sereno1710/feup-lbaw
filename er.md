@@ -89,7 +89,7 @@ The online auction will have an adaptive design, allowing users to be on the sys
 
 The actors of the SoundSello are represented in Figure 1 and described in Table 1.
 
-![Actors](https://media.discordapp.net/attachments/1154434520511164426/1156640104731918436/actors_1.png?ex=6515b48a&is=6514630a&hm=fef7d4f15e43ad642377577465edbde7e8465727fa67c931948a72bfc5cccbf2&=&width=473&height=675)
+![Actors](/resources/actors.png)
 
 Figure 1: SoundSello Actors
 
@@ -109,7 +109,7 @@ User
 
 </td>
 <td> 
-Generic actor that has access to all information,active auctions and profiles of the website.
+Generic actor that has access to all information, active auctions and profiles of the website.
 </td>
 </tr>
 <tr>
@@ -132,7 +132,7 @@ Authenticated User
 </td>
 <td>
 
-Autenticated users are able to deposit money to their account,follow auctions, bid in auctions or create their own auctions. They are also able to manage their profile. 
+Autenticated users are able to deposit money into their account, follow auctions, bid in auctions and create their own auctions. They are also able to manage their own profile. 
 
 </td>
 </tr>
@@ -144,7 +144,7 @@ Bidder
 </td>
 <td>
 
-Bidders are authenticated users who are participating in a auction by bidding in it, making it possible to see all the current auctions that he is bidding on and receiving notifications with auction changes.
+Bidders are authenticated users who are participating in a auction by having bid on it. They can see all the current auctions that he is bidding on and receive notifications when a change occurs in them.
 
 </td>
 </tr>
@@ -156,7 +156,7 @@ Seller
 </td>
 <td>
 
-Sellers are authenticated users who created an auction.They are able to delete and edit their auctions. 
+Sellers are authenticated users who created an auction. They are able to delete and edit their auctions. 
 
 </td>
 </tr>
@@ -168,7 +168,7 @@ System Manager
 </td>
 <td>
 
-System Manager are authenticated users who moderate the system being able to manage the auctions aswell as temporarily banning accounts.
+System Manager are authenticated users who moderate the system, being able to manage the auctions aswell as temporarily banning accounts.
 
 </td>
 </tr>
@@ -180,7 +180,7 @@ Administrator
 </td>
 <td>
 
-Administrator are able to manage accounts(changing account details,deleting accounts), aswell as managing category filters.
+Administrator are able to manage accounts (changing account details, deleting accounts), aswell as managing category filters.
 
 </td>
 </tr>
@@ -248,7 +248,7 @@ Administrator are able to manage accounts(changing account details,deleting acco
 <td>US07</td>
 <td>Consult FAQ / Help / Contacts</td>
 <td>Medium</td>
-<td>As a User, I want a ‘FAQ / Help’ section so that I can find a solution to a problem.</td>
+<td>As a user, I want a ‘FAQ / Help’ section so that I can find a solution to a problem.</td>
 </tr>
 <tr>
 <td>US08</td>
@@ -339,7 +339,7 @@ Administrator are able to manage accounts(changing account details,deleting acco
 </tr>
 <tr>
 <td>US15</td>
-<td>View Profile</td>
+<td>View Own Profile</td>
 <td>High</td>
 <td>As an authenticated user, I want a section where I can see my own profile so that I can see all my activity and informations about my account.</td>
 </tr>
@@ -363,12 +363,18 @@ Administrator are able to manage accounts(changing account details,deleting acco
 </tr>
 <tr>
 <td>US19</td>
+<td>Like an Auction</td>
+<td>Medium</td>
+<td>As an authenticated user, I want to be able to like/follow an auction, so that I can receive notifications about an auction without having to bid on them.</td>
+</tr>
+<tr>
+<td>US20</td>
 <td>Receive and View Personal Notifications</td>
 <td>Medium</td>
 <td>As an authenticated user, I want to receive personal notifications about auctions, bids and messages so that I can stay informed on auctions I have liked or bid on.</td>
 </tr>
 <tr>
-<td>US20</td>
+<td>US21</td>
 <td>Support Profile Picture</td>
 <td>Medium</td>
 <td>As an authenticated user, I want to be able to upload and display a profile picture so that I can personalize my user profile and make it more recognizable to other users on the website.</td>
@@ -395,39 +401,39 @@ Administrator are able to manage accounts(changing account details,deleting acco
 </td>
 </tr>
 <tr>
-<td>US21</td>
+<td>US22</td>
 <td>View Auction Bidding History</td>
 <td>High</td>
 <td>As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise.</td>
 </tr>
 <tr>
-<td>US22</td>
+<td>US23</td>
 <td>Rate Seller</td>
 <td>Medium</td>
 <td>As a bidder, I want to be able to give a rating from 1 to 5 to a seller i've purchased something from, so that I can give my opinion on them.
 </td>
 </tr>
 <tr>
-<td>US23</td>
-<td>New bid on Participating Auction</td>
+<td>US24</td>
+<td>New bid on Participating Auction Notification</td>
 <td>Medium</td>
 <td>As a bidder, I want to get a notification when someone outbids me, so that I can get a chance to send another bid immediately.</td>
 </tr>
 <tr>
-<td>US24</td>
-<td>Participating Auction Ending</td>
+<td>US25</td>
+<td>Participating Auction Ending Notification</td>
 <td>Medium</td>
 <td>As a bidder, I want to get a notification when an auction I'm participating in is 1 minute away from ending, so that I can keep up with it in the closing moments.</td>
 </tr>
 <tr>
-<td>US25</td>
-<td>Participating Auction Ended</td>
+<td>US26</td>
+<td>Participating Auction Ended Notification</td>
 <td>Medium</td>
 <td>As a bidder, I want to get a notification when an auction I'm participating in ends, so that I know the winning bid as soon as possible.</td>
 </tr>
 <tr>
-<td>US26</td>
-<td>Participating Auction Cancelled</td>
+<td>US27</td>
+<td>Participating Auction Cancelled Notification</td>
 <td>Medium</td>
 <td>As a bidder, I want to get a notification when an auction I'm participating in is cancelled, so that I know exactly when that happens.</td>
 </tr>
@@ -453,30 +459,30 @@ Administrator are able to manage accounts(changing account details,deleting acco
 </td>
 </tr>
 <tr>
-<td>US27</td>
+<td>US28</td>
 <td>View Auction Bidding History</td>
 <td>High</td>
 <td>As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise.
 </td>
 </tr>
 <tr>
-<td>US28</td>
+<td>US29</td>
 <td>Cancel Auction</td>
 <td>High</td>
 <td>As a seller, I want to be able to cancel my auction if no one has submitted a bid so that I can keep my item if I change my mind.</td>
 </tr>
 <tr>
-<td>US29</td>
+<td>US30</td>
 <td>Edit Auction</td>
 <td>High</td>
 <td>As a seller, I want to be able to change the instrument type and material quality of my auction, so that I can correct a mistake I made.
 </td>
 </tr>
 <tr>
-<td>US30</td>
+<td>US31</td>
 <td>Owned Auction Winner</td>
 <td>Medium</td>
-<td>As a seller, I want to know who won my auction, so that I can be informed about who my item will be with. 
+<td>As a seller, I want to know who won my auction, so that I can be informed about who I should send my item to.
 </td>
 </tr>
 </table>
@@ -501,56 +507,56 @@ Administrator are able to manage accounts(changing account details,deleting acco
 </td>
 </tr>
 <tr>
-<td>US31</td>
+<td>US32</td>
 <td>Change Auction Content</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to change the content of an auction, such as its description or category, so that I can update or correct information.
 </td>
 </tr>
 <tr>
-<td>US32</td>
+<td>US33</td>
 <td>Delete Auction Content</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to delete specific content within an auction, such as certain images, so that I can remove content that does not follow the guidelines without deleting the entire auction.
 </td>
 </tr>
 <tr>
-<td>US33</td>
+<td>US34</td>
 <td>Pause Auctions</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to stop an auction, so that I can delay the auction process in case of technical issues, guideline violations, or other necessary reasons.
 </td>
 </tr>
 <tr>
-<td>US34</td>
+<td>US35</td>
 <td>Resume Auctions</td>
 <td>Medium</td>
 <td>As an administrator, I want to be able to resume a previously paused auction, so that I can allow users to continue bidding.
 </td>
 </tr>
 <tr>
-<td>US35</td>
+<td>US36</td>
 <td>Close Auctions</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to close an auction, so that I can end the bidding process without declaring a winner before the auction reaches its intended end time.
 </td>
 </tr>
 <tr>
-<td>US36</td>
+<td>US37</td>
 <td>Delete Auctions</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to delete an auction, so that I can remove content that does not follow the guidelines.
 </td>
 </tr>
 <tr>
-<td>US37</td>
+<td>US38</td>
 <td>Ban User Accounts</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to ban user accounts for a certain amount of time, so that I can restrict access to the platform for users who violated the guidelines.
 </td>
 </tr>
 <tr>
-<td>US38</td>
+<td>US39</td>
 <td>Unban User Accounts</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to unban user accounts, so that I can bring back users to the website in case of a ban appeal.
@@ -578,21 +584,21 @@ Administrator are able to manage accounts(changing account details,deleting acco
 </td>
 </tr>
 <tr>
-<td>US39</td>
+<td>US40</td>
 <td>Manage User Accounts</td>
 <td>Medium</td>
 <td>As an administrator, I want to have the ability to manage users, including the ability to edit existing user profiles, create new accounts and search for certain users, so that I can have total control over the users.
 </td>
 </tr>
 <tr>
-<td>US40</td>
+<td>US41</td>
 <td>Delete User Accounts</td>
 <td>Medium</td>
 <td>As an administrator, I want to be able to delete user accounts, so that I can remove inactive or unauthorized users from the system completely.
 </td>
 </tr>
 <tr>
-<td>US41</td>
+<td>US42</td>
 <td>Manage Filter Categories</td>
 <td>Medium</td>
 <td>As an administrator, I want to be able to manage filter categories, so that I can add or edit categories when deemed necessary.

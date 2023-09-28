@@ -82,7 +82,7 @@ The online auction will have an adaptive design, allowing users to be on the sys
 
 ## A2: Actors and User stories
 
-> Brief presentation of the artifact goals.
+Actors and user stories represent the type of users that will use our website, as well as the features it is going to have for each type of user.
 
 
 ### 1. Actors
@@ -219,42 +219,47 @@ Administrator are able to manage accounts (changing account details, deleting ac
 <td>View Active Auctions</td>
 <td>High</td>
 <td>As a user, I want to be able to view a list of currently active auctions so that I can bid on items that are currently being auctioned.</td>
+<td>US03</td>
+<td>View Auction Details</td>
+<td>High</td>
+<td>As a user, I want to be able to click on an auction from the list to view its detailed information, including item description, current highest bid, and auction end time, so that I can get more insight into the product.
+</td>
 </tr>
 <tr>
-<td>US03</td>
+<td>US04</td>
 <td>Exact match search</td>
 <td>High</td>
 <td>As a user, I want to be able to search with a specific text so that I can quickly find a specific item.</td>
 </tr>
 <tr>
-<td>US04</td>
+<td>US05</td>
 <td>Full text search</td>
 <td>High</td>
 <td>As a user, I want to be able to search words or phrases within extensive text so that I can find the item I want faster.</td>
 </tr>
 <tr>
-<td>US05</td>
+<td>US06</td>
 <td>View User Profiles</td>
 <td>High</td>
 <td>As a user, I want to be able to view other user profiles that are registered in the platform so that I can see their activity and items they have listed or bid on.</td>
 </tr>
 <tr>
-<td>US06</td>
+<td>US07</td>
 <td>Search Filters</td>
 <td>Medium</td>
 <td>As a user, I want to be able to apply filters so that I can refine my search results based on instrument type, price, material quality and date.</td>
 </tr>
 <tr>
-<td>US07</td>
+<td>US08</td>
 <td>Consult FAQ / Help / Contacts</td>
 <td>Medium</td>
 <td>As a user, I want a ‘FAQ / Help’ section so that I can find a solution to a problem.</td>
 </tr>
 <tr>
-<td>US08</td>
-<td>See Main Features</td>
-<td>Medium</td>
-<td>As a user, I want to be able to see all the main features on the website so that I can see all the functionalities I can use. </td>
+<td>US09</td>
+<td>See About Page</td>
+<td>Low</td>
+<td>As a user, I want to be able to see an "About Us" page, so that I can know more about the website and its creators. </td>
 </tr>
 </table>
 
@@ -278,20 +283,20 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 <tr>
-<td>US09</td>
+<td>US10</td>
 <td>Log in</td>
 <td>High</td>
 <td>As a user, I want to be able to log in to my account so that I can manage my settings and track my activity securely.
 </td>
 </tr>
 <tr>
-<td>US10</td>
+<td>US11</td>
 <td>Register Account</td>
 <td>High</td>
 <td>As a user, I want to be able to register for a new account so that I can participate in auctions and save favorite items.</td>
 </tr>
 <tr>
-<td>US11</td>
+<td>US12</td>
 <td>Recover Password</td>
 <td>Medium</td>
 <td>As a user, I want to be able to recover my password in case I forget it so that I can regain access to my account and continue to use the website.
@@ -319,65 +324,77 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 <tr>
-<td>US12</td>
+<td>US13</td>
 <td>Log out</td>
 <td>High</td>
 <td>As an authenticated user, I want the ability to log out of my account so that I can end my session in a secure way preventing it from unauthorized access.
 </td>
 </tr>
 <tr>
-<td>US13</td>
+<td>US14</td>
 <td>Create Auction</td>
 <td>High</td>
 <td>As an authenticated user, I want to be able to create a new auction so that I can sell items to other users on the website.</td>
 </tr>
 <tr>
-<td>US14</td>
+<td>US15</td>
 <td>Bid on Auction</td>
 <td>High</td>
 <td>As an authenticated user, I want to be able to place bids on active auctions so that I can use it for making purchases and bidding on the website.</td>
 </tr>
 <tr>
-<td>US15</td>
+<td>US16</td>
 <td>View Own Profile</td>
 <td>High</td>
 <td>As an authenticated user, I want a section where I can see my own profile so that I can see all my activity and informations about my account.</td>
 </tr>
 <tr>
-<td>US16</td>
+<td>US17</td>
 <td>Edit Profile</td>
 <td>High</td>
 <td>As an authenticated user, I want to be able to edit and update my user profile information so that I can keep my personal details and preferences updated.</td>
 </tr>
 <tr>
-<td>US17</td>
+<td>US18</td>
 <td>Deposit Money on Account</td>
 <td>Medium</td>
 <td>As an authenticated user, I want to be able to deposit money into my account so that I can use that money to participate in active auctions.</td>
 </tr>
 <tr>
-<td>US18</td>
+<td>US19</td>
 <td>Delete Account</td>
 <td>Medium</td>
 <td>As an authenticated user, I want to be able to delete my account permanently so that I can create a brand new account using the same credentials or never use the website again.</td>
 </tr>
 <tr>
-<td>US19</td>
+<td>US20</td>
 <td>Like an Auction</td>
 <td>Medium</td>
 <td>As an authenticated user, I want to be able to like/follow an auction, so that I can receive notifications about an auction without having to bid on them.</td>
 </tr>
 <tr>
-<td>US20</td>
+<td>US21</td>
 <td>Receive and View Personal Notifications</td>
 <td>Medium</td>
 <td>As an authenticated user, I want to receive personal notifications about auctions, bids and messages so that I can stay informed on auctions I have liked or bid on.</td>
 </tr>
 <tr>
-<td>US21</td>
+<td>US22</td>
 <td>Support Profile Picture</td>
 <td>Medium</td>
 <td>As an authenticated user, I want to be able to upload and display a profile picture so that I can personalize my user profile and make it more recognizable to other users on the website.</td>
+</tr>
+<tr>
+<td>US23</td>
+<td>Report Auctions</td>
+<td>Low</td>
+<td>As an authenticated user, I want the ability to report auctions th3 guidelines, so that I can contribute to maintaining a safe auction environment.</td>
+</tr>
+<tr>
+<td>US24</td>
+<td>Report User Accounts</td>
+<td>Low</td>
+<td>As an authenticated user, I want the ability to report user accounts that seem suspicious, so that I can contribute to mantaining a safe user base.</td>
 </tr>
 </table>
 
@@ -401,38 +418,38 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 <tr>
-<td>US22</td>
+<td>US25</td>
 <td>View Auction Bidding History</td>
 <td>High</td>
 <td>As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise.</td>
 </tr>
 <tr>
-<td>US23</td>
+<td>US26</td>
 <td>Rate Seller</td>
 <td>Medium</td>
 <td>As a bidder, I want to be able to give a rating from 1 to 5 to a seller i've purchased something from, so that I can give my opinion on them.
 </td>
 </tr>
 <tr>
-<td>US24</td>
+<td>US27</td>
 <td>New bid on Participating Auction Notification</td>
 <td>Medium</td>
 <td>As a bidder, I want to get a notification when someone outbids me, so that I can get a chance to send another bid immediately.</td>
 </tr>
 <tr>
-<td>US25</td>
+<td>US28</td>
 <td>Participating Auction Ending Notification</td>
 <td>Medium</td>
 <td>As a bidder, I want to get a notification when an auction I'm participating in is 1 minute away from ending, so that I can keep up with it in the closing moments.</td>
 </tr>
 <tr>
-<td>US26</td>
+<td>US29</td>
 <td>Participating Auction Ended Notification</td>
 <td>Medium</td>
 <td>As a bidder, I want to get a notification when an auction I'm participating in ends, so that I know the winning bid as soon as possible.</td>
 </tr>
 <tr>
-<td>US27</td>
+<td>US30</td>
 <td>Participating Auction Cancelled Notification</td>
 <td>Medium</td>
 <td>As a bidder, I want to get a notification when an auction I'm participating in is cancelled, so that I know exactly when that happens.</td>
@@ -459,27 +476,27 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 <tr>
-<td>US28</td>
+<td>US31</td>
 <td>View Auction Bidding History</td>
 <td>High</td>
 <td>As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise.
 </td>
 </tr>
 <tr>
-<td>US29</td>
+<td>US32</td>
 <td>Cancel Auction</td>
 <td>High</td>
 <td>As a seller, I want to be able to cancel my auction if no one has submitted a bid so that I can keep my item if I change my mind.</td>
 </tr>
 <tr>
-<td>US30</td>
+<td>US33</td>
 <td>Edit Auction</td>
 <td>High</td>
 <td>As a seller, I want to be able to change the instrument type and material quality of my auction, so that I can correct a mistake I made.
 </td>
 </tr>
 <tr>
-<td>US31</td>
+<td>US34</td>
 <td>Owned Auction Winner</td>
 <td>Medium</td>
 <td>As a seller, I want to know who won my auction, so that I can be informed about who I should send my item to.
@@ -507,59 +524,66 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 <tr>
-<td>US32</td>
+<td>US35</td>
 <td>Change Auction Content</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to change the content of an auction, such as its description or category, so that I can update or correct information.
 </td>
 </tr>
 <tr>
-<td>US33</td>
+<td>US36</td>
 <td>Delete Auction Content</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to delete specific content within an auction, such as certain images, so that I can remove content that does not follow the guidelines without deleting the entire auction.
 </td>
 </tr>
 <tr>
-<td>US34</td>
+<td>US37</td>
 <td>Pause Auctions</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to stop an auction, so that I can delay the auction process in case of technical issues, guideline violations, or other necessary reasons.
 </td>
 </tr>
 <tr>
-<td>US35</td>
+<td>US38</td>
 <td>Resume Auctions</td>
 <td>Medium</td>
 <td>As an administrator, I want to be able to resume a previously paused auction, so that I can allow users to continue bidding.
 </td>
 </tr>
 <tr>
-<td>US36</td>
+<td>US39</td>
 <td>Close Auctions</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to close an auction, so that I can end the bidding process without declaring a winner before the auction reaches its intended end time.
 </td>
 </tr>
 <tr>
-<td>US37</td>
+<td>US40</td>
 <td>Delete Auctions</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to delete an auction, so that I can remove content that does not follow the guidelines.
 </td>
 </tr>
 <tr>
-<td>US38</td>
+<td>US41</td>
 <td>Ban User Accounts</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to ban user accounts for a certain amount of time, so that I can restrict access to the platform for users who violated the guidelines.
 </td>
 </tr>
 <tr>
-<td>US39</td>
+<td>US42</td>
 <td>Unban User Accounts</td>
 <td>Medium</td>
 <td>As a system manager, I want to be able to unban user accounts, so that I can bring back users to the website in case of a ban appeal.
+</td>
+</tr>
+<tr>
+<td>US43</td>
+<td>Manage Report System</td>
+<td>Medium</td>
+<td>As a system manager/administrator, I want to have the ability to manage the report system, including reviewing and responding to user and auction reports, so that I can take appropriate actions to address the reported issues.
 </td>
 </tr>
 </table>
@@ -584,24 +608,30 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 <tr>
-<td>US40</td>
+<td>US44</td>
 <td>Manage User Accounts</td>
 <td>Medium</td>
 <td>As an administrator, I want to have the ability to manage users, including the ability to edit existing user profiles, create new accounts and search for certain users, so that I can have total control over the users.
 </td>
 </tr>
 <tr>
-<td>US41</td>
+<td>US45</td>
 <td>Delete User Accounts</td>
 <td>Medium</td>
 <td>As an administrator, I want to be able to delete user accounts, so that I can remove inactive or unauthorized users from the system completely.
 </td>
 </tr>
 <tr>
-<td>US42</td>
+<td>US46</td>
 <td>Manage Filter Categories</td>
-<td>Medium</td>
+<td>Low</td>
 <td>As an administrator, I want to be able to manage filter categories, so that I can add or edit categories when deemed necessary.
+</td>
+</tr>
+<td>US47</td>
+<td>Access System Manager Activity Log</td>
+<td>Low</td>
+<td>As an administrator, I want to access a system manager acitivy log, which includes records of all system manager's actions and they time they happened, so that I can investigate any irregularities or issues effectively.
 </td>
 </tr>
 </table>

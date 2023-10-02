@@ -1,30 +1,30 @@
 # **ER: Requirements Specification Component**
 
-**Project vision:** SoundSello is being developed to facilitate music lovers and musical instrument collectors find what they want or need by bidding or auctioning intruments of all kind.    
+**Project vision:** SoundSello is being developed to facilitate music lovers and musical instrument collectors find what they want or need by bidding or auctioning instruments of all kinds.
 
 ## **A1: SoundSello**
 
 SoundSello is being developed by a small group of students as a product targeted to those who want to buy or sell musical instruments.
 
-The main goal of the project is to develop a web-based auctioning system for musical instruments with the purpose of assisting those in search of them. This tool can only be used by anyone above 18. To begin bidding or selling, users will need to create an account and log in. To sell an instrument, the user has to send the product to our headquarters so we can evaluate the veracity of the product.The system will be managed by system managers who will handle auctions and account-related issues.
+The main goal of the project is to develop a web-based auction system for musical instruments with the purpose of assisting those in search of them. This tool can only be used by anyone above 18. To begin bidding or selling, users will need to create an account and log in. To sell an instrument, the user has to send the product to our headquarters so we can evaluate the veracity of the product. The system will be managed by system managers who will handle auctions and account-related issues.
 
-Users will be divided into several groups, visitors, authenticated users, system managers as mentioned before and administrators.
+Users will be divided into several groups, visitors, authenticated users, system managers, as mentioned before and administrators.
 
-Visitors are unregistered users with minimal access to the site features being only able to see active auctions and profiles, aswell as FAQ, About Us and contacts. After they log in/sign in they become authenticated users.
+Visitors are unregistered users with minimal access to the site features being only able to see active auctions and profiles, as well as FAQ, About Us and contacts. After they log in/sign in, they become authenticated users.
 
 Authenticated users are able to sell or bid on products and if so, they become either a bidder or seller.
 
-A bidder is a user whose bids has been submited and a seller when the user submit an auction. They are both able to see the bidding history of that specific auction/auctions. 
+A bidder is a user whose bids have been submited and a seller when the user submits an auction. They are both able to see the bidding history of that specific auction/auctions. 
 
 Bidders can rate sellers and receive notifications about an auction in which they are bidding.
 
-Sellers can cancel auctions(if the requirements are met) aswell as receive notifications about who won their auction.
+Sellers can cancel auctions (if the requirements are met) as well as receive notifications about who won their auction.
 
-System managers are users who were promoted by an administrator and are capable of approving auctions, aswell as managing them. They can also ban/unban users.  
+System managers are users who were promoted by an administrator and are capable of approving auctions, as well as managing them. They can also ban/unban users.  
 
 Administrator is another group of users, who can manage user accounts and have control of the whole system. 
 
-The online auction will have an adaptive design, allowing users to be on the system in any type of device or browser. It will also be easy to navigate throught the system giving the user a better experience.
+The online auction will have an adaptive design, allowing users to be on the system in any type of device or browser. It will also be easy to navigate through the system giving the user a better experience.
 
 ## **Main features:**
 
@@ -765,30 +765,77 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 <tr>
-<td>TR02</td>
+<td>
+
+**TR02**
+</td>
+<td>
+
+**Accessibility**
+</td>
+<td>
+
+**The system must ensure that everyone can access the pages, regardless of whether they have any handicap or not, or the Web browser they use.**
+</td>
+</tr>
+<tr>
+<td>TR03</td>
 <td>Robustness</td>
 <td>The system must be prepared to handle and continue operating when runtime errors occur.
 </td>
 </tr>
 <tr>
-<td>TR03</td>
+<td>
+
+**TR04**
+</td>
+<td>
+
+**Usability**
+</td>
+<td>
+
+**The system should be simple and intuitive.**
+</td>
+</tr>
+<tr>
+<td>TR05</td>
 <td>Scalability</td>
 <td>The system must be prepared to deal with the growth in the number of users and their actions.
 </td>
 </tr>
 <tr>
-<td>TR04</td>
-<td>Accessibility</td>
-<td>The system must ensure that everyone can access the pages, regardless of whether they have any handicap or not, or the Web browser they use.
+<td>
+
+**TR06**
+</td>
+<td>
+
+**Security**
+</td>
+<td>
+
+**The system should protect any user's information, so that only the administrators of SoundSello and the user themselves can access a user's data.**
 </td>
 </tr>
 <tr>
-<td>TR05</td>
+<td>TR07</td>
 <td>Availability</td>
 <td>The system must have an uptime of 99% or more.
 </td>
 </tr>
+<tr>
+<td>TR08</td>
+<td>Database</td>
+<td>The system should have a reliable database to store information.
+</td>
+</tr>
 </table>
+
+Usability and accessibility are two of the most important technical requirements because this platform only works when users use it, so it should be easy and convenient for anyone to browse our website.
+
+Since the user will be submitting their information in their normal use of the system, we need to ensure their privacy, making security an equally important technical requirement. 
+
 
 #### **3.3. Restrictions**
 <table>

@@ -372,7 +372,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 <tr>
 <td>US18</td>
 <td>View My Bidding History</td>
-<td>High</td>
+<td>Medium</td>
 <td>As an authenticated user, I want to be able to view all the bids I've done on the platform so that I can keep track of my history.</td>
 </tr>
 <tr>
@@ -559,7 +559,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 <tr>
 <td>US38</td>
 <td>Approve Auction</td>
-<td>Medium</td>
+<td>High</td>
 <td>As a system manager, I want to be able to approve pending auctions, so that they can be ready to be bid on.
 </td>
 </tr>

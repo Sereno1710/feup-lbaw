@@ -268,13 +268,13 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </tr>
 <tr>
 <td>US08</td>
-<td>Consult FAQ / Help / Contacts</td>
+<td>Consult FAQ / Help</td>
 <td>Medium</td>
 <td>As a user, I want a ‘FAQ / Help’ section so that I can find a solution to a problem.</td>
 </tr>
 <tr>
 <td>US09</td>
-<td>See About Page</td>
+<td>See "About us" Page</td>
 <td>Low</td>
 <td>As a user, I want to be able to see an "About Us" page, so that I can know more about the website and its creators. </td>
 </tr>
@@ -856,8 +856,18 @@ Since the user will be submitting their information in their normal use of the s
 </tr>
 <tr>
 <td>R01</td>
-<td>Restriction</td>
-<td>Description
+<td>Database</td>
+<td>The database should use PostgreSQL
+</td>
+<tr>
+<td>R02</td>
+<td>Deadline</td>
+<td>This project should be ready to use by the end of the semester
+</td>
+<tr>
+<td>R03</td>
+<td>Payment Processor</td>
+<td>This project has PayPal as its payment processing service.
 </td>
 </tr>
 </table>

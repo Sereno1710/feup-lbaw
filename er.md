@@ -832,6 +832,11 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </tr>
 </table>
 
+Usability and accessibility are two of the most important technical requirements because this platform only works when users use it, so it should be easy and convenient for anyone to browse our website.
+
+Since the user will be submitting their information in their normal use of the system, we need to ensure their privacy, making security an equally important technical requirement. 
+
+
 #### **3.3. Restrictions**
 <table>
 <td> 

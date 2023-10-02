@@ -8,6 +8,8 @@ SoundSello is being developed by a small group of students as a product targeted
 
 The main goal of the project is to develop a web-based auction system for musical instruments with the purpose of assisting those in search of them. This tool can only be used by anyone above 18. To begin bidding or selling, users will need to create an account and log in. To sell an instrument, the user has to send the product to our headquarters so we can evaluate the veracity of the product. The system will be managed by system managers who will handle auctions and account-related issues.
 
+Auctions will have a countdown timer, bidders can see it and the current highest auction at any given time, and they can bid as long as they are not the current highest bidder. If someone bids when the auction has less than 15 minutes remaining, the deadline is increased by 30 minutes. When the timer hits zero, the highest bidder is announced as the winner.
+
 Users will be divided into several groups, visitors, authenticated users, system managers, as mentioned before and administrators.
 
 Visitors are unregistered users with minimal access to the site features being only able to see active auctions and profiles, as well as FAQ, About Us and contacts. After they log in/sign in, they become authenticated users.

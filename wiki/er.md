@@ -103,7 +103,7 @@ This artifact contains actors and user stories. Represent the type of users that
 
 The actors of SoundSello are represented in Figure 1 and described in Table 1.
 
-![Actors](/resources/actors.png)
+![Actors](/wiki/resources/actors.png)
 
 Figure 1: SoundSello Actors
 
@@ -895,7 +895,7 @@ This artifact contains SoundSello's sitemap which shows how the information is o
 
 This diagram shows the pages that are going to exist on our web application and how they interact with each other.
 
-![Sitemap](/resources/sitemap.png)
+![Sitemap](/wiki/resources/sitemap.png)
 
 Figure 2: SoundSello Sitemap
 
@@ -906,7 +906,7 @@ The wireframes below show the content of the most important pages on our web app
 
 #### UI01: Home Page
 
-![Home](/resources/homepage.png)
+![Home](/wiki/resources/homepage.png)
 
 Figure 3: SoundSello's home page 
 
@@ -920,7 +920,7 @@ Figure 3: SoundSello's home page
 
 #### UI02: Profile Page
 
-![Profile](/resources/profile.png)
+![Profile](/wiki/resources/profile.png)
 
 Figure 4: User profile page
 
@@ -937,7 +937,7 @@ Figure 4: User profile page
 
 #### UI10: View Auction
 
-![Auction](/resources/auction.png)
+![Auction](/wiki/resources/auction.png)
 
 Figure 5: Auction page
 
@@ -950,7 +950,7 @@ Figure 5: Auction page
 
 #### UI09: Active Auctions Page
 
-![Auctions](/resources/active_auctions.png)
+![Auctions](/wiki/resources/active_auctions.png)
 
 Figure 6: Active auctions page
 

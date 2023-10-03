@@ -911,8 +911,8 @@ The wireframes below show the content of the most important pages on our web app
 Figure 3: SoundSello's home page 
 
 1. Link to the home page.
-2. Links to a page to deposit money into the user account (left), submit an auction into the platform (middle) and view all auctions available (right).
-3. Link to the user profile.
+2. Link to a page with active auctions.
+3. Buttons for the visitor to sign up or sign in.
 4. Footer that contains all the links to "About Us", FAQ, Contacts, Terms of Use and Privacy Policy
 5. Breadcrumbs to help the user navigate.
 6. Search bar to help the user find auctions and other users.

@@ -952,7 +952,8 @@ Figure 5: Auction page
 7. Image of the auctioned item.
 8. Section displaying all user bids.
 9. Details about the specific item.
-10. Countdown timer displaying remaining auction time to users.
+10. Input area to place bid.
+11. Countdown timer displaying remaining auction time to users.
 
 #### UI09: Active Auctions Page
 
@@ -966,7 +967,7 @@ Figure 6: Active auctions page
 4. Footer that contains all the links to "About Us", FAQ, Contacts, Terms of Use and Privacy Policy
 5. Breadcrumbs to help the user navigate.
 6. Search bar to help the user find auctions and other users.
-7. Button for using filters to assist users in searching auctions.
+7. Button for using filters and sorting to assist users in searching auctions.
 8. Each auction card has a link to the auction in question.
 
 ---

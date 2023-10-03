@@ -895,7 +895,7 @@ This artifact contains SoundSello's sitemap which shows how the information is o
 
 This diagram shows the pages that are going to exist on our web application and how they interact with each other.
 
-![Sitemap](/resources/homepage.png)
+![Sitemap](/resources/sitemap.png)
 
 Figure 2: SoundSello Sitemap
 
@@ -950,7 +950,7 @@ Figure 5: Auction page
 
 #### UI09: Active Auctions Page
 
-![Auctions](/resources/auctions.png)
+![Auctions](/resources/active_auctions.png)
 
 Figure 6: Active auctions page
 

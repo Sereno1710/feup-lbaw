@@ -28,66 +28,66 @@ Administrator is another group of users, who can manage user accounts and have c
 
 The online auction will have an adaptive design, allowing users to be on the system in any type of device or browser. It will also be easy to navigate through the system giving the user a better experience.
 
-## **Main features:**
+## **Main Features:**
 
 ### **User:** 
 * **Exact match search auctions**
 * **Full text search auctions**
-* Search Filters
+* Search filters
 * **Log in**
-* **Register Account**
-* Recover Password
-* **View Active Auctions**
-* **View User Profiles**
+* **Register fccount**
+* Recover password
+* **View active auctions**
+* **View user profiles**
 
 
 ### **Authenticated User:**
 * **Log out**
-* **Submit Auction**
-* **Bid on Auction**
+* **Submit auction**
+* **Bid on auction**
 * Deposit money on account
 * **View profile**
 * **Edit profile**
-* Delete Account
+* Delete account
 * Receive and view personal notifications
 * Support profile picture
-* Follow Auction
-* View Followed Auctions
-* View My Bidding History
-* **View My Auctions**
-* Comment on Auctions
+* Follow auction
+* View followed auctions
+* View my bidding history
+* **View my auctions**
+* Comment on auctions
 
 ### **Bidder:**
-* Rate Seller
-* **View Auction Bidding's History**
+* Rate seller
+* **View auction's bidding history**
 
 ### **Seller:**
-* **View Auction Bidding's History**
-* Cancel Auction
+* **View auction's bidding history**
+* Cancel auction
 
 ### **System Manager:**
-* **Approve Auctions**
-* Access User Activity Logs
-* Ban/Unban User Accounts
-* Manage Filter Categories
+* **Approve auctions**
+* Access user activity logs
+* Ban/unban user accounts
+* Manage filter categories
 
 ### **Private Notifications:**
-* New Bid on Owned or Participating Auction
-* Owned or Participating Auction Ending
-* Owned or Participating Auction Ended
-* Owned or Followed Auction Canceled
-* Owned or Participating Auction Winner
+* New bid on owned or participating auction
+* Owned or participating auction ending
+* Owned or participating auction ended
+* Owned or followed auction cancelled
+* Owned or participating auction winner
   
 ### **Administrator:**
-* Delete Accounts
-* **Manage users (edit,view, create, search,promote)**
-* Manage Filters
-* Access System Managers Activity Log 
+* Delete accounts
+* **Manage users (edit, view, create, search, promote)**
+* Manage filters
+* Access system managers activity log 
 
 ### **Help:**
-* Placeholders in Form Inputs
-* Contextual Error Messages
-* Contextual Help
+* Placeholders in form inputs
+* Contextual error messages
+* Contextual help
 * FAQ
 
 ### **Product Information:**
@@ -158,7 +158,7 @@ Bidder
 </td>
 <td>
 
-Bidders are authenticated users who are participating in a auction by having bid on it. They can see all the current auctions that he is bidding on and receive notifications when a change occurs in them.
+Bidders are authenticated users who are participating in a auction by having bid on it. They can see all the current auctions that they are bidding on and receive notifications when a change occurs in them.
 
 </td>
 </tr>

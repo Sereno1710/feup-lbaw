@@ -16,7 +16,7 @@ Visitors are unregistered users with minimal access to the site features being o
 
 Authenticated users are able to sell or bid on products and if so, they become either a bidder or seller.
 
-A bidder is a user whose bids have been submited and a seller when the user submits an auction. They are both able to see the bidding history of that specific auction/auctions. 
+A bidder is a user whose bids have been submitted and a seller when the user submits an auction. They are both able to see the bidding history of that specific auction/auctions. 
 
 Bidders can rate sellers and receive notifications about an auction in which they are bidding.
 
@@ -97,12 +97,11 @@ The online auction will have an adaptive design, allowing users to be on the sys
 
 ## A2: Actors and User stories
 
-Actors and user stories represent the type of users that will use our website, as well as the features it is going to have for each type of user.
-
+This artifact contains actors and user stories. Represent the type of users that will use our website, as well as the features it is going to have for each type of user.
 
 ### 1. Actors
 
-The actors of the SoundSello are represented in Figure 1 and described in Table 1.
+The actors of SoundSello are represented in Figure 1 and described in Table 1.
 
 ![Actors](/resources/actors.png)
 
@@ -147,7 +146,7 @@ Authenticated User
 </td>
 <td>
 
-Autenticated users are able to deposit money into their account, follow auctions, bid in auctions and create their own auctions. They are also able to manage their own profile. 
+Authenticated users are able to deposit money into their account, follow auctions, bid in auctions and create their own auctions. They are also able to manage their own profile. 
 
 </td>
 </tr>
@@ -183,7 +182,7 @@ System Manager
 </td>
 <td>
 
-System Manager are authenticated users who moderate the system, being able to manage the auctions aswell as temporarily banning accounts.
+System Manager are authenticated users who moderate the system, being able to manage the auctions as well as temporarily banning accounts.
 
 </td>
 </tr>
@@ -195,11 +194,12 @@ Administrator
 </td>
 <td>
 
-Administrator are able to manage accounts (changing account details, deleting accounts), aswell as managing category filters.
+Administrator are able to manage accounts (changing account details, deleting accounts), as well as managing category filters.
 
 </td>
 </tr>
 </table>
+Table 1: Actors descriptions
 
 
 ### **2. User Stories**
@@ -279,6 +279,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 <td>As a user, I want to be able to see an "About Us" page, so that I can know more about the website and its creators. </td>
 </tr>
 </table>
+Table 2: User stories for the User
 
 #### **2.2. Visitor**
 <table>
@@ -320,6 +321,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 </table>
+Table 3: User stories for the Visitor
 
 #### **2.3. Authenticated User**
 <table>
@@ -363,7 +365,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 <td>US16</td>
 <td>View Own Profile</td>
 <td>High</td>
-<td>As an authenticated user, I want a section where I can see my own profile so that I can see all my activity and informations about my account.</td>
+<td>As an authenticated user, I want a section where I can see my own profile so that I can see all my activity and information about my account.</td>
 </tr>
 <tr>
 <td>US17</td>
@@ -429,7 +431,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 <td>US27</td>
 <td>Report User Accounts</td>
 <td>Low</td>
-<td>As an authenticated user, I want the ability to report user accounts that seem suspicious, so that I can contribute to mantaining a safe user base.</td>
+<td>As an authenticated user, I want the ability to report user accounts that seem suspicious, so that I can contribute to maintaining a safe user base.</td>
 </tr>
 <tr>
 <td>US28</td>
@@ -438,6 +440,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 <td>As an authenticated user, I want the ability to comment on an auction, so that I can get answers and express my opinion.</td>
 </tr>
 </table>
+Table 4: User stories for the Authenticated User
 
 #### **2.4. Bidder**
 <table>
@@ -496,6 +499,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 <td>As a bidder, I want to get a notification when an auction I'm participating in is cancelled, so that I know exactly when that happens.</td>
 </tr>
 </table>
+Table 5: User stories for the Bidder
 
 #### **2.5. Seller**
 <table>
@@ -538,6 +542,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 </table>
+Table 6: User stories for the Seller
 
 #### **2.6. System Manager**
 <table>
@@ -608,6 +613,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 </table>
+Table 7: User stories for the System Manager
 
 #### **2.7. Administrator**
 <table>
@@ -652,10 +658,11 @@ Administrator are able to manage accounts (changing account details, deleting ac
 <td>US48</td>
 <td>Access System Manager Activity Log</td>
 <td>Low</td>
-<td>As an administrator, I want to access a system manager acitivy log, which includes records of all system manager's actions and they time they happened, so that I can investigate any irregularities or issues effectively.
+<td>As an administrator, I want to access a system manager activity log, which includes records of all system manager's actions and they time they happened, so that I can investigate any irregularities or issues effectively.
 </td>
 </tr>
 </table>
+Table 8: User stories for the Administrator
 
 ### **3. Supplementary Requirements**
 <br> 
@@ -744,6 +751,7 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 </table>
+Table 9: Business rules
 
 #### **3.2. Technical requirements**
 <table>
@@ -833,10 +841,11 @@ Administrator are able to manage accounts (changing account details, deleting ac
 </td>
 </tr>
 </table>
+Table 10: Technical requirements
 
 Usability and accessibility are two of the most important technical requirements because this platform only works when users use it, so it should be easy and convenient for anyone to browse our website.
 
-Since the user will be submitting their information in their normal use of the system, we need to ensure their privacy, making security an equally important technical requirement. 
+Since the user will be submitting their private information to the system, we need to ensure their privacy, making security an equally important technical requirement. 
 
 
 #### **3.3. Restrictions**
@@ -871,44 +880,96 @@ Since the user will be submitting their information in their normal use of the s
 </td>
 </tr>
 </table>
+Table 11: Other restrictions
 
 ---
 
 
 ## A3: Information Architecture
 
-> Brief presentation of the artifact goals.
+This artifact contains SoundSello's sitemap which shows how the information is organized and some wireframes for essential pages functionality and content. These are useful to clarify user requirements and evaluate the product's user interface.
+
 
 
 ### 1. Sitemap
 
-> Sitemap presenting the overall structure of the web application.  
-> Each page must be identified in the sitemap.  
-> Multiple instances of the same page (e.g. student profile in SIGARRA) are presented as page stacks.
+This diagram shows the pages that are going to exist on our web application and how they interact with each other.
+
+![Sitemap](/resources/homepage.png)
+
+Figure 2: SoundSello Sitemap
 
 
 ### 2. Wireframes
 
-> Wireframes for, at least, two main pages of the web application.
-> Do not include trivial use cases (e.g. about page, contacts).
+The wireframes below show the content of the most important pages on our web application.
+
+#### UI01: Home Page
+
+![Home](/resources/homepage.png)
+
+Figure 3: SoundSello's home page 
+
+1. Link to the home page.
+2. Links to a page to deposit money into the user account (left), submit an auction into the platform (middle) and view all auctions available (right).
+3. Link to the user profile.
+4. Footer that contains all the links to "About Us", FAQ, Contacts, Terms of Use and Privacy Policy
+5. Breadcrumbs to help the user navigate.
+6. Search bar to help the user find auctions and other users.
 
 
-#### UIxx: Page Name
+#### UI02: Profile Page
 
-#### UIxx: Page Name
+![Profile](/resources/profile.png)
 
+Figure 4: User profile page
+
+1. Link to the home page.
+2. Links to a page to deposit money into the user account (left), submit an auction into the platform (middle) and view all auctions available (right).
+3. Link to the user profile.
+4. Footer that contains all the links to "About Us", FAQ, Contacts, Terms of Use and Privacy Policy
+5. Breadcrumbs to help the user navigate.
+6. Search bar to help the user find auctions and other users.
+7. Links to a page with the user's complete bidding history (left) and complete seller history (right).
+8. Link to edit profile page, where you can change name and profile picture (only visible if it's the user's own profile).
+9. Each auction card has a link to the auction in question.
+10. View all of your followed auctions.
+
+#### UI10: View Auction
+
+![Auction](/resources/auction.png)
+
+Figure 5: Auction page
+
+1. Link to the home page.
+2. Links to a page to deposit money into the user account (left), submit an auction into the platform (middle) and view all auctions available (right).
+3. Link to the user profile.
+4. Footer that contains all the links to "About Us", FAQ, Contacts, Terms of Use and Privacy Policy
+5. Breadcrumbs to help the user navigate.
+6. Search bar to help the user find auctions and other users.
+
+#### UI09: Active Auctions Page
+
+![Auctions](/resources/auctions.png)
+
+Figure 6: Active auctions page
+
+1. Link to the home page.
+2. Links to a page to deposit money into the user account (left), submit an auction into the platform (middle) and view all active auctions (right).
+3. Link to the user profile.
+4. Footer that contains all the links to "About Us", FAQ, Contacts, Terms of Use and Privacy Policy
+5. Breadcrumbs to help the user navigate.
+6. Search bar to help the user find auctions and other users.
 
 ---
 
 
 ## Revision history
 
-Changes made to the first submission:
-1. Item 1
-1. ...
+No changes have been made to the first submission yet.
 
 ***
-GROUP0202, DD/MM/20YY
+GROUP0202, 03/10/2023
 
 * Daniel Gago, up202108791@edu.fe.up.pt
 * Eduardo Oliveira, up202108843@edu.fe.up.pt

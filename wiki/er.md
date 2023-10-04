@@ -983,6 +983,6 @@ GROUP0202, 03/10/2023
 
 * Daniel Gago, up202108791@edu.fe.up.pt
 * Eduardo Oliveira, up202108843@edu.fe.up.pt
-* José Santos, up202108729@edu.fe.up.pt
+* José Santos, up202108729@edu.fe.up.pt (Editor)
 * Máximo Pereira, up202108887@edu.fe.up.pt
 

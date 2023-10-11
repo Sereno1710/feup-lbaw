@@ -406,7 +406,7 @@ Table 3: User stories for the Visitor
 </tr>
 <tr>
 <td>US23</td>
-<td>Like an Auction</td>
+<td>Follow an Auction</td>
 <td>Medium</td>
 <td>As an authenticated user, I want to be able to like/follow an auction, so that I can receive notifications about an auction without having to bid on them.</td>
 </tr>

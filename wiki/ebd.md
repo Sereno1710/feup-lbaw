@@ -24,16 +24,16 @@ This artifact's goal is to provide an abstract representation of the data struct
 
 ### 1. Relational Schema
 
-> This section presents the relational schema derived from the conceptual data model through analysis. It includes details for each relational schema, such as attributes, domains, primary keys, foreign keys, and necessary integrity constraints like uniqueness (UK), default values, not null (NN), and check (CK).
+> This section presents the relational schema derived from the conceptual data model through analysis. It includes details for each relational schema, such as attributes, domains, primary keys (PK), foreign keys (FK), and necessary integrity constraints like uniqueness (UK), default values (DF), not null (NN), and check (CK).
 
 | Relation reference | Relation Compact Notation                        |
 | ------------------ | ------------------------------------------------ |
-| R01                | User(id PK, username NN UK, email NN UK, password NN, balance NN, date_of_birth NN)                     |
+| R01                | User(id PK, username NN UK, email NN UK, password NN, balance NN DF 0, date_of_birth NN)                     |
 | R02                | SystemManager(id->User PK)            |
-| R02                | Admin(id->User PK)            |
-| R02                | Address(id PK, street NNL, city NN, zip_code NN, country NN)            |
-| R03                | Table3(<ins>id</ins>, id2 → Table2, attribute **UK NN**)   |
-| R04                | Table4((<ins>id1</ins>, <ins>id2</ins>) → Table3, id3, attribute **CK** attribute > 0) |
+| R03                | Admin(id->User PK)            |
+| R04                | Address(id PK, street NNL, city NN, zip_code NN, country NN, FK user_id -> User PK)            |
+| R05                | Auction(id PK, name NN, description NN, price CK price > 0, initial_time, end_time, category DF NN, state NN DF)   |
+| R06                | Table4((<ins>id1</ins>, <ins>id2</ins>) → Table3, id3, attribute **CK** attribute > 0) |
 
 ### 2. Domains
 

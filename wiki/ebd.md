@@ -32,7 +32,7 @@ This artifact's goal is to provide an abstract representation of the data struct
 | R02                | SystemManager(id->User PK)            |
 | R03                | Admin(id->User PK)            |
 | R04                | Address(id PK, street NNL, city NN, zip_code NN, country NN, FK user_id -> User PK)            |
-| R05                | Auction(id PK, name NN, description NN, price CK price > 0, initial_time, end_time, category DF NN, state NN DF)   |
+| R05                | Auction(id PK, name NN, description NN, price CK price > 0, initial_time, end_time, category DF NN, state NN DF,FK user_id -> User PK)   |
 | R06                | Table4((<ins>id1</ins>, <ins>id2</ins>) → Table3, id3, attribute **CK** attribute > 0) |
 
 ### 2. Domains

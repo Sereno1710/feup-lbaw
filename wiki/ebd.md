@@ -29,8 +29,10 @@ This artifact's goal is to provide an abstract representation of the data struct
 
 | Relation reference | Relation Compact Notation                        |
 | ------------------ | ------------------------------------------------ |
-| R01                | Table1(<ins>id</ins>, attribute **NN**)                     |
-| R02                | Table2(<ins>id</ins>, attribute → Table1 **NN**)            |
+| R01                | User(id PK, username NN UK, email NN UK, password NN, balance NN, date_of_birth NN)                     |
+| R02                | SystemManager(id->User PK)            |
+| R02                | Admin(id->User PK)            |
+| R02                | Address(id PK, street NNL, city NN, zip_code NN, country NN)            |
 | R03                | Table3(<ins>id</ins>, id2 → Table2, attribute **UK NN**)   |
 | R04                | Table4((<ins>id1</ins>, <ins>id2</ins>) → Table3, id3, attribute **CK** attribute > 0) |
 

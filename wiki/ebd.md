@@ -24,8 +24,7 @@ This artifact's goal is to provide an abstract representation of the data struct
 
 ### 1. Relational Schema
 
-> The Relational Schema includes the relation schemas, attributes, domains, primary keys, foreign keys and other integrity rules: UNIQUE, DEFAULT, NOT NULL, CHECK.  
-> Relation schemas are specified in the compact notation:  
+> This section presents the relational schema derived from the conceptual data model through analysis. It includes details for each relational schema, such as attributes, domains, primary keys, foreign keys, and necessary integrity constraints like uniqueness (UK), default values, not null (NN), and check (CK).
 
 | Relation reference | Relation Compact Notation                        |
 | ------------------ | ------------------------------------------------ |

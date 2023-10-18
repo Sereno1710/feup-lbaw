@@ -18,51 +18,13 @@ Figure 7: UML Class diagram
  
 > Business rules can be included in the UML diagram as UML notes or in a table in this section.
 
-<table>
-<td>
-
-**Identifier**
-</td>
-<td>
-
-**Description**
-</td>
-</tr>
-<tr>
-<td>
-BR12
-</td>
-<td>
-A user cannot bid in its own auction.
-</td>
-</tr>
-<tr>
-<td>
-BR13
-</td>
-<td>
-A user can only report an aution or another user once.
-</td>
-</tr>
-<tr>
-<td>
-BR14
-</td>
-<td>
-A user cannot bid in an auction where he is the highest bid.
-</td>
-</tr>
-<tr>
-<td>
-BR15
-</td>
-<td>
-A user cannot follow an auction that he is already following.
-</td>
-</tr>
-</table>
-
-
+| Identifier | Description |
+| --- | --- |
+| BR12 | The auction winner is the user with the highest bid on the auction when it ends. |
+| BR13 | A user cannot bid in its own auction. |
+| BR14 | A user can only report an auction or another user once. |
+| BR15 | A user cannot bid in an auction where he is the highest bid. |
+| BR16 | A user cannot follow an auction that he is already following. |
 
 ## A5: Relational Schema, validation and schema refinement
 
@@ -73,36 +35,57 @@ It also contains the database structure, including all domains and relations.
 
 This section contains the relational schema that resulted from the UML Class Diagram. It shows all the atributes,domains,keys and integrity rules in case of need.
 
-| Relation reference | Relation Compact Notation                        |
-| ------------------ | ------------------------------------------------ |
-| R01                | users(id **PK**, username **NN UK**, email **NN UK**, password **NN**, balance **NN DF** 0, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country **NN**,image **NN**)                     |
-| R02                | SystemManager(id->User **PK**)            |
-| R03                | Admin(id->User **PK**)            |
-| R04               | Auction(id **PK**, name **NN**, description **NN**, price **CK** price > 0, initial_time **CK** initial_time > today, end_time **DF N**, category **DF NN**, state **NN DF**,**FK** user_id -> User **PK**)   |
+| Relation reference | Relation Compact Notation |
+| --- | --- |
+| R01 | User (id **PK**, username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country **NN**,image **NN**) |
+| R02 | SystemManager (id -> User(id) **PK**) |
+| R03 | Admin (id -> User(id) **PK**) |
+| R04 | Auction (id **PK**, name **NN**, description **NN**, price **CK** price > 0, initial_time **CK initial_time <= today**, end_time **DF N**, category **DF NN**, state **NN DF**,**FK** owner -> User(id) **PK**, **FK** auction_winner -> User(id) **DF N**) |
+| R05 | AuctionPhoto (id **PK**, **FK** auction_id -> Auction(id), image **NN**) |
+| R06 | Bid (id **PK**, **FK** user_id -> User(id), **FK** auction_id ->  Auction(id), amount **NN** **CK** amount > 0,time **CK** time <= today) |
+| R07 | Report (**FK** user_id -> User(id) **PK**,**FK** auction_id ->  Auction(id) **PK**, description **NN**) |
+| R08 | follows (**FK** user_id -> User(id) **PK**, **FK** auction_id _> Auction(id) **PK**) |
+| R09 | Comment(id **PK**, **FK** user_id -> User(id) **PK**,**FK** auction_id -> Auction(id) **PK**, message **NN**, time **CK** time <= today) |
+| R10 |  MetaInfo(name **PK**) |
+| R11 | MetaInfoValue(id **PK**, **FK** meta_info_name -> MetaInfo(name), value **NN**) |
+| R12 | AuctionMetaInfoValue(**FK** auction_id -> Auction(id) **PK**, **FK** meta_info_value_id -> MetaInfoValue(id) **PK**) |
+| R13 | Notification (id **PK**, date **NN CK** date <= today, viewed **NN DF false**, **FK** user_id ->  User(id)) | 
+| R14 | user_notification(notificiation_id -> Notification(id) **PK**, notification_type) |
+| R15 | auction_notification(notification_id -> Notification(id) **PK**, **FK** auction_id -> Auction(id), notification_type) |
+| R16 | comment_notification(notificiation_id -> Notification(id) **PK**, **FK** comment_id -> Comment(id))|
+| R17 | bid_notification(notification_id -> Notification(id) **PK**,**FK** bid_id -> Bid(id)) |
 
 
 ### 2. Domains
 
 Specification of aditional domains:
 
-| Domain Name | Domain Specification           |
-| ----------- | ------------------------------ |
-| today	      | DATE DEFAULT CURRENT_DATE      |
-| auction_notification  | ENUM ('auction_paused','auction_closed','auction_approved,'auction_denied') |
-| user_notification | ENUM ('user_upgrade','user_downgrade')|
-| notification | ENUM ('comment_notification,'user_notification','auction_notification','bid_notification')|
+| Domain Name | Domain Specification |
+| --- | --- |
+| today	| DATE DEFAULT CURRENT_DATE |
+| notification | ENUM ('comment_notification, 'user_notification', 'auction_notification', 'bid_notification') |
+| auction_notification_type  | ENUM ('auction_paused', 'auction_finished', 'auction_approved', 'auction_denied') |
+| user_notification_type | ENUM ('user_upgrade', 'user_downgrade') |
+| category_type | ENUM ('strings', 'woodwinds', 'bass', 'percussion') |
+| auction_state | ENUM ('pending', 'active', 'finished', 'paused', 'approved', 'denied','disabled') |
+
+
 ### 3. Schema validation
 
-> To validate the Relational Schema obtained from the Conceptual Model, all functional dependencies are identified and the normalization of all relation schemas is accomplished. Should it be necessary, in case the scheme is not in the Boyce–Codd Normal Form (BCNF), the relational schema is refined using normalization.  
+> To validate the Relational Schema obtained from the Conceptual Model, all functional dependencies are identified and the normalization of all relation schemas is accomplished. Should it be necessary, in case the scheme is not in the Boyce-Codd Normal Form (BCNF), the relational schema is refined using normalization.  
 
-| **TABLE R01**   | User               |
-| --------------  | ---                |
-| **Keys**        | { id }, { email }  |
-| **Functional Dependencies:** |       |
-| FD0101          | id → {email, name} |
-| FD0102          | email → {id, name} |
-| ...             | ...                |
-| **NORMAL FORM** | BCNF               |
+
+
+| **TABLE R01** | User |
+| --- | --- |
+| **Keys** | { id }, { email }, { username } |
+| **Functional Dependencies** | |
+| FD0101 | id → { username, email, password, balance, date_of_birth, street, city, zip_code, country, image } |
+| FD0102 | email → { id, username, password, balance, date_of_birth, street, city, zip_code, country, image } |
+| FD0103 | username → { id, email, password, balance, date_of_birth, street, city, zip_code, country, image } |
+| **NORMAL FORM** | BCNF |
+
+
 
 > If necessary, description of the changes necessary to convert the schema to BCNF.  
 > Justification of the BCNF.  
@@ -205,9 +188,9 @@ Specification of aditional domains:
 No changes have been made to the first submission yet.
 
 ***
-GROUP0202, 11/10/2023
+GROUP0202, 18/10/2023
 
-* Daniel Gago, up202108791@edu.fe.up.pt (Editor)
+* Daniel Gago, up202108791@edu.fe.up.pt
 * Eduardo Oliveira, up202108843@edu.fe.up.pt
-* José Santos, up202108729@edu.fe.up.pt 
+* José Santos, up202108729@edu.fe.up.pt (Editor)
 * Máximo Pereira, up202108887@edu.fe.up.pt

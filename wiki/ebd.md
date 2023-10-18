@@ -4,46 +4,93 @@
 
 ## A4: Conceptual Data Model
 
-This artifact's goal is to provide an abstract representation of the data structure and it's relationships within our system. It serves as a blueprint for the web appliction's database.
+Entities and its relationships that exist in SoundSello and it's database are described in this section.
 
 ### 1. Class diagram
 
+The UML diagram presents the main organizational entities, their relationships, attributes domains, and the multiplicity of relationships for SoundSello.
 
+![Class Diagram](/wiki/resources/UML.png)
+
+Figure 7: UML Class diagram
 
 ### 2. Additional Business Rules
  
 > Business rules can be included in the UML diagram as UML notes or in a table in this section.
 
+<table>
+<td>
 
----
+**Identifier**
+</td>
+<td>
+
+**Description**
+</td>
+</tr>
+<tr>
+<td>
+BR12
+</td>
+<td>
+A user cannot bid in its own auction.
+</td>
+</tr>
+<tr>
+<td>
+BR13
+</td>
+<td>
+A user can only report an aution or another user once.
+</td>
+</tr>
+<tr>
+<td>
+BR14
+</td>
+<td>
+A user cannot bid in an auction where he is the highest bid.
+</td>
+</tr>
+<tr>
+<td>
+BR15
+</td>
+<td>
+A user cannot follow an auction that he is already following.
+</td>
+</tr>
+</table>
+
 
 
 ## A5: Relational Schema, validation and schema refinement
 
-> Brief presentation of the artifact goals.
+This artifact contains the Relational Schema obtained by the UML Class Diagram. The Relational Schema includes each relation schema, attributes, domains, primary keys, foreign keys and other integrity rules.
+It also contains the database structure, including all domains and relations.
 
 ### 1. Relational Schema
 
-> This section presents the relational schema derived from the conceptual data model through analysis. It includes details for each relational schema, such as attributes, domains, primary keys (PK), foreign keys (FK), and necessary integrity constraints like uniqueness (UK), default values (DF), not null (NN), and check (CK).
+This section contains the relational schema that resulted from the UML Class Diagram. It shows all the atributes,domains,keys and integrity rules in case of need.
 
 | Relation reference | Relation Compact Notation                        |
 | ------------------ | ------------------------------------------------ |
-| R01                | User(id PK, username NN UK, email NN UK, password NN, balance NN DF 0, date_of_birth NN)                     |
-| R02                | SystemManager(id->User PK)            |
-| R03                | Admin(id->User PK)            |
-| R04                | Address(id PK, street NNL, city NN, zip_code NN, country NN, FK user_id -> User PK)            |
-| R05                | Auction(id PK, name NN, description NN, price CK price > 0, initial_time, end_time, category DF NN, state NN DF,FK user_id -> User PK)   |
-| R06                | Table4((<ins>id1</ins>, <ins>id2</ins>) → Table3, id3, attribute **CK** attribute > 0) |
+| R01                | users(id **PK**, username **NN UK**, email **NN UK**, password **NN**, balance **NN DF** 0, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country **NN**,image **NN**)                     |
+| R02                | SystemManager(id->User **PK**)            |
+| R03                | Admin(id->User **PK**)            |
+| R04               | Auction(id **PK**, name **NN**, description **NN**, price **CK** price > 0, initial_time **CK** initial_time > today, end_time **DF N**, category **DF NN**, state **NN DF**,**FK** user_id -> User **PK**)   |
+
 
 ### 2. Domains
 
-> The specification of additional domains can also be made in a compact form, using the notation:  
+Specification of aditional domains:
 
 | Domain Name | Domain Specification           |
 | ----------- | ------------------------------ |
-| Today	      | DATE DEFAULT CURRENT_DATE      |
-| Priority    | ENUM ('High', 'Medium', 'Low') |
-
+| today	      | DATE DEFAULT CURRENT_DATE      |
+| auction_notification  | ENUM ('auction_paused','auction_closed','auction_approved,'auction_denied') |
+| user_notification | ENUM ('user_upgrade','user_downgrade')|
+| notification | ENUM ('comment_notification,'user_notification','auction_notification','bid_notification')|
 ### 3. Schema validation
 
 > To validate the Relational Schema obtained from the Conceptual Model, all functional dependencies are identified and the normalization of all relation schemas is accomplished. Should it be necessary, in case the scheme is not in the Boyce–Codd Normal Form (BCNF), the relational schema is refined using normalization.  

@@ -252,11 +252,13 @@ Since the user will be submitting their private information to the system, we ne
 
 #### **3.3. Restrictions**
 
-
+| **Identifier** | **Name** | **Description** |
+| --- | --- | --- |
+| R01 | Database | The database should use PostgreSQL |
+| R02 | Deadline | This project should be ready to use by the end of the semester|
+| R03 | Payment Processor | This project has PayPal as its payment processing service. |
 
 Table 11: Other restrictions
-
----
 
 
 ## A3: Information Architecture

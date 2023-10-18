@@ -72,9 +72,7 @@ Specification of aditional domains:
 
 ### 3. Schema validation
 
-> To validate the Relational Schema obtained from the Conceptual Model, all functional dependencies are identified and the normalization of all relation schemas is accomplished. Should it be necessary, in case the scheme is not in the Boyce-Codd Normal Form (BCNF), the relational schema is refined using normalization.  
-
-
+Function dependencies identified as well as if it is in BCNF.
 
 | **TABLE R01** | User |
 | --- | --- |
@@ -85,13 +83,119 @@ Specification of aditional domains:
 | FD0103 | username → { id, email, password, balance, date_of_birth, street, city, zip_code, country, image } |
 | **NORMAL FORM** | BCNF |
 
+| **TABLE RO2** | SystemManager |
+| --- | --- |
+| Keys | { id } |
+| Functional Dependencies |
+| FD0101 | none |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE RO3** | Admin |
+| --- | --- |
+| Keys | { id } |
+| Functional Dependencies |
+| FD0101 | none |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R04** | Auction |
+| --- | --- |
+| **Keys** | { id } |
+| **Functional Dependencies** | |
+| FD0401 | id → { name, description, price, initial_time, end_time, category, state, owner, auction_winner } |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R05** | AuctionPhoto |
+| --- | --- |
+| **Keys** | { id } |
+| **Functional Dependencies** | |
+| FD0501 | id → { auction_id, image } |
+| **NORMAL FORM** | BCNF |
 
 
-> If necessary, description of the changes necessary to convert the schema to BCNF.  
-> Justification of the BCNF.  
+| **TABLE R06** | Bid |
+| --- | --- |
+| **Keys** | { id } |
+| **Functional Dependencies** | |
+| FD0601 | id → { user_id, auction_id, amount, time } |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R07** | Report |
+| --- | --- |
+| **Keys** | { user_id, auction_id } |
+| **Functional Dependencies** | |
+| FD0701 | { user_id, auction_id } → { description } |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R08** | follows |
+| --- | --- |
+| **Keys** | { user_id, auction_id } |
+| **Functional Dependencies** | |
+| FD0801 | { user_id, auction_id } → {} |
+| **NORMAL FORM** | BCNF |
 
 
----
+| **TABLE R09** | Comment |
+| --- | --- |
+| **Keys** | { id, user_id, auction_id } |
+| **Functional Dependencies** | |
+| FD0901 | { id, user_id, auction_id } → { message, time } |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R10** | MetaInfo |
+| --- | --- |
+| **Keys** | { name } |
+| **Functional Dependencies** | |
+| FD1001 | { name } → {} |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R11** | MetaInfoValue |
+| --- | --- |
+| **Keys** | { id } |
+| **Functional Dependencies** | |
+| FD1101 | id → { meta_info_name, value } |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R12** | AuctionMetaInfoValue |
+| --- | --- |
+| **Keys** | { auction_id, meta_info_value_id } |
+| **Functional Dependencies** | |
+| FD1201 | { auction_id, meta_info_value_id } → {} |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R13** | Notification |
+| --- | --- |
+| **Keys** | { id } |
+| **Functional Dependencies** | |
+| FD1301 | id → { date, viewed, user_id } |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R14** | user_notification |
+| --- | --- |
+| **Keys** | { notification_id } |
+| **Functional Dependencies** | |
+| FD1401 | { notification_id } → { notification_type } |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R15** | auction_notification |
+| --- | --- |
+| **Keys** | { notification_id } |
+| **Functional Dependencies** | |
+| FD1501 | { notification_id } → { notification_type , auction_id} |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R16** | comment_notification |
+| --- | --- |
+| **Keys** | { notification_id } |
+| **Functional Dependencies** | |
+| FD1601 | notification_id → { comment_id } |
+| **NORMAL FORM** | BCNF |
+
+| **TABLE R17** | bid_notification |
+| --- | --- |
+| **Keys** | { notification_id } |
+| **Functional Dependencies** | |
+| FD1701 | notification_id → { bid_id } |
+| **NORMAL FORM** | BCNF |
 
 
 ## A6: Indexes, triggers, transactions and database population

@@ -55,6 +55,14 @@ This section contains the relational schema that resulted from the UML Class Dia
 | R16 | comment_notification(notificiation_id -> Notification(id) **PK**, **FK** comment_id -> Comment(id))|
 | R17 | bid_notification(notification_id -> Notification(id) **PK**,**FK** bid_id -> Bid(id)) |
 
+Annotation: <br>
+- **CK** - CHECK
+- **NN** - NOT NULL    
+- **N**  - NULL
+- **FK** - FOREIGN KEY
+- **PK** - PRIMARY KEY
+- **UK** - UNIQUE KEY
+- **DF** - DEFAULT
 
 ### 2. Domains
 

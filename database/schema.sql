@@ -1,22 +1,21 @@
 -- Drop old tables
-DROP TABLE IF EXISTS User CASCADE;
-DROP TABLE IF EXISTS SystemManager CASCADE;
-DROP TABLE IF EXISTS Admin CASCADE;
-DROP TABLE IF EXISTS Auction CASCADE;
-DROP TABLE IF EXISTS AuctionPhoto CASCADE;
-DROP TABLE IF EXISTS Bid CASCADE;
-DROP TABLE IF EXISTS Report CASCADE;
 DROP TABLE IF EXISTS follows CASCADE;
 DROP TABLE IF EXISTS Comment CASCADE;
-DROP TABLE IF EXISTS MetaInfo CASCADE;
-DROP TABLE IF EXISTS MetaInfoValue CASCADE;
-DROP TABLE IF EXISTS AuctionMetaInfoValue CASCADE;
-DROP TABLE IF EXISTS Notification CASCADE;
-DROP TABLE IF EXISTS user_notification CASCADE;
+DROP TABLE IF EXISTS Report CASCADE;
+DROP TABLE IF EXISTS Bid CASCADE;
+DROP TABLE IF EXISTS AuctionPhoto CASCADE;
+DROP TABLE IF EXISTS Auction CASCADE;
+DROP TABLE IF EXISTS Admin CASCADE;
+DROP TABLE IF EXISTS SystemManager CASCADE;
+DROP TABLE IF EXISTS User CASCADE;
 DROP TABLE IF EXISTS auction_notification CASCADE;
+DROP TABLE IF EXISTS user_notification CASCADE;
+DROP TABLE IF EXISTS Notification CASCADE;
+DROP TABLE IF EXISTS AuctionMetaInfoValue CASCADE;
+DROP TABLE IF EXISTS MetaInfoValue CASCADE;
+DROP TABLE IF EXISTS MetaInfo CASCADE;
 
 -- Define enums
-
 CREATE TYPE auction_notification AS ENUM (
     'auction_paused',
     'auction_finished',
@@ -45,7 +44,6 @@ CREATE TYPE auction_state AS ENUM (
     'denied',
     'disabled'
 );
-
 
 -- User table
 CREATE TABLE User (
@@ -79,19 +77,19 @@ CREATE TABLE Auction (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
-  price NUMERIC CHECK (price > 0),
+  price NUMERIC CHECK (price >= 0),
   initial_time TIMESTAMP CHECK (initial_time <= CURRENT_TIMESTAMP),
-  end_time TIMESTAMP DEFAULT NULL,
-  category category_type DEFAULT 'NN',
+  end_time TIMESTAMP NOT NULL,
+  category category_type DEFAULT 'strings',
   state auction_state NOT NULL,
   owner INT REFERENCES User(id),
-  auction_winner INT DEFAULT NULL REFERENCES User(id)
+  auction_winner INT NOT NULL REFERENCES User(id)
 );
 
 -- AuctionPhoto table
 CREATE TABLE AuctionPhoto (
   id SERIAL PRIMARY KEY,
-  auction_id INT REFERENCES Auction(id),
+  auction_id INT REFERENCES Auction(id) NOT NULL,
   image BYTEA NOT NULL
 );
 
@@ -99,7 +97,7 @@ CREATE TABLE AuctionPhoto (
 CREATE TABLE Bid (
   id SERIAL PRIMARY KEY,
   user_id INT REFERENCES User(id),
-  auction_id INT REFERENCES Auction(id),
+  auction_id INT REFERENCES Auction(id) NOT NULL,
   amount NUMERIC NOT NULL CHECK (amount > 0),
   time TIMESTAMP CHECK (time <= CURRENT_TIMESTAMP),
   PRIMARY KEY (user_id, auction_id)

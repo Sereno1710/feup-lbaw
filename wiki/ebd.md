@@ -260,6 +260,238 @@ Function dependencies identified as well as if it is in BCNF.
 
 | **Trigger**      | TRIGGER01                              |
 | ---              | ---                                    |
+| **Description**  | Upon account deletion, shared user data (e.g. comments, reviews, likes) is kept but is made anonymous. (business rule BR01) |
+```sql
+CREATE FUNCTION anonymize_user_data()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  DECLARE anonymous_user_id INT;
+  SELECT id INTO anonymous_user_id FROM User WHERE username = 'Anonymous';
+  IF anonymous_user_id IS NOT NULL THEN
+    UPDATE Comment
+    SET user_id = anonymous_user_id
+    WHERE user_id = OLD.id;
+    UPDATE Report
+    SET user_id = anonymous_user_id
+    WHERE user_id = OLD.id;
+    UPDATE Bid
+    SET user_id = anonymous_user_id
+    WHERE user_id = OLD.id;
+    UPDATE follows
+    SET user_id = anonymous_user_id
+    WHERE user_id = OLD.id;
+  END IF;
+  RETURN OLD;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER anonymize_user_data_trigger
+BEFORE DELETE ON User
+FOR EACH ROW
+EXECUTE FUNCTION anonymize_user_data();
+```
+
+| **Trigger**      | TRIGGER02                              |
+| ---              | ---                                    |
+| **Description**  | Administrator accounts are independent of the user accounts, i.e. they cannot create or participate in auctions. (business rule BR02) |
+```sql
+CREATE FUNCTION prevent_admin_auctions()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  IF OLD.role = 'admin' THEN
+    RAISE EXCEPTION 'Administrators cannot create or participate in auctions.';
+  END IF;
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER prevent_admin_create_auction_trigger
+BEFORE INSERT ON Auction
+FOR EACH ROW
+EXECUTE FUNCTION prevent_admin_auctions();
+
+CREATE TRIGGER prevent_admin_participate_auction_trigger
+BEFORE INSERT ON Bid
+FOR EACH ROW
+EXECUTE FUNCTION prevent_admin_auctions();
+```
+
+| **Trigger**      | TRIGGER03                              |
+| ---              | ---                                    |
+| **Description**  | An auction can only be cancelled if there are no bids. (business rule BR03) |
+```sql
+CREATE FUNCTION prevent_auction_cancellation()
+RETURNS TRIGGER AS 
+$$
+DECLARE
+  num_bids INTEGER;
+BEGIN
+  SELECT COUNT(*) INTO num_bids FROM Bid WHERE auction_id = OLD.id;
+  IF num_bids > 0 THEN
+    RAISE EXCEPTION 'Cannot cancel the auction. There are % bids.', num_bids;
+  END IF;
+  RETURN OLD;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER prevent_auction_cancellation_trigger
+BEFORE DELETE ON Auction
+FOR EACH ROW
+EXECUTE FUNCTION prevent_auction_cancellation();
+```
+
+| **Trigger**      | TRIGGER04                              |
+| ---              | ---                                    |
+| **Description**  | A user can only bid if their bid is higher than the current highest bid. A user cannot bid if their bid is the current highest. (business rule BR04) |
+```sql
+CREATE FUNCTION enforce_bidding_rules()
+RETURNS TRIGGER AS 
+$$
+DECLARE
+  current_highest_bid NUMERIC;
+BEGIN
+  SELECT MAX(amount) INTO current_highest_bid
+  FROM Bid
+  WHERE auction_id = NEW.auction_id;
+  IF NEW.amount <= current_highest_bid THEN
+    RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER enforce_bidding_rules_trigger
+BEFORE INSERT ON Bid
+FOR EACH ROW
+EXECUTE FUNCTION enforce_bidding_rules();
+```
+
+| **Trigger**      | TRIGGER05                              |
+| ---              | ---                                    |
+| **Description**  | When a bid is made in the last 15 minutes of the auction, the auction deadline is extended by 30 minutes. (business rule BR05) |
+```sql
+CREATE OR REPLACE FUNCTION extend_auction_deadline()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  DECLARE current_time TIMESTAMP;
+  current_time := NOW();
+  DECLARE fifteen_minutes_later TIMESTAMP;
+  fifteen_minutes_later := current_time + INTERVAL '15 minutes';
+  IF NEW.time > current_time AND NEW.time <= fifteen_minutes_later THEN
+    UPDATE Auction
+    SET end_time = OLD.end_time + INTERVAL '30 minutes'
+    WHERE id = NEW.auction_id;
+  END IF;
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER extend_auction_deadline_trigger
+BEFORE INSERT ON Bid
+FOR EACH ROW
+EXECUTE FUNCTION extend_auction_deadline();
+```
+
+| **Trigger**      | TRIGGER06                              |
+| ---              | ---                                    |
+| **Description**  | A seller cannot rate themselves. (business rule BR07) |
+```sql
+
+???????????
+
+```
+
+| **Trigger**      | TRIGGER07                              |
+| ---              | ---                                    |
+| **Description**  | A seller cannot follow their own auction. (business rule BR07) |
+```sql
+CREATE FUNCTION prevent_seller_self_follow()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  IF NEW.user_id = (SELECT owner FROM Auction WHERE id = NEW.auction_id) THEN
+    RAISE EXCEPTION 'A seller cannot follow their own auction.';
+  END IF;
+
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+CREATE TRIGGER prevent_seller_self_follow_trigger
+BEFORE INSERT ON follows
+FOR EACH ROW
+EXECUTE FUNCTION prevent_seller_self_follow();
+```
+
+| **Trigger**      | TRIGGER08                              |
+| ---              | ---                                    |
+| **Description**  | The date of an incoming bid has to be higher than the date of the current highest bid. The date when an auction closed has to be higher than the date of the last bid. (business rule BR08) |
+```sql
+CREATE OR REPLACE FUNCTION check_bid_date()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  IF NEW.time <= (SELECT MAX(time) FROM Bid WHERE auction_id = NEW.auction_id) THEN
+    RAISE EXCEPTION 'The date of the incoming bid must be higher than the date of the current highest bid.';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER check_bid_date_trigger
+BEFORE INSERT ON Bid
+FOR EACH ROW
+EXECUTE FUNCTION check_bid_date();
+```
+
+| **Trigger**      | TRIGGER09                              |
+| ---              | ---                                    |
+| **Description**  | Auctions should be automatically paused when the system is down. This ensures that the bidding process is not affected by technical errors. (business rule BR09) |
+```sql
+
+???????????
+
+```
+
+| **Trigger**      | TRIGGER10                              |
+| ---              | ---                                    |
+| **Description**  | A user needs to be at least 18 years old to use this website. (business rule BR10) |
+```sql
+CREATE FUNCTION check_user_age()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  DECLARE user_age INT;
+  user_age := EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT(YEAR FROM NEW.date_of_birth);
+  IF user_age < 18 THEN
+    RAISE EXCEPTION 'You must be at least 18 years old to register on this website.';
+  END IF;
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER check_user_age_trigger
+BEFORE INSERT ON User
+FOR EACH ROW
+EXECUTE FUNCTION check_user_age();
+```
+
+| **Trigger**      | TRIGGER11                              |
+| ---              | ---                                    |
+| **Description**  | An auction is only closed when the bidder confirms they got their item. (business rule BR11) |
+```sql
+
+???????????
+
+```
+
+| **Trigger**      | TRIGGER12                              |
+| ---              | ---                                    |
 | **Description**  | The auction winner is the user with the highest bid on the auction when it ends. (business rule BR12) |
 ```sql
 CREATE FUNCTION set_auction_winner()
@@ -283,7 +515,7 @@ FOR EACH ROW
 EXECUTE FUNCTION set_auction_winner();
 ```
 
-| **Trigger**      | TRIGGER02                              |
+| **Trigger**      | TRIGGER13                              |
 | ---              | ---                                    |
 | **Description**  | A user cannot bid in its own auction. (business rule BR13) |
 ```sql
@@ -304,7 +536,7 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_owner_bid();
 ```
 
-| **Trigger**      | TRIGGER03                              |
+| **Trigger**      | TRIGGER14                              |
 | ---              | ---                                    |
 | **Description**  | A user can only report an auction or another user once. (business rule BR14) |
 ```sql
@@ -330,7 +562,7 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_duplicate_report();
 ```
 
-| **Trigger**      | TRIGGER04                              |
+| **Trigger**      | TRIGGER15                              |
 | ---              | ---                                    |
 | **Description**  | A user cannot bid in an auction where he is the highest bid. (business rule BR15) |
 ```sql
@@ -355,7 +587,7 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_highest_bidder_bid();
 ```
 
-| **Trigger**      | TRIGGER05                              |
+| **Trigger**      | TRIGGER16                              |
 | ---              | ---                                    |
 | **Description**  | A user cannot follow an auction that he is already following. (business rule BR16) |
 ```sql

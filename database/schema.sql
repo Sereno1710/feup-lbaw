@@ -80,7 +80,7 @@ CREATE TABLE Auction (
   price NUMERIC CHECK (price >= 0),
   initial_time TIMESTAMP CHECK (initial_time <= CURRENT_TIMESTAMP),
   end_time TIMESTAMP NOT NULL,
-  category category_type DEFAULT NOT NULL,
+  category category_type DEFAULT NULL,
   state auction_state NOT NULL,
   owner INT REFERENCES User(id),
   auction_winner INT NOT NULL REFERENCES User(id)

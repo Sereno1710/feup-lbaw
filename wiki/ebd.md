@@ -37,10 +37,10 @@ This section contains the relational schema that resulted from the UML Class Dia
 
 | Relation reference | Relation Compact Notation |
 | --- | --- |
-| R01 | User (id **PK**, username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country **NN**,image **NN**) |
+| R01 | User (id **PK**, username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country **NN**,image) |
 | R02 | SystemManager (id -> User(id) **PK**) |
 | R03 | Admin (id -> User(id) **PK**) |
-| R04 | Auction (id **PK**, name **NN**, description **NN**, price **CK** price > 0, initial_time **CK initial_time <= today**, end_time **DF N**, category **DF NN**, state **NN DF**,**FK** owner -> User(id) **PK**, **FK** auction_winner -> User(id) **DF N**) |
+| R04 | Auction (id **PK**, name **NN**, description **NN**, price **CK** price > 0, initial_time **CK initial_time <= today**, end_time **DF N**, category **DF NN**, state **NN DF**,**FK** owner -> User(id), **FK** auction_winner -> User(id) **DF N**) |
 | R05 | AuctionPhoto (id **PK**, **FK** auction_id -> Auction(id), image **NN**) |
 | R06 | Bid (id **PK**, **FK** user_id -> User(id), **FK** auction_id ->  Auction(id), amount **NN** **CK** amount > 0,time **CK** time <= today) |
 | R07 | Report (**FK** user_id -> User(id) **PK**,**FK** auction_id ->  Auction(id) **PK**, description **NN**) |

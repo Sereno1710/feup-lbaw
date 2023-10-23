@@ -17,17 +17,17 @@ DROP TABLE IF EXISTS user_notification CASCADE;
 
 
 -- Define enums
-CREATE TYPE auction_notification AS ENUM (
+CREATE TYPE notification_type AS ENUM (
     'auction_paused',
     'auction_finished',
     'auction_approved',
-    'auction_denied'
-);
-
-CREATE TYPE user_notification AS ENUM (
+    'auction_denied',
+    'auction_comment',
+    'auction_bid',
     'user_upgrade',
     'user_downgrade'
 );
+
 
 CREATE TYPE category_type AS ENUM (
     'strings',
@@ -148,32 +148,11 @@ CREATE TABLE AuctionMetaInfoValue (
 -- Notification table
 CREATE TABLE Notification (
   id SERIAL PRIMARY KEY,
+  notification_type notification_type NOT NULL,
   date TIMESTAMP NOT NULL CHECK (date <= NOW()),
   viewed BOOLEAN DEFAULT false,
-  user_id INT REFERENCES User(id)
-);
-
--- user_notification table
-CREATE TABLE user_notification (
-  notification_id INT REFERENCES Notification(id) PRIMARY KEY,
-  notification_type user_notification_type NOT NULL
-);
-
--- auction_notification table
-CREATE TABLE auction_notification (
-  notification_id INT REFERENCES Notification(id) PRIMARY KEY,
+  receiver_id INT REFERENCES User(id),
+  bid_id INT REFERENCES Bid(id),
   auction_id INT REFERENCES Auction(id),
-  notification_type auction_notification_type NOT NULL,
-);
-
--- comment_notification table
-CREATE TABLE comment_notification (
-  notification_id INT REFERENCES Notification(id),
   comment_id INT REFERENCES Comment(id),
-);
-
--- auction_notification table
-CREATE TABLE bid_notification (
-  notification_id INT REFERENCES Notification(id) PRIMARY KEY,
-  bid_id INT REFERENCES Bid(id)
 );

@@ -49,11 +49,7 @@ This section contains the relational schema that resulted from the UML Class Dia
 | R10 |  MetaInfo(name **PK**) |
 | R11 | MetaInfoValue(id **PK**, **FK** meta_info_name -> MetaInfo(name), value **NN**) |
 | R12 | AuctionMetaInfoValue(**FK** auction_id -> Auction(id) **PK**, **FK** meta_info_value_id -> MetaInfoValue(id) **PK**) |
-| R13 | Notification (id **PK**, date **NN CK** date <= today, viewed **NN DF false**, **FK** user_id ->  User(id)) | 
-| R14 | user_notification(notificiation_id -> Notification(id) **PK**, notification_type) |
-| R15 | auction_notification(notification_id -> Notification(id) **PK**, **FK** auction_id -> Auction(id), notification_type) |
-| R16 | comment_notification(notificiation_id -> Notification(id) **PK**, **FK** comment_id -> Comment(id))|
-| R17 | bid_notification(notification_id -> Notification(id) **PK**,**FK** bid_id -> Bid(id)) |
+| R13 | Notification (id **PK**, date **NN CK** date <= today, viewed **NN DF false**, **FK** receiver_id ->  User(id), **FK** bid_id -> Bid(id), **FK** auction_id -> Auction(id), **FK** comment_id -> Comment(id)) | 
 
 Annotation: <br>
 - **CK** - CHECK
@@ -71,7 +67,7 @@ Specification of aditional domains:
 | Domain Name | Domain Specification |
 | --- | --- |
 | today	| DATE DEFAULT CURRENT_DATE |
-| notification | ENUM ('comment_notification, 'user_notification', 'auction_notification', 'bid_notification') |
+| notification | ENUM ('comment_notification, 'bid_notification', 'user_upgrade', 'user_downgrade', 'auction_paused', 'auction_finished', 'auction_approved', 'auction_denied') |
 | auction_notification_type  | ENUM ('auction_paused', 'auction_finished', 'auction_approved', 'auction_denied') |
 | user_notification_type | ENUM ('user_upgrade', 'user_downgrade') |
 | category_type | ENUM ('strings', 'woodwinds', 'bass', 'percussion') |
@@ -302,7 +298,7 @@ No changes have been made to the first submission yet.
 ***
 GROUP0202, 18/10/2023
 
-* Daniel Gago, up202108791@edu.fe.up.pt
+* Daniel Gago, up202108791@edu.fe.up.pt (Editor)
 * Eduardo Oliveira, up202108843@edu.fe.up.pt
-* José Santos, up202108729@edu.fe.up.pt (Editor)
+* José Santos, up202108729@edu.fe.up.pt 
 * Máximo Pereira, up202108887@edu.fe.up.pt

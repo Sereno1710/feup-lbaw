@@ -214,12 +214,12 @@ To develop a well-designed database, it is crucial to have a clear understanding
 
 | **Index**           | IDX02                                  |
 | ---                 | ---                                    |
-| **Relation**        | users |
-| **Attribute**       | username |
+| **Relation**        | Notification |
+| **Attribute**       | receiver_id |
 | **Type**            | Hash |
-| **Cardinality**     | High |
+| **Cardinality**     | Medium |
 | **Clustering**      | No |
-| **Justification**   | The attribute username is subject to many searches in queries, like when showing auctions or comments, so creating an index for this attribute helps performance. Since in these queries, we will search for the exact username, we chose to use hashing, and clustering is not necessary. |
+| **Justification**   | The system will send a lot of notifications, and it always needs to see who to send it to, so receiver_id will be a part of many queries. These queries will look for the exact id, so we chose hashing as the type for the index, and clustering is not necessary. |
 
 | **Index**           | IDX03                                  |
 | ---                 | ---                                    |
@@ -246,8 +246,7 @@ To develop a well-designed database, it is crucial to have a clear understanding
 ```sql
 ALTER TABLE users
 ADD COLUMN tsvectors TSVECTOR;
-CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS 
-$$
+CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
@@ -263,8 +262,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END
-$$
-LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 CREATE TRIGGER user_fullsearch_update
 BEFORE INSERT OR UPDATE ON users

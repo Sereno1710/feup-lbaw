@@ -5,7 +5,7 @@ VALUES
   ('gago', 'daniel@email.com', 'danielpass', 3500.00, '2003-11-15', 'Rua do Twistzz', 'Faro', '12345', 'Portugal'),
   ('sereno', 'jose@email.com', 'josepass', 2000.00, '2003-03-23', 'Avenida dos Desdentados', 'Guimaraes', '123123', 'Portugal'),
   ('edu', 'eduardo@email.com', 'edupass', 1.05, '2003-07-21', 'Praça dos Maluquinhos', 'Santo Tirso', '4780-666', 'Portugal'),
-  ('max', 'maximo@email.com', 'maxpass', 100.00, '2003-01-13', 'Rua do Inspetor', 'Gondomar', '4420-123', 'Portugal'),
+  ('max', 'maximo@email.com', 'maxpass', 1000.00, '2003-01-13', 'Rua do Inspetor', 'Gondomar', '4420-123', 'Portugal'),
   ('zemanel', 'zemanel@hotmail.com', 'password123', 5.00, '1992-02-10', 'Rua Santa Catarina', 'Porto', '34567', 'Portugal'),
   ('darkknight', 'brucewayne@email.com', 'batman123', 1000000.00, '1980-05-10', 'Gotham Street', 'Gotham City', '12345', 'USA'),
   ('webslinger', 'peterparker@email.com', 'spidey', 50000.00, '1995-02-14', 'Web Avenue', 'New York', '54321', 'USA'),
@@ -118,9 +118,9 @@ VALUES
 INSERT INTO Bid (user_id, auction_id, amount, time)
 VALUES
   (2, 1, 110.00, '2023-10-19 09:00:00'),
-  (4, 1, 160.00, '2023-10-20 11:00:00'),
-  (2, 1, 190.00, '2023-10-24 01:00:00');
-  (4, 3, 260-00, '2023-10-24 17:15:00');
+  (5, 1, 160.00, '2023-10-20 11:00:00'),
+  (2, 1, 190.00, '2023-10-24 01:00:00'),
+  (5, 1, 260.00, '2023-10-24 14:15:00');
 
 INSERT INTO Report (user_id, auction_ID, description)
 VALUES 

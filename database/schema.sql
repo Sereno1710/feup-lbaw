@@ -302,13 +302,12 @@ $$
 DECLARE
   num_bids INTEGER;
 BEGIN
-  SELECT COUNT(*) INTO num_bids FROM Bid WHERE auction_id = OLD.id;
-  IF num_bids > 0 THEN
-    RAISE EXCEPTION 'Cannot cancel the auction. There are % bids.', num_bids;
+  IF old.state = 'active' AND NEW.state = 'disabled' THEN
+    SELECT COUNT(*) INTO num_bids FROM Bid WHERE auction_id = OLD.id;
+    IF num_bids > 0 THEN
+      RAISE EXCEPTION 'Cannot cancel the auction. There are % bids.', num_bids;
+    END IF;
   END IF;
-  UPDATE Auction
-  SET auction_state = 'disabled'
-  WHERE id = OLD.id;
   RETURN NEW;
 END;
 $$ 

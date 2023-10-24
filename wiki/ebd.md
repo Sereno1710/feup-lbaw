@@ -113,7 +113,6 @@ Function dependencies identified as well as if it is in BCNF.
 | FD0501 | id → { auction_id, image } |
 | **NORMAL FORM** | BCNF |
 
-
 | **TABLE R06** | Bid |
 | --- | --- |
 | **Keys** | { id } |
@@ -134,7 +133,6 @@ Function dependencies identified as well as if it is in BCNF.
 | **Functional Dependencies** | |
 | FD0801 | { user_id, auction_id } → {} |
 | **NORMAL FORM** | BCNF |
-
 
 | **TABLE R09** | Comment |
 | --- | --- |
@@ -174,16 +172,28 @@ Function dependencies identified as well as if it is in BCNF.
 
 ## A6: Indexes, triggers, transactions and database population
 
-> Brief presentation of the artifact goals.
+This artifact covers essential database optimization techniques. It includes the creation of indexes for faster data retrieval, the implementation of triggers for automated actions in response to events, ensuring data consistency and integrity through transactions, and database population with initial data for system setup and testing.
 
 ### 1. Database Workload
  
-> A study of the predicted system load (database load).
-> Estimate of tuples at each relation.
+To develop a well-designed database, it is crucial to have a clear understanding of how tables will grow and how often they will be accessed. The following table presents these growth predictions:
 
 | **Relation reference** | **Relation Name** | **Order of magnitude**        | **Estimated growth** |
 | --- | --- | --- | --- |
-| R01 | Table1 | units|dozens|hundreds|etc | order per time |
+| R01 | Users | 10k | 10 | 
+| R02 | SystemManager | 10 | 1 |
+| R03 | Admin | 1 | 1 |
+| R04 | Auction | 1k | 1 |
+| R05 | AuctionPhoto | 1k | 1 |
+| R06 | Bid | 10k | 10 |
+| R07 | Report | 100 | 1 |
+| R08 | Follows | 1k | 1 |
+| R09 | Comment | 10k | 10 |
+| R10 | MetaInfo | 1 | 0 |
+| R11 | MetaInfoValue | 100 | 0 | 
+| R12 | AuctionMetaInfoValue | 10k | 10 |
+| R13 | Notification | 10k | 1k |
+
 
 
 
@@ -195,12 +205,12 @@ Function dependencies identified as well as if it is in BCNF.
 
 | **Index**           | IDX01                                  |
 | ---                 | ---                                    |
-| **Relation**        | Relation where the index is applied    |
-| **Attribute**       | Attribute where the index is applied   |
-| **Type**            | B-tree, Hash, GiST or GIN              |
-| **Cardinality**     | Attribute cardinality: low/medium/high |
-| **Clustering**      | Clustering of the index                |
-| **Justification**   | Justification for the proposed index   |
+| **Relation**        | User                                   |
+| **Attribute**       | username                               |
+| **Type**            | Hash                                   |
+| **Cardinality**     | High                                   |
+| **Clustering**      | No                                     |
+| **Justification**   | The attribute username is subject to many searches in queries, like when showing auctions or comments  |
 | `SQL code`                                                  ||
 
 
@@ -210,21 +220,87 @@ Function dependencies identified as well as if it is in BCNF.
 
 | **Index**           | IDX01                                  |
 | ---                 | ---                                    |
-| **Relation**        | Relation where the index is applied    |
-| **Attribute**       | Attribute where the index is applied   |
-| **Type**            | B-tree, Hash, GiST or GIN              |
-| **Clustering**      | Clustering of the index                |
-| **Justification**   | Justification for the proposed index   |
-| `SQL code`                                                  ||
+| **Relation**        | user   |
+| **Attribute**       | username   |
+| **Type**            | GIN              |
+| **Clustering**      | No               |
+| **Justification**   | To provide full-text search features to look for users based on matching usernames. The GIN index type is chosen because the indexed fields are not expected to change often.   |
+```sql
+ALTER TABLE users
+ADD COLUMN tsvectors TSVECTOR;
+CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS 
+$$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        NEW.tsvectors = (
+            setweight(to_tsvector('english', NEW.username), 'B')
+        );
+    END IF;
+    IF TG_OP = 'UPDATE' THEN
+        IF NEW.username <> OLD.username THEN
+            NEW.tsvectors = (
+                setweight(to_tsvector('english', NEW.username), 'B')
+            );
+        END IF;
+    END IF;
+    RETURN NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER user_fullsearch_update
+BEFORE INSERT OR UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION user_fullsearch_update();
+
+CREATE INDEX search_user ON users USING GIN (tsvectors);
+```
+
+| **Index**           | IDX02                                  |
+| ---                 | ---                                    |
+| **Relation**        | auction  |
+| **Attribute**       | name   |
+| **Type**            | GIN              |
+| **Clustering**      | No               |
+| **Justification**   | To provide full-text search features to look for auctions based on matching names. The GIN index type is chosen because the indexed fields are not expected to change often.   |
+```sql
+ALTER TABLE Auction
+ADD COLUMN tsvectors TSVECTOR;
+
+CREATE FUNCTION auction_search_update() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        NEW.tsvectors = (
+            setweight(to_tsvector('english', NEW.name), 'B')
+        );
+    END IF;
+    IF TG_OP = 'UPDATE' THEN
+        IF NEW.name <> OLD.name THEN
+            NEW.tsvectors = (
+                setweight(to_tsvector('english', NEW.name), 'B')
+            );
+        END IF;
+    END IF;
+    RETURN NEW;
+END
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER auction_search_update
+BEFORE INSERT OR UPDATE ON Auction
+FOR EACH ROW
+EXECUTE FUNCTION auction_search_update();
+
+CREATE INDEX search_auction ON Auction USING GIN (tsvectors);
+```
 
 
 ### 3. Triggers
  
 > User-defined functions and trigger procedures that add control structures to the SQL language or perform complex computations, are identified and described to be trusted by the database server. Every kind of function (SQL functions, Stored procedures, Trigger procedures) can take base types, composite types, or combinations of these as arguments (parameters). In addition, every kind of function can return a base type or a composite type. Functions can also be defined to return sets of base or composite values.  
 
-| **Trigger**      | TRIGGER01                              |
-| ---              | ---                                    |
-| **Description**  | Upon account deletion, shared user data (e.g. comments, reviews, likes) is kept but is made anonymous. (business rule BR01) |
+| **Trigger** | TRIGGER01 |
+| --- | --- |
+| **Description** | Upon account deletion, shared user data (e.g. comments, reviews, likes) is kept but is made anonymous. (business rule BR01) |
 ```sql
 CREATE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
@@ -267,9 +343,9 @@ EXECUTE FUNCTION anonymize_user_data();
 ```
 
 
-| **Trigger**      | TRIGGER03                              |
-| ---              | ---                                    |
-| **Description**  | An auction can only be cancelled if there are no bids. (business rule BR03) |
+| **Trigger** | TRIGGER03 |
+| --- | --- |
+| **Description** | An auction can only be cancelled if there are no bids. (business rule BR03) |
 ```sql
 CREATE FUNCTION prevent_auction_cancellation()
 RETURNS TRIGGER AS 
@@ -298,9 +374,9 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_auction_cancellation();
 ```
 
-| **Trigger**      | TRIGGER04                              |
-| ---              | ---                                    |
-| **Description**  | A user can only bid if their bid is higher than the current highest bid. A user cannot bid if their bid is the current highest. (business rule BR04) |
+| **Trigger** | TRIGGER04 |
+| --- | --- |
+| **Description** | A user can only bid if their bid is higher than the current highest bid. A user cannot bid if their bid is the current highest. (business rule BR04) |
 ```sql
 CREATE FUNCTION enforce_bidding_rules()
 RETURNS TRIGGER AS 
@@ -309,6 +385,7 @@ DECLARE
   current_highest_bid MONEY;
   highest_bidder INTEGER;
   i_price MONEY;
+  user_balance MONEY;
 BEGIN
   SELECT user_id, amount INTO highest_bidder, current_highest_bid
   FROM Bid
@@ -318,11 +395,18 @@ BEGIN
   SELECT price INTO i_price
   FROM Auction
   WHERE id = NEW.auction_id;
+  SELECT balance INTO user_balance
+  FROM users
+  WHERE id = NEW.user_id;
 
+
+  
   IF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
     RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
   ELSIF highest_bidder = NEW.user_id THEN
     RAISE EXCEPTION 'You cannot bid if you currently own the highest bid.';
+  ELSIF user_balance < NEW.amount THEN
+    RAISE EXCEPTION 'You do not have enough balance in your account'.
   END IF;
   RETURN NEW;
 END;
@@ -334,9 +418,9 @@ FOR EACH ROW
 EXECUTE FUNCTION enforce_bidding_rules();
 ```
 
-| **Trigger**      | TRIGGER05                              |
-| ---              | ---                                    |
-| **Description**  | When a bid is made in the last 15 minutes of the auction, the auction deadline is extended by 30 minutes. (business rule BR05) |
+| **Trigger** | TRIGGER05 |
+| --- | --- |
+| **Description** | When a bid is made in the last 15 minutes of the auction, the auction deadline is extended by 30 minutes. (business rule BR05) |
 ```sql
 CREATE FUNCTION extend_auction_deadline()
 RETURNS TRIGGER AS 
@@ -365,18 +449,18 @@ FOR EACH ROW
 EXECUTE FUNCTION extend_auction_deadline();
 ```
 
-| **Trigger**      | TRIGGER06                              |
-| ---              | ---                                    |
-| **Description**  | A seller cannot rate themselves. (business rule BR07) |
+| **Trigger** | TRIGGER06 |
+| --- | --- |
+| **Description** | A seller cannot rate themselves. (business rule BR07) |
 ```
 
 Se der tempo
 
 ```
 
-| **Trigger**      | TRIGGER07                              |
-| ---              | ---                                    |
-| **Description**  | A seller cannot follow their own auction. (business rule BR07) |
+| **Trigger** | TRIGGER07 |
+| --- | --- |
+| **Description** | A seller cannot follow their own auction. (business rule BR07) |
 ```sql
 CREATE FUNCTION prevent_seller_self_follow()
 RETURNS TRIGGER AS 
@@ -396,9 +480,9 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_seller_self_follow();
 ```
 
-| **Trigger**      | TRIGGER08                              |
-| ---              | ---                                    |
-| **Description**  | The date of an incoming bid has to be higher than the date of the current highest bid. The date when an auction closed has to be higher than the date of the last bid. (business rule BR08) |
+| **Trigger** | TRIGGER08 |
+| --- | --- |
+| **Description** | The date of an incoming bid has to be higher than the date of the current highest bid. The date when an auction closed has to be higher than the date of the last bid. (business rule BR08) |
 ```sql
 CREATE FUNCTION check_bid_date()
 RETURNS TRIGGER AS 
@@ -424,18 +508,18 @@ FOR EACH ROW
 EXECUTE FUNCTION check_bid_date();
 ```
 
-| **Trigger**      | TRIGGER09                              |
-| ---              | ---                                    |
-| **Description**  | Auctions should be automatically paused when the system is down. This ensures that the bidding process is not affected by technical errors. (business rule BR09) |
+| **Trigger** | TRIGGER09 |
+| --- | --- |
+| **Description** | Auctions should be automatically paused when the system is down. This ensures that the bidding process is not affected by technical errors. (business rule BR09) |
 ```sql
 
 ???????????
 
 ```
 
-| **Trigger**      | TRIGGER10                              |
-| ---              | ---                                    |
-| **Description**  | A user needs to be at least 18 years old to use this website. (business rule BR10) |
+| **Trigger** | TRIGGER10 |
+| --- | --- |
+| **Description** | A user needs to be at least 18 years old to use this website. (business rule BR10) |
 ```sql
 CREATE FUNCTION check_user_age()
 RETURNS TRIGGER AS 
@@ -461,9 +545,9 @@ EXECUTE FUNCTION check_user_age();
 ```
 
 
-| **Trigger**      | TRIGGER12                              |
-| ---              | ---                                    |
-| **Description**  | The auction winner is the user with the highest bid on the auction when it ends. (business rule BR12) |
+| **Trigger** | TRIGGER12 |
+| --- | --- |
+| **Description** | The auction winner is the user with the highest bid on the auction when it ends. (business rule BR12) |
 ```sql
 CREATE FUNCTION set_auction_winner()
 RETURNS TRIGGER AS 
@@ -486,9 +570,9 @@ FOR EACH ROW
 EXECUTE FUNCTION set_auction_winner();
 ```
 
-| **Trigger**      | TRIGGER13                              |
-| ---              | ---                                    |
-| **Description**  | A user cannot bid in its own auction. (business rule BR13) |
+| **Trigger** | TRIGGER13 |
+| --- | --- |
+| **Description** | A user cannot bid in its own auction. (business rule BR13) |
 ```sql
 CREATE FUNCTION prevent_owner_bid()
 RETURNS TRIGGER AS 
@@ -507,8 +591,8 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_owner_bid();
 ```
 
-| **Trigger**      | TRIGGER14                              |
-| ---              | ---                                    |
+| **Trigger** | TRIGGER14  |
+| --- | ---                                    |
 | **Description**  | A user can only report an auction once. (business rule BR14) |
 ```sql
 CREATE FUNCTION prevent_duplicate_report()
@@ -534,9 +618,9 @@ EXECUTE FUNCTION prevent_duplicate_report();
 ```
 
 
-| **Trigger**      | TRIGGER16                              |
-| ---              | ---                                    |
-| **Description**  | A user cannot follow an auction that he is already following. (business rule BR16) |
+| **Trigger** | TRIGGER16 |
+| --- | --- |
+| **Description** | A user cannot follow an auction that he is already following. (business rule BR16) |
 ```sql
 CREATE FUNCTION prevent_duplicate_follow()
 RETURNS TRIGGER AS 
@@ -560,12 +644,15 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_duplicate_follow();
 ```
 
+
+
 ### 4. Transactions
  
 > Transactions needed to assure the integrity of the data.  
 
-| SQL Reference   | Transaction Name                    |
+| Transaction  | TRAN01                    |
 | --------------- | ----------------------------------- |
+| Description   | Buy an item  |
 | Justification   | Justification for the transaction.  |
 | Isolation level | Isolation level of the transaction. |
 | `Complete SQL Code`                                   ||

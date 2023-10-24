@@ -183,6 +183,40 @@ CREATE TABLE Notification (
   comment_id INT REFERENCES Comment(id) ON UPDATE CASCADE
 );
 
+/*
+
+INDEXES
+
+*/
+
+-- Index (IDX01)
+ALTER TABLE users
+ADD COLUMN tsvectors TSVECTOR;
+CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS 
+$$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        NEW.tsvectors = (
+            setweight(to_tsvector('english', NEW.username), 'B')
+        );
+    END IF;
+    IF TG_OP = 'UPDATE' THEN
+        IF NEW.username <> OLD.username THEN
+            NEW.tsvectors = (
+                setweight(to_tsvector('english', NEW.username), 'B')
+            );
+        END IF;
+    END IF;
+    RETURN NEW;
+END
+$$
+LANGUAGE plpgsql;
+CREATE TRIGGER user_fullsearch_update
+BEFORE INSERT OR UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION user_fullsearch_update();
+CREATE INDEX search_user ON users USING GIN (tsvectors);
+
 
 /*
 
@@ -230,7 +264,6 @@ BEFORE DELETE ON users
 FOR EACH ROW
 EXECUTE FUNCTION anonymize_user_data();
 
-/*
 -- Trigger (T02)
 CREATE FUNCTION prevent_auction_cancellation()
 RETURNS TRIGGER AS 
@@ -253,7 +286,6 @@ CREATE TRIGGER prevent_auction_cancellation_trigger
 BEFORE UPDATE ON Auction
 FOR EACH ROW
 EXECUTE FUNCTION prevent_auction_cancellation();
-*/
 
 -- Trigger (T04)
 CREATE FUNCTION enforce_bidding_rules()
@@ -263,6 +295,7 @@ DECLARE
   current_highest_bid MONEY;
   highest_bidder INTEGER;
   i_price MONEY;
+  user_balance MONEY;
 BEGIN
   SELECT user_id, amount INTO highest_bidder, current_highest_bid
   FROM Bid
@@ -272,11 +305,18 @@ BEGIN
   SELECT price INTO i_price
   FROM Auction
   WHERE id = NEW.auction_id;
+  SELECT balance INTO user_balance
+  FROM users
+  WHERE id = NEW.user_id;
 
+
+  
   IF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
     RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
   ELSIF highest_bidder = NEW.user_id THEN
     RAISE EXCEPTION 'You cannot bid if you currently own the highest bid.';
+  ELSIF user_balance < NEW.amount THEN
+    RAISE EXCEPTION 'You do not have enough balance in your account.';
   END IF;
   RETURN NEW;
 END;

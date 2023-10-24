@@ -238,14 +238,14 @@ BEGIN
      IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
             setweight(to_tsvector('english', NEW.name), 'B') ||
-            setweight(to_tsvector('english', NEW.category), 'A')
+            setweight(to_tsvector('english', NEW.category::text), 'A')
         );
     END IF;
     IF TG_OP = 'UPDATE' THEN
         IF NEW.name <> OLD.name OR NEW.category <> OLD.category THEN
             NEW.tsvectors = (
                 setweight(to_tsvector('english', NEW.name), 'B') ||
-                setweight(to_tsvector('english', NEW.category), 'A')
+                setweight(to_tsvector('english', NEW.category::text), 'A')
             );
         END IF;
     END IF;

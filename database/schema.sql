@@ -17,6 +17,9 @@ DROP TYPE IF EXISTS notification_type;
 DROP TYPE IF EXISTS category_type;
 DROP TYPE IF EXISTS auction_state;
 
+DROP FUNCTION IF EXISTS user_fullsearch_update;
+DROP FUNCTION IF EXISTS auction_search_update;
+
 DROP FUNCTION IF EXISTS anonymize_user_data;
 DROP FUNCTION IF EXISTS prevent_auction_cancellation;
 DROP FUNCTION IF EXISTS enforce_bidding_rules;
@@ -216,6 +219,34 @@ BEFORE INSERT OR UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION user_fullsearch_update();
 CREATE INDEX search_user ON users USING GIN (tsvectors);
+
+-- Index (IDX02)
+ALTER TABLE auction
+ADD COLUMN tsvectors TSVECTOR;
+
+CREATE FUNCTION auction_search_update() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        NEW.tsvectors = (
+            setweight(to_tsvector('english', NEW.name), 'B')
+        );
+    END IF;
+    IF TG_OP = 'UPDATE' THEN
+        IF NEW.name <> OLD.name THEN
+            NEW.tsvectors = (
+                setweight(to_tsvector('english', NEW.name), 'B')
+            );
+        END IF;
+    END IF;
+    RETURN NEW;
+END
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER auction_search_update
+BEFORE INSERT OR UPDATE ON Auction
+FOR EACH ROW
+EXECUTE FUNCTION auction_search_update();
+
+CREATE INDEX search_auction ON Auction USING GIN (tsvectors);
 
 
 /*

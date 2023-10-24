@@ -205,12 +205,30 @@ To develop a well-designed database, it is crucial to have a clear understanding
 
 | **Index**           | IDX01                                  |
 | ---                 | ---                                    |
-| **Relation**        | User                                   |
-| **Attribute**       | username                               |
-| **Type**            | Hash                                   |
-| **Cardinality**     | High                                   |
-| **Clustering**      | No                                     |
-| **Justification**   | The attribute username is subject to many searches in queries, like when showing auctions or comments  |
+| **Relation**        | users |
+| **Attribute**       | username |
+| **Type**            | Hash |
+| **Cardinality**     | High |
+| **Clustering**      | No |
+| **Justification**   | The attribute username is subject to many searches in queries, like when showing auctions or comments, so creating an index for this attribute helps performance. Since in these queries, we will search for the exact username, we chose to use hashing, and clustering is not necessary. |
+
+| **Index**           | IDX02                                  |
+| ---                 | ---                                    |
+| **Relation**        | users |
+| **Attribute**       | username |
+| **Type**            | Hash |
+| **Cardinality**     | High |
+| **Clustering**      | No |
+| **Justification**   | The attribute username is subject to many searches in queries, like when showing auctions or comments, so creating an index for this attribute helps performance. Since in these queries, we will search for the exact username, we chose to use hashing, and clustering is not necessary. |
+
+| **Index**           | IDX03                                  |
+| ---                 | ---                                    |
+| **Relation**        | users |
+| **Attribute**       | username |
+| **Type**            | Hash |
+| **Cardinality**     | High |
+| **Clustering**      | No |
+| **Justification**   | The attribute username is subject to many searches in queries, like when showing auctions or comments, so creating an index for this attribute helps performance. Since in these queries, we will search for the exact username, we chose to use hashing, and clustering is not necessary. |
 | `SQL code`                                                  ||
 
 
@@ -284,7 +302,6 @@ BEGIN
     RETURN NEW;
 END
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER auction_search_update
 BEFORE INSERT OR UPDATE ON Auction
 FOR EACH ROW

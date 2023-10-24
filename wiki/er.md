@@ -351,22 +351,20 @@ Figure 6: Active auctions page
 ## Revision history
 
 Changes made to the first submisson:
+
+### 18/10/2023
 1. Deleted user story for deleting auctions
-2. Changed the project description
+2. Changed the project description to explain better how item selling works
 
+- Daniel Gago
+- José Santos 
 
-by:
-    Daniel Gago
-    José Santos 
-    18/10/2023
+### 24/10/2023
+1. Changed 'Canceled' auction to 'Disabled' auction
+2. Deleted some business rules we found unnecessary
 
-1. Changed Canceled auction to Disabled auction
-2. Deleted some Business rules
-
-by:
-    Daniel Gago
-    José Santos
-    24/10/2023
+- Daniel Gago
+- José Santos
 
 ***
 GROUP0202, 24/10/2023

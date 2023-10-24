@@ -37,10 +37,10 @@ This section contains the relational schema that resulted from the UML Class Dia
 
 | Relation reference | Relation Compact Notation |
 | --- | --- |
-| R01 | User (id **PK**, username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country **NN**,image) |
+| R01 | users (id **PK**, username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country **NN**,image) |
 | R02 | SystemManager (id -> User(id) **PK**) |
 | R03 | Admin (id -> User(id) **PK**) |
-| R04 | Auction (id **PK**, name **NN**, description **NN**, price **CK** price > 0, initial_time **CK initial_time <= today**, end_time **DF N**, category **DF NN**, state **NN DF**,**FK** owner -> User(id), **FK** auction_winner -> User(id) **DF N**) |
+| R04 | Auction (id **PK**, name **NN**, description **NN**, price **CK** price > 0, initial_time  **DF N**, end_time **DF N**, category **DF NN**, state **NN DF**,**FK** owner -> User(id), **FK** auction_winner -> User(id) **DF N**) |
 | R05 | AuctionPhoto (id **PK**, **FK** auction_id -> Auction(id), image **NN**) |
 | R06 | Bid (id **PK**, **FK** user_id -> User(id), **FK** auction_id ->  Auction(id), amount **NN** **CK** amount > 0,time **CK** time <= today) |
 | R07 | Report (**FK** user_id -> User(id) **PK**,**FK** auction_id ->  Auction(id) **PK**, description **NN**) |
@@ -49,7 +49,7 @@ This section contains the relational schema that resulted from the UML Class Dia
 | R10 |  MetaInfo(name **PK**) |
 | R11 | MetaInfoValue(id **PK**, **FK** meta_info_name -> MetaInfo(name), value **NN**) |
 | R12 | AuctionMetaInfoValue(**FK** auction_id -> Auction(id) **PK**, **FK** meta_info_value_id -> MetaInfoValue(id) **PK**) |
-| R13 | Notification (id **PK**, date **NN CK** date <= today, viewed **NN DF false**, **FK** receiver_id ->  User(id), **FK** bid_id -> Bid(id), **FK** auction_id -> Auction(id), **FK** comment_id -> Comment(id)) | 
+| R13 | Notification (id **PK**, notification_type **NN**, date **NN CK** date <= today, viewed **NN DF false**, **FK** receiver_id ->  User(id), **FK** bid_id -> Bid(id), **FK** auction_id -> Auction(id), **FK** comment_id -> Comment(id)) | 
 
 Annotation: <br>
 - **CK** - CHECK
@@ -68,17 +68,15 @@ Specification of aditional domains:
 | --- | --- |
 | today	| DATE DEFAULT CURRENT_DATE |
 | notification | ENUM ('comment_notification, 'bid_notification', 'user_upgrade', 'user_downgrade', 'auction_paused', 'auction_finished', 'auction_approved', 'auction_denied') |
-| auction_notification_type  | ENUM ('auction_paused', 'auction_finished', 'auction_approved', 'auction_denied') |
-| user_notification_type | ENUM ('user_upgrade', 'user_downgrade') |
-| category_type | ENUM ('strings', 'woodwinds', 'bass', 'percussion') |
 | auction_state | ENUM ('pending', 'active', 'finished', 'paused', 'approved', 'denied','disabled') |
+| category_type | ENUM ('strings', 'woodwinds', 'bass', 'percussion') |
 
 
 ### 3. Schema validation
 
 Function dependencies identified as well as if it is in BCNF.
 
-| **TABLE R01** | User |
+| **TABLE R01** | users |
 | --- | --- |
 | **Keys** | { id }, { email }, { username } |
 | **Functional Dependencies** | |
@@ -170,35 +168,7 @@ Function dependencies identified as well as if it is in BCNF.
 | --- | --- |
 | **Keys** | { id } |
 | **Functional Dependencies** | |
-| FD1301 | id → { date, viewed, user_id } |
-| **NORMAL FORM** | BCNF |
-
-| **TABLE R14** | user_notification |
-| --- | --- |
-| **Keys** | { notification_id } |
-| **Functional Dependencies** | |
-| FD1401 | { notification_id } → { notification_type } |
-| **NORMAL FORM** | BCNF |
-
-| **TABLE R15** | auction_notification |
-| --- | --- |
-| **Keys** | { notification_id } |
-| **Functional Dependencies** | |
-| FD1501 | { notification_id } → { notification_type , auction_id} |
-| **NORMAL FORM** | BCNF |
-
-| **TABLE R16** | comment_notification |
-| --- | --- |
-| **Keys** | { notification_id } |
-| **Functional Dependencies** | |
-| FD1601 | notification_id → { comment_id } |
-| **NORMAL FORM** | BCNF |
-
-| **TABLE R17** | bid_notification |
-| --- | --- |
-| **Keys** | { notification_id } |
-| **Functional Dependencies** | |
-| FD1701 | notification_id → { bid_id } |
+| FD1301 | id → { date, viewed, receiver_id, bid_id, auction_id, comment_id} |
 | **NORMAL FORM** | BCNF |
 
 
@@ -212,11 +182,9 @@ Function dependencies identified as well as if it is in BCNF.
 > Estimate of tuples at each relation.
 
 | **Relation reference** | **Relation Name** | **Order of magnitude**        | **Estimated growth** |
-| ------------------ | ------------- | ------------------------- | -------- |
-| R01                | Table1        | units|dozens|hundreds|etc | order per time |
-| R02                | Table2        | units|dozens|hundreds|etc | dozens per month |
-| R03                | Table3        | units|dozens|hundreds|etc | hundreds per day |
-| R04                | Table4        | units|dozens|hundreds|etc | no growth |
+| --- | --- | --- | --- |
+| R01 | Table1 | units|dozens|hundreds|etc | order per time |
+
 
 
 ### 2. Proposed Indices
@@ -261,9 +229,9 @@ Function dependencies identified as well as if it is in BCNF.
 CREATE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
 $$
+DECLARE anonymous_user_id INT;
 BEGIN
-  DECLARE anonymous_user_id INT;
-  SELECT id INTO anonymous_user_id FROM User WHERE username = 'Anonymous';
+  SELECT id INTO anonymous_user_id FROM users WHERE username = 'Anonymous';
   IF anonymous_user_id IS NOT NULL THEN
     UPDATE Comment
     SET user_id = anonymous_user_id
@@ -277,42 +245,27 @@ BEGIN
     UPDATE follows
     SET user_id = anonymous_user_id
     WHERE user_id = OLD.id;
+    UPDATE Auction
+    SET owner = anonymous_user_id
+    WHERE owner = OLD.id;
+    UPDATE Auction
+    SET auction_winner = anonymous_user_id
+    WHERE auction_winner = OLD.id;
   END IF;
+  DELETE FROM Admin
+  WHERE user_id = OLD.id;
+  DELETE FROM SystemManager
+  WHERE user_id = OLD.id;
   RETURN OLD;
 END;
 $$ 
 LANGUAGE plpgsql;
 CREATE TRIGGER anonymize_user_data_trigger
-BEFORE DELETE ON User
+BEFORE DELETE ON users
 FOR EACH ROW
 EXECUTE FUNCTION anonymize_user_data();
 ```
 
-| **Trigger**      | TRIGGER02                              |
-| ---              | ---                                    |
-| **Description**  | Administrator accounts are independent of the user accounts, i.e. they cannot create or participate in auctions. (business rule BR02) |
-```sql
-CREATE FUNCTION prevent_admin_auctions()
-RETURNS TRIGGER AS 
-$$
-BEGIN
-  IF OLD.role = 'admin' THEN
-    RAISE EXCEPTION 'Administrators cannot create or participate in auctions.';
-  END IF;
-  RETURN NEW;
-END;
-$$ 
-LANGUAGE plpgsql;
-CREATE TRIGGER prevent_admin_create_auction_trigger
-BEFORE INSERT ON Auction
-FOR EACH ROW
-EXECUTE FUNCTION prevent_admin_auctions();
-
-CREATE TRIGGER prevent_admin_participate_auction_trigger
-BEFORE INSERT ON Bid
-FOR EACH ROW
-EXECUTE FUNCTION prevent_admin_auctions();
-```
 
 | **Trigger**      | TRIGGER03                              |
 | ---              | ---                                    |
@@ -328,12 +281,15 @@ BEGIN
   IF num_bids > 0 THEN
     RAISE EXCEPTION 'Cannot cancel the auction. There are % bids.', num_bids;
   END IF;
-  RETURN OLD;
+  UPDATE Auction
+  SET auction_state = 'disabled'
+  WHERE id = OLD.id;
+  RETURN NEW;
 END;
 $$ 
 LANGUAGE plpgsql;
 CREATE TRIGGER prevent_auction_cancellation_trigger
-BEFORE DELETE ON Auction
+BEFORE UPDATE ON Auction
 FOR EACH ROW
 EXECUTE FUNCTION prevent_auction_cancellation();
 ```
@@ -346,15 +302,24 @@ CREATE FUNCTION enforce_bidding_rules()
 RETURNS TRIGGER AS 
 $$
 DECLARE
-  current_highest_bid NUMERIC;
+  current_highest_bid MONEY;
+  highest_bidder INTEGER;
+  i_price MONEY;
 BEGIN
-  SELECT MAX(amount) INTO current_highest_bid
+  SELECT user_id, amount INTO highest_bidder, current_highest_bid
   FROM Bid
-  WHERE auction_id = NEW.auction_id;
-  IF NEW.amount <= current_highest_bid THEN
-    RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
-  END IF;
+  WHERE auction_id = NEW.auction_id
+  ORDER BY amount DESC
+  LIMIT 1;
+  SELECT price INTO i_price
+  FROM Auction
+  WHERE id = NEW.auction_id;
 
+  IF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
+    RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
+  ELSIF highest_bidder = NEW.user_id THEN
+    RAISE EXCEPTION 'You cannot bid if you currently own the highest bid.';
+  END IF;
   RETURN NEW;
 END;
 $$ 
@@ -369,17 +334,21 @@ EXECUTE FUNCTION enforce_bidding_rules();
 | ---              | ---                                    |
 | **Description**  | When a bid is made in the last 15 minutes of the auction, the auction deadline is extended by 30 minutes. (business rule BR05) |
 ```sql
-CREATE OR REPLACE FUNCTION extend_auction_deadline()
+CREATE FUNCTION extend_auction_deadline()
 RETURNS TRIGGER AS 
 $$
+DECLARE
+  e_time TIMESTAMP;
+  fifteen_minutes_later TIMESTAMP;
 BEGIN
-  DECLARE current_time TIMESTAMP;
-  current_time := NOW();
-  DECLARE fifteen_minutes_later TIMESTAMP;
-  fifteen_minutes_later := current_time + INTERVAL '15 minutes';
-  IF NEW.time > current_time AND NEW.time <= fifteen_minutes_later THEN
+  SELECT end_time INTO e_time
+  FROM Auction
+  WHERE id = NEW.auction_id;
+
+  fifteen_minutes_later := NEW.time + INTERVAL '15 minutes';
+  IF e_time < fifteen_minutes_later THEN
     UPDATE Auction
-    SET end_time = OLD.end_time + INTERVAL '30 minutes'
+    SET end_time = end_time + INTERVAL '30 minutes'
     WHERE id = NEW.auction_id;
   END IF;
   RETURN NEW;
@@ -395,9 +364,9 @@ EXECUTE FUNCTION extend_auction_deadline();
 | **Trigger**      | TRIGGER06                              |
 | ---              | ---                                    |
 | **Description**  | A seller cannot rate themselves. (business rule BR07) |
-```sql
+```
 
-???????????
+Se der tempo
 
 ```
 
@@ -427,11 +396,17 @@ EXECUTE FUNCTION prevent_seller_self_follow();
 | ---              | ---                                    |
 | **Description**  | The date of an incoming bid has to be higher than the date of the current highest bid. The date when an auction closed has to be higher than the date of the last bid. (business rule BR08) |
 ```sql
-CREATE OR REPLACE FUNCTION check_bid_date()
+CREATE FUNCTION check_bid_date()
 RETURNS TRIGGER AS 
 $$
+DECLARE last_bid_time TIMESTAMP;
 BEGIN
-  IF NEW.time <= (SELECT MAX(time) FROM Bid WHERE auction_id = NEW.auction_id) THEN
+  SELECT time, amount INTO last_bid_time
+  FROM Bid 
+  Where auction_id = NEW.auction_id
+  ORDER BY amount DESC
+  LIMIT 1;
+  IF NEW.time <= last_bid_time THEN
     RAISE EXCEPTION 'The date of the incoming bid must be higher than the date of the current highest bid.';
   END IF;
 
@@ -461,30 +436,26 @@ EXECUTE FUNCTION check_bid_date();
 CREATE FUNCTION check_user_age()
 RETURNS TRIGGER AS 
 $$
+DECLARE
+  user_age INT;
+  current_18 INT;
 BEGIN
-  DECLARE user_age INT;
-  user_age := EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT(YEAR FROM NEW.date_of_birth);
-  IF user_age < 18 THEN
+  user_age := extract(YEAR FROM AGE(NEW.date_of_birth));
+  current_18 := extract(YEAR FROM AGE(CURRENT_DATE - INTERVAL '18 years'));
+  IF user_age < current_18 THEN
     RAISE EXCEPTION 'You must be at least 18 years old to register on this website.';
   END IF;
   RETURN NEW;
 END;
 $$ 
 LANGUAGE plpgsql;
+
 CREATE TRIGGER check_user_age_trigger
-BEFORE INSERT ON User
+BEFORE INSERT ON users
 FOR EACH ROW
 EXECUTE FUNCTION check_user_age();
 ```
 
-| **Trigger**      | TRIGGER11                              |
-| ---              | ---                                    |
-| **Description**  | An auction is only closed when the bidder confirms they got their item. (business rule BR11) |
-```sql
-
-???????????
-
-```
 
 | **Trigger**      | TRIGGER12                              |
 | ---              | ---                                    |
@@ -646,9 +617,9 @@ EXECUTE FUNCTION prevent_duplicate_follow();
 No changes have been made to the first submission yet.
 
 ***
-GROUP0202, 18/10/2023
+GROUP0202, 24/10/2023
 
-* Daniel Gago, up202108791@edu.fe.up.pt (Editor)
+* Daniel Gago, up202108791@edu.fe.up.pt
 * Eduardo Oliveira, up202108843@edu.fe.up.pt
-* José Santos, up202108729@edu.fe.up.pt 
+* José Santos, up202108729@edu.fe.up.pt (Editor)
 * Máximo Pereira, up202108887@edu.fe.up.pt

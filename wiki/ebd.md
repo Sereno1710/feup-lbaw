@@ -67,7 +67,7 @@ Specification of aditional domains:
 | Domain Name | Domain Specification |
 | --- | --- |
 | today	| DATE DEFAULT CURRENT_DATE |
-| notification | ENUM ('comment_notification, 'bid_notification', 'user_upgrade', 'user_downgrade', 'auction_paused', 'auction_finished', 'auction_approved', 'auction_denied') |
+| notification | ENUM ('auction_comment', 'auction_bid', 'user_upgrade', 'user_downgrade', 'auction_paused', 'auction_finished', 'auction_approved', 'auction_denied') |
 | auction_state | ENUM ('pending', 'active', 'finished', 'paused', 'approved', 'denied','disabled') |
 | category_type | ENUM ('strings', 'woodwinds', 'bass', 'percussion') |
 
@@ -308,16 +308,16 @@ FOR EACH ROW
 EXECUTE FUNCTION auction_search_update();
 
 CREATE INDEX search_auction ON Auction USING GIN (tsvectors);
-```
-
+``` 
 
 ### 3. Triggers
- 
-> User-defined functions and trigger procedures that add control structures to the SQL language or perform complex computations, are identified and described to be trusted by the database server. Every kind of function (SQL functions, Stored procedures, Trigger procedures) can take base types, composite types, or combinations of these as arguments (parameters). In addition, every kind of function can return a base type or a composite type. Functions can also be defined to return sets of base or composite values.  
+
+Triggers are used to enforce complex integrity rules that can't be achieved through simpler methods. They are defined by specifying when they should activate, what conditions they should check, and the code they should execute. Triggers also help maintain the accuracy of full-text indexes.
 
 | **Trigger** | TRIGGER01 |
 | --- | --- |
 | **Description** | Upon account deletion, shared user data (e.g. comments, reviews, likes) is kept but is made anonymous. (business rule BR01) |
+
 ```sql
 CREATE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
@@ -665,7 +665,7 @@ EXECUTE FUNCTION prevent_duplicate_follow();
 
 ### 4. Transactions
  
-> Transactions needed to assure the integrity of the data.  
+The following transactions ensure data integrity when multiple operations are conducted and deemed essential.
 
 | Transaction  | TRAN01                    |
 | --------------- | ----------------------------------- |
@@ -674,6 +674,87 @@ EXECUTE FUNCTION prevent_duplicate_follow();
 | Isolation level | Isolation level of the transaction. |
 | `Complete SQL Code`                                   ||
 
+
+```sql
+
+BEGIN TRANSACTION;
+
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE READ ONLY;
+
+INSERT INTO  Bid( user_id, auction_id, amount, time)
+  VALUES ($user_id, $auction_id, $amount, $time);
+
+UPDATE users SET balance = balance - $amount WHERE id = $user_id;
+
+SELECT user_id, amount INTO  old_highest_bidder, old_price 
+FROM (  SELECT user_id, amount 
+        FROM Bid
+        WHERE auction_id = $auction_id
+        ORDER BY amount DESC
+        LIMIT 2)
+ORDER BY amount ASC
+LIMIT 1;
+
+UPDATE users SET balance= balance + old_price WHERE id = old_highest_bidder;
+
+UPDATE Auction SET price = $amount WHERE id = $auction_id;
+
+INSERT INTO Notification (notification_type, date, viewed, receiver_id, bid_id, auction_id, comment_id)
+SELECT 
+  'auction_bid',
+  $time,
+  FALSE,
+  B.user_id,
+  $id,
+  NULL,
+  NULL
+FROM Bid B
+INNER JOIN follows F ON B.auction_id = F.auction_id
+INNER JOIN Auction A ON B.auction_id = A.id
+WHERE $user_id <> A.user_id;
+ 
+END TRANSACTION;
+
+```
+
+| Transaction  | TRAN01                    |
+| --------------- | ----------------------------------- |
+| Description   | Bid on an auction  |
+| Justification   | Justification for the transaction.  |
+| Isolation level | Isolation level of the transaction. |
+| `Complete SQL Code`                                   ||
+
+
+```sql
+
+BEGIN TRANSACTION;
+
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE READ ONLY;
+
+INSERT INTO  Bid(id, user_id, auction_id, amount, time)
+  VALUES ($id, $user_id, $auction_id, $amount, $time);
+
+UPDATE users SET balance = balance - $amount WHERE id = $user_id;
+
+SELECT user_id, amount INTO  old_highest_bidder, old_price 
+FROM (  SELECT user_id, amount 
+        FROM Bid
+        WHERE auction_id = $auction_id
+        ORDER BY amount DESC
+        LIMIT 2;)
+ORDER BY amount ASC
+LIMIT 1;
+
+UPDATE users SET balance= balance + old_price WHERE id = old_highest_bidder;
+
+UPDATE Auction SET price = $amount WHERE id = $auction_id;
+
+
+
+
+
+END TRANSACTION;
+```
 
 ## Annex A. SQL Code
 

@@ -337,13 +337,14 @@ DECLARE
   highest_bidder INTEGER;
   i_price MONEY;
   user_balance MONEY;
+  current_state auction_state;
 BEGIN
   SELECT user_id, amount INTO highest_bidder, current_highest_bid
   FROM Bid
   WHERE auction_id = NEW.auction_id
   ORDER BY amount DESC
   LIMIT 1;
-  SELECT price INTO i_price
+  SELECT price, state INTO i_price, current_state
   FROM Auction
   WHERE id = NEW.auction_id;
   SELECT balance INTO user_balance
@@ -358,6 +359,8 @@ BEGIN
     RAISE EXCEPTION 'You cannot bid if you currently own the highest bid.';
   ELSIF user_balance < NEW.amount THEN
     RAISE EXCEPTION 'You do not have enough balance in your account.';
+  ELSIF current_State <> 'active' THEN
+    RAISE EXCEPTION 'You may only bid in active auctions.';
   END IF;
   RETURN NEW;
 END;

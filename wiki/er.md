@@ -8,7 +8,7 @@ SoundSello is being developed by a small group of students as a product targeted
 
 The main goal of the project is to develop a web-based auction system for musical instruments with the purpose of assisting those in search of them. This tool can only be used by anyone above 18. Users will be divided into several groups: visitors, authenticated users, system managers, and administrators. To start bidding and/or selling, users will need to create an account and log in to be authenticated in the system.
 
-To sell an instrument, the user first has to fill in the auction creation form on our website. Then, they need to send the product to our headquarters so we can evaluate the veracity of the product. If the product doesn't meet the expected conditions, it is returned to the user and the user is notified that it has been rejected. Otherwise, the user will be notified that the auction has been approved and is ready to start whenever the user wishes. The auction can always be cancelled, as long as no one has bid on it yet.
+To sell an instrument, the user first has to fill in the auction creation form on our website. Then, they need to send the product to our headquarters so we can evaluate the veracity of the product. If the product doesn't meet the expected conditions, it is returned to the user and the user is notified that it has been rejected. Otherwise, the user will be notified that the auction has been approved and is ready to start whenever the user wishes. The auction can always be disabled, as long as no one has bid on it yet.
 
 Auctions will have a countdown timer, which any user can see, as well as the current highest bid. They can bid as long as they are not the current highest bidder and they are not the owner of the auction. If someone bids when the auction has less than 15 minutes remaining, the deadline is increased by 30 minutes. When the timer hits zero, the highest bidder is announced as the winner.
 
@@ -178,7 +178,7 @@ Table 5: User stories for the Bidder
 | Identifier | Name | Description | Priority |
 | --- | --- | --- | --- |
 | US34 | View Auction Bidding History | As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise. | High |
-| US35 | Cancel Auction | As a seller, I want to be able to cancel my auction if no one has submitted a bid so that I can keep my item if I change my mind. | High |
+| US35 | Disable Auction | As a seller, I want to be able to disable my auction if no one has submitted a bid so that I can keep my item if I change my mind. Whilst being able to make that same auction active again at another time. | High |
 | US36 | My Auction's Winner | As a seller, I want to know who won my auction, so that I can be informed about who will get my item and how much was their bid. | Medium |
 
 Table 6: User stories for the Seller
@@ -216,16 +216,15 @@ Table 8: User stories for the Administrator
 | Identifier | Name | Description |
 | --- | --- | --- |
 | BR01 | Account Deletion | Upon account deletion, shared user data (e.g. comments, reviews, likes) is kept but is made anonymous. |
-| BR02 | Administrator Accounts | Administrator accounts are independent of the user accounts, i.e. they cannot create or participate in auctions. |
-| BR03 | Cancelling Auctions | An auction can only be cancelled if there are no bids. |
-| BR04 | Bidding in Auctions | A user can only bid if their bid is higher than the current highest bid. A user cannot bid if their bid is the current highest. |
-| BR05 | Auction Deadline | When a bid is made in the last 15 minutes of the auction, the auction deadline is extended by 30 minutes. |
-| BR06 | Seller Comments | A seller can comment on their own auctions. |
-| BR07 | Seller Actions | A seller cannot rate themselves, follow their own auction, or bid on it. |
-| BR08 | Dates | The date of an incoming bid has to be higher than the date of the current highest bid. The date when an auction closed has to be higher than the date of the last bid. |
-| BR09 | Pausing Auctions | Auctions should be automatically paused when the system is down. This ensures that the bidding process is not affected by technical errors. |
-| BR10 | Minimum Age | A user needs to be at least 18 years old to use this website.                                                   |
-| BR11 | Closing Auctions | An auction is only closed when the bidder confirms they got their item. |
+| BR02 | Disabling Auctions | An auction can only be disabled if there are no bids. |
+| BR03 | Bidding in Auctions | A user can only bid if their bid is higher than the current highest bid. A user cannot bid if their bid is the current highest. |
+| BR04 | Auction Deadline | When a bid is made in the last 15 minutes of the auction, the auction deadline is extended by 30 minutes. |
+| BR05 | Seller Comments | A seller can comment on their own auctions. |
+| BR06 | Seller Actions | A seller cannot rate themselves, follow their own auction, or bid on it. |
+| BR07 | Dates | The date of an incoming bid has to be higher than the date of the current highest bid. The date when an auction closed has to be higher than the date of the last bid. |
+| BR08 | Pausing Auctions | Auctions should be automatically paused when the system is down. This ensures that the bidding process is not affected by technical errors. |
+| BR09 | Minimum Age | A user needs to be at least 18 years old to use this website.                                                   |
+
 
 Table 9: Business rules
 
@@ -354,13 +353,23 @@ Figure 6: Active auctions page
 Changes made to the first submisson:
 1. Deleted user story for deleting auctions
 2. Changed the project description
+
+
 by:
-Daniel Gago
-José Santos
-18/10/2023
+    Daniel Gago
+    José Santos 
+    18/10/2023
+
+1. Changed Canceled auction to Disabled auction
+2. Deleted some Business rules
+
+by:
+    Daniel Gago
+    José Santos
+    24/10/2023
 
 ***
-GROUP0202, 18/10/2023
+GROUP0202, 24/10/2023
 
 * Daniel Gago, up202108791@edu.fe.up.pt (Editor)
 * Eduardo Oliveira, up202108843@edu.fe.up.pt

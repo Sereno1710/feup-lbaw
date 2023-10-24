@@ -20,11 +20,11 @@ Figure 7: UML Class diagram
 
 | Identifier | Description |
 | --- | --- |
-| BR12 | The auction winner is the user with the highest bid on the auction when it ends. |
-| BR13 | A user cannot bid in its own auction. |
-| BR14 | A user can only report an auction or another user once. |
-| BR15 | A user cannot bid in an auction where he is the highest bid. |
-| BR16 | A user cannot follow an auction that he is already following. |
+| BR10' | The auction winner is the user with the highest bid on the auction when it ends. |
+| BR11 | A user cannot bid in its own auction. |
+| BR12 | A user can only report an auction once. |
+| BR13 | A user cannot bid in an auction where he is the highest bid. |
+| BR14 | A user cannot follow an auction that he is already following. |
 
 ## A5: Relational Schema, validation and schema refinement
 
@@ -274,16 +274,20 @@ EXECUTE FUNCTION anonymize_user_data();
 CREATE FUNCTION prevent_auction_cancellation()
 RETURNS TRIGGER AS 
 $$
-DECLARE
-  num_bids INTEGER;
+    DECLARE num_bids INTEGER;
 BEGIN
-  SELECT COUNT(*) INTO num_bids FROM Bid WHERE auction_id = OLD.id;
-  IF num_bids > 0 THEN
-    RAISE EXCEPTION 'Cannot cancel the auction. There are % bids.', num_bids;
+
+  IF TG_OP = 'UPDATE' AND OLD.auction_state <> NEW.auction_state THEN
+
+    SELECT COUNT(*) INTO num_bids FROM Bid WHERE auction_id = NEW.id;
+    IF num_bids > 0 THEN
+      RAISE EXCEPTION 'Cannot change the state. There are % bids.', num_bids;
+    END IF;
   END IF;
-  UPDATE Auction
-  SET auction_state = 'disabled'
-  WHERE id = OLD.id;
+  
+
+  NEW.auction_state = OLD.auction_state;
+  
   RETURN NEW;
 END;
 $$ 
@@ -466,7 +470,7 @@ RETURNS TRIGGER AS
 $$
 BEGIN
   IF NEW.state = 'finished' THEN
-    SELECT INTO NEW.auction_winner user_id
+    SELECT user_id INTO NEW.auction_winner
     FROM Bid
     WHERE auction_id = NEW.id
     ORDER BY amount DESC
@@ -477,7 +481,7 @@ END;
 $$ 
 LANGUAGE plpgsql;
 CREATE TRIGGER update_auction_winner
-AFTER UPDATE ON Auction
+BEFORE UPDATE ON Auction
 FOR EACH ROW
 EXECUTE FUNCTION set_auction_winner();
 ```
@@ -505,7 +509,7 @@ EXECUTE FUNCTION prevent_owner_bid();
 
 | **Trigger**      | TRIGGER14                              |
 | ---              | ---                                    |
-| **Description**  | A user can only report an auction or another user once. (business rule BR14) |
+| **Description**  | A user can only report an auction once. (business rule BR14) |
 ```sql
 CREATE FUNCTION prevent_duplicate_report()
 RETURNS TRIGGER AS 
@@ -515,9 +519,9 @@ BEGIN
     SELECT 1
     FROM Report
     WHERE user_id = NEW.user_id
-    AND (auction_id = NEW.auction_id OR reported_user_id = NEW.reported_user_id)
+    AND (auction_id = NEW.auction_id)
   ) THEN
-    RAISE EXCEPTION 'A user can only report an auction or another user once.';
+    RAISE EXCEPTION 'A user can only report an auction once.';
   END IF;
   RETURN NEW;
 END;
@@ -529,30 +533,6 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_duplicate_report();
 ```
 
-| **Trigger**      | TRIGGER15                              |
-| ---              | ---                                    |
-| **Description**  | A user cannot bid in an auction where he is the highest bid. (business rule BR15) |
-```sql
-CREATE FUNCTION prevent_highest_bidder_bid()
-RETURNS TRIGGER AS 
-$$
-DECLARE
-  current_highest_bid NUMERIC;
-BEGIN
-  SELECT MAX(amount) INTO current_highest_bid
-  FROM Bid
-  WHERE auction_id = NEW.auction_id;
-  IF NEW.user_id = (SELECT user_id FROM Bid WHERE auction_id = NEW.auction_id AND amount = current_highest_bid) THEN RAISE EXCEPTION 'The user already has the highest bid in this auction.';
-  END IF;
-  RETURN NEW;
-END;
-$$ 
-LANGUAGE plpgsql;
-CREATE TRIGGER check_highest_bidder_bid
-BEFORE INSERT ON Bid
-FOR EACH ROW
-EXECUTE FUNCTION prevent_highest_bidder_bid();
-```
 
 | **Trigger**      | TRIGGER16                              |
 | ---              | ---                                    |

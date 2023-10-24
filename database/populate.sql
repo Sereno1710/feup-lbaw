@@ -54,10 +54,6 @@ VALUES
   ('magneto', 'eriklensherr@email.com', 'magnetism', 90000.00, '1963-06-05', 'Mutant Lane', 'Genosha', '22222', 'Genosha'),
   ('hulk', 'brucebanner@email.com', 'smash', 85000.00, '1962-05-02', 'Gamma Road', 'New York', '98765', 'USA');
 
-INSERT INTO users (username, email, password, balance, date_of_birth, street, city, zip_code, country)
-VALUES 
-  ('kidkid', 'kid@email.com', 'imakid', 85000.00, '2012-05-02', 'Gamma Road', 'New York', '98765', 'USA');
-
 INSERT INTO Auction (name, description, price, initial_time, end_time, category, state, owner, auction_winner)
 VALUES
   ('Rare Acoustic Guitar', 'A vintage acoustic guitar with a unique sound.', 100.00, '2023-10-01 10:00:00', '2023-10-24 01:30:00', 'strings', 'active', 3, NULL),
@@ -80,6 +76,11 @@ VALUES
   (1, 1, 110.00, '2023-10-19 09:00:00'),
   (2, 1, 160.00, '2023-10-20 11:00:00'),
   (1, 1, 190.00, '2023-10-24 01:00:00');
+
+INSERT INTO Report (user_id, auction_ID, description)
+VALUES 
+  (1, 1, 'Que suspeito.'),
+  (2, 1, 'parece-me sus');
 
 INSERT INTO SystemManager (user_id)
 SELECT id

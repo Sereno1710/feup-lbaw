@@ -18,11 +18,16 @@ DROP TYPE IF EXISTS category_type;
 DROP TYPE IF EXISTS auction_state;
 
 DROP FUNCTION IF EXISTS anonymize_user_data;
+DROP FUNCTION IF EXISTS prevent_auction_cancellation;
 DROP FUNCTION IF EXISTS enforce_bidding_rules;
 DROP FUNCTION IF EXISTS extend_auction_deadline;
 DROP FUNCTION IF EXISTS prevent_seller_self_follow;
 DROP FUNCTION IF EXISTS check_bid_date;
 DROP FUNCTION IF EXISTS check_user_age;
+DROP FUNCTION IF EXISTS set_auction_winner;
+DROP FUNCTION IF EXISTS prevent_owner_bid;
+DROP FUNCTION IF EXISTS prevent_duplicate_report;
+DROP FUNCTION IF EXISTS prevent_duplicate_follow;
 
 /*
 
@@ -225,6 +230,31 @@ BEFORE DELETE ON users
 FOR EACH ROW
 EXECUTE FUNCTION anonymize_user_data();
 
+/*
+-- Trigger (T02)
+CREATE FUNCTION prevent_auction_cancellation()
+RETURNS TRIGGER AS 
+$$
+DECLARE
+  num_bids INTEGER;
+BEGIN
+  SELECT COUNT(*) INTO num_bids FROM Bid WHERE auction_id = OLD.id;
+  IF num_bids > 0 THEN
+    RAISE EXCEPTION 'Cannot cancel the auction. There are % bids.', num_bids;
+  END IF;
+  UPDATE Auction
+  SET auction_state = 'disabled'
+  WHERE id = OLD.id;
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER prevent_auction_cancellation_trigger
+BEFORE UPDATE ON Auction
+FOR EACH ROW
+EXECUTE FUNCTION prevent_auction_cancellation();
+*/
+
 -- Trigger (T04)
 CREATE FUNCTION enforce_bidding_rules()
 RETURNS TRIGGER AS 
@@ -343,8 +373,89 @@ BEGIN
 END;
 $$ 
 LANGUAGE plpgsql;
-
 CREATE TRIGGER check_user_age_trigger
 BEFORE INSERT ON users
 FOR EACH ROW
 EXECUTE FUNCTION check_user_age();
+
+-- Trigger (T09)
+CREATE FUNCTION set_auction_winner()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  IF NEW.state = 'finished' THEN
+    SELECT user_id INTO NEW.auction_winner
+    FROM Bid
+    WHERE auction_id = NEW.id
+    ORDER BY amount DESC
+    LIMIT 1;
+  END IF;
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER update_auction_winner
+BEFORE UPDATE ON Auction
+FOR EACH ROW
+EXECUTE FUNCTION set_auction_winner();
+
+-- Trigger (T10)
+CREATE FUNCTION prevent_owner_bid()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  IF NEW.user_id = (SELECT owner FROM Auction WHERE id = NEW.auction_id) THEN
+    RAISE EXCEPTION 'You cannot bid on your own auction as the owner.';
+  END IF;
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER check_owner_bid
+BEFORE INSERT ON Bid
+FOR EACH ROW
+EXECUTE FUNCTION prevent_owner_bid();
+
+-- Trigger (T11)
+CREATE FUNCTION prevent_duplicate_report()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM Report
+    WHERE user_id = NEW.user_id
+    AND (auction_id = NEW.auction_id)
+  ) THEN
+    RAISE EXCEPTION 'A user can only report an auction once.';
+  END IF;
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER check_duplicate_report
+BEFORE INSERT ON Report
+FOR EACH ROW
+EXECUTE FUNCTION prevent_duplicate_report();
+
+-- Trigger (T12)
+CREATE FUNCTION prevent_duplicate_follow()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM follows
+    WHERE user_id = NEW.user_id
+    AND auction_id = NEW.auction_id
+  ) THEN
+    RAISE EXCEPTION 'The user is already following this auction.';
+  END IF;
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER check_duplicate_follow
+BEFORE INSERT ON follows
+FOR EACH ROW
+EXECUTE FUNCTION prevent_duplicate_follow();

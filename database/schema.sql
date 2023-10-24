@@ -193,6 +193,15 @@ INDEXES
 */
 
 -- Index (IDX01)
+CREATE INDEX username_search ON users USING HASH (username);
+
+-- Index (IDX02)
+CREATE INDEX notification_receiver ON Notification USING HASH (receiver_id);
+
+-- Index (IDX03)
+CREATE INDEX auction_state ON Auction USING HASH (state);
+
+-- Index (IDX04)
 ALTER TABLE users
 ADD COLUMN tsvectors TSVECTOR;
 CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS 
@@ -220,21 +229,23 @@ FOR EACH ROW
 EXECUTE FUNCTION user_fullsearch_update();
 CREATE INDEX search_user ON users USING GIN (tsvectors);
 
--- Index (IDX02)
-ALTER TABLE auction
+-- Index (IDX05)
+ALTER TABLE Auction
 ADD COLUMN tsvectors TSVECTOR;
 
 CREATE FUNCTION auction_search_update() RETURNS TRIGGER AS $$
 BEGIN
-    IF TG_OP = 'INSERT' THEN
+     IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
-            setweight(to_tsvector('english', NEW.name), 'B')
+            setweight(to_tsvector('english', NEW.name), 'B') ||
+            setweight(to_tsvector('english', NEW.category), 'A')
         );
     END IF;
     IF TG_OP = 'UPDATE' THEN
-        IF NEW.name <> OLD.name THEN
+        IF NEW.name <> OLD.name OR NEW.category <> OLD.category THEN
             NEW.tsvectors = (
-                setweight(to_tsvector('english', NEW.name), 'B')
+                setweight(to_tsvector('english', NEW.name), 'B') ||
+                setweight(to_tsvector('english', NEW.category), 'A')
             );
         END IF;
     END IF;

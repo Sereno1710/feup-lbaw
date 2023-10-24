@@ -223,12 +223,12 @@ To develop a well-designed database, it is crucial to have a clear understanding
 
 | **Index**           | IDX03                                  |
 | ---                 | ---                                    |
-| **Relation**        | users |
-| **Attribute**       | username |
+| **Relation**        | Auction |
+| **Attribute**       | state |
 | **Type**            | Hash |
-| **Cardinality**     | High |
+| **Cardinality**     | Low |
 | **Clustering**      | No |
-| **Justification**   | The attribute username is subject to many searches in queries, like when showing auctions or comments, so creating an index for this attribute helps performance. Since in these queries, we will search for the exact username, we chose to use hashing, and clustering is not necessary. |
+| **Justification**   | The attribute state will be invlolved in many queries, since every time we want to show auctions to an authenticated user, we will look only for the ones that are active. Hashing is the most effective method since we are don't need to sort the values, and it's also more effective if we don't use clustering. |
 | `SQL code`                                                  ||
 
 
@@ -236,7 +236,7 @@ To develop a well-designed database, it is crucial to have a clear understanding
 
 > The system being developed must provide full-text search features supported by PostgreSQL. Thus, it is necessary to specify the fields where full-text search will be available and the associated setup, namely all necessary configurations, indexes definitions and other relevant details.  
 
-| **Index**           | IDX01                                  |
+| **Index**           | IDX04                                  |
 | ---                 | ---                                    |
 | **Relation**        | user   |
 | **Attribute**       | username   |
@@ -246,6 +246,7 @@ To develop a well-designed database, it is crucial to have a clear understanding
 ```sql
 ALTER TABLE users
 ADD COLUMN tsvectors TSVECTOR;
+
 CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
@@ -263,7 +264,6 @@ BEGIN
     RETURN NEW;
 END
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER user_fullsearch_update
 BEFORE INSERT OR UPDATE ON users
 FOR EACH ROW
@@ -272,13 +272,13 @@ EXECUTE FUNCTION user_fullsearch_update();
 CREATE INDEX search_user ON users USING GIN (tsvectors);
 ```
 
-| **Index**           | IDX02                                  |
+| **Index**           | IDX05                                  |
 | ---                 | ---                                    |
 | **Relation**        | auction  |
-| **Attribute**       | name   |
+| **Attribute**       | name, category   |
 | **Type**            | GIN              |
 | **Clustering**      | No               |
-| **Justification**   | To provide full-text search features to look for auctions based on matching names. The GIN index type is chosen because the indexed fields are not expected to change often.   |
+| **Justification**   | To provide full-text search features to look for auctions based on matching names and categories. The GIN index type is chosen because the indexed fields are not expected to change often.   |
 ```sql
 ALTER TABLE Auction
 ADD COLUMN tsvectors TSVECTOR;
@@ -287,13 +287,15 @@ CREATE FUNCTION auction_search_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
-            setweight(to_tsvector('english', NEW.name), 'B')
+            setweight(to_tsvector('english', NEW.name), 'B') ||
+            setweight(to_tsvector('english', NEW.category), 'A')
         );
     END IF;
     IF TG_OP = 'UPDATE' THEN
-        IF NEW.name <> OLD.name THEN
+        IF NEW.name <> OLD.name OR NEW.category <> OLD.category THEN
             NEW.tsvectors = (
-                setweight(to_tsvector('english', NEW.name), 'B')
+                setweight(to_tsvector('english', NEW.name), 'B') ||
+                setweight(to_tsvector('english', NEW.category), 'A')
             );
         END IF;
     END IF;
@@ -667,7 +669,7 @@ EXECUTE FUNCTION prevent_duplicate_follow();
 
 | Transaction  | TRAN01                    |
 | --------------- | ----------------------------------- |
-| Description   | Buy an item  |
+| Description   | Bid on an auction  |
 | Justification   | Justification for the transaction.  |
 | Isolation level | Isolation level of the transaction. |
 | `Complete SQL Code`                                   ||

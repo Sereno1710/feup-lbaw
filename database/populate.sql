@@ -122,7 +122,7 @@ VALUES
   (2, 1, 190.00, '2023-10-24 01:00:00'),
   (5, 1, 260.00, '2023-10-24 14:15:00');
 
-INSERT INTO Report (user_id, auction_ID, description)
+INSERT INTO Report (user_id, auction_id, description)
 VALUES 
   (2, 1, 'Que suspeito.'),
   (3, 1, 'parece-me sus');

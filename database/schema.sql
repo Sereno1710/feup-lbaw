@@ -28,11 +28,7 @@ DROP FUNCTION IF EXISTS extend_auction_deadline;
 DROP FUNCTION IF EXISTS prevent_seller_self_follow;
 DROP FUNCTION IF EXISTS check_bid_date;
 DROP FUNCTION IF EXISTS check_user_age;
-DROP FUNCTION IF EXISTS set_auction_winner;
 DROP FUNCTION IF EXISTS prevent_owner_bid;
-DROP FUNCTION IF EXISTS prevent_duplicate_report;
-DROP FUNCTION IF EXISTS prevent_duplicate_follow;
-DROP FUNCTION IF EXISTS prevent_owner_receive_money;
 DROP FUNCTION IF EXISTS send_comment_notification;
 DROP FUNCTION IF EXISTS send_bid_notification;
 DROP FUNCTION IF EXISTS send_upgrade_notification;
@@ -364,7 +360,7 @@ BEGIN
   WHERE auction_id = NEW.auction_id
   ORDER BY amount DESC
   LIMIT 1;
-  SELECT price, state INTO i_price, current_state
+  SELECT initial_price, state INTO i_price, current_state
   FROM Auction
   WHERE id = NEW.auction_id;
   SELECT balance INTO user_balance

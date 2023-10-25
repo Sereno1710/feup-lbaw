@@ -222,8 +222,7 @@ Table 8: User stories for the Administrator
 | BR05 | Seller Comments | A seller can comment on their own auctions. |
 | BR06 | Seller Actions | A seller cannot rate themselves, follow their own auction, or bid on it. |
 | BR07 | Dates | The date of an incoming bid has to be higher than the date of the current highest bid. The date when an auction closed has to be higher than the date of the last bid. |
-| BR08 | Pausing Auctions | Auctions should be automatically paused when the system is down. This ensures that the bidding process is not affected by technical errors. |
-| BR09 | Minimum Age | A user needs to be at least 18 years old to use this website.                                                   |
+| BR08 | Minimum Age | A user needs to be at least 18 years old to use this website.                                                   |
 
 
 Table 9: Business rules
@@ -356,21 +355,27 @@ Changes made to the first submisson:
 1. Deleted user story for deleting auctions
 2. Changed the project description to explain better how item selling works
 
-- Daniel Gago
+- Daniel Gago (Editor)
 - José Santos 
 
 ### 24/10/2023
 1. Changed 'Canceled' auction to 'Disabled' auction
-2. Deleted some business rules we found unnecessary
+2. Deleted some business rules we found unnecessary or didn't make sense
 
-- Daniel Gago
+- Daniel Gago (Editor)
 - José Santos
 
+### 25/10/2023
+1. Removed one more business rule that we found unnecessary
+
+- José Santos (Editor)
+
 ***
+
 GROUP0202, 24/10/2023
 
-* Daniel Gago, up202108791@edu.fe.up.pt (Editor)
+* Daniel Gago, up202108791@edu.fe.up.pt 
 * Eduardo Oliveira, up202108843@edu.fe.up.pt
-* José Santos, up202108729@edu.fe.up.pt
+* José Santos, up202108729@edu.fe.up.pt (Editor)
 * Máximo Pereira, up202108887@edu.fe.up.pt
 

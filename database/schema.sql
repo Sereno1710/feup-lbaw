@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS Comment CASCADE;
 DROP TABLE IF EXISTS Report CASCADE;
 DROP TABLE IF EXISTS Bid CASCADE;
 DROP TABLE IF EXISTS AuctionPhoto CASCADE;
+DROP TABLE IF EXISTS AuctionWinner CASCADE;
 DROP TABLE IF EXISTS Auction CASCADE;
 DROP TABLE IF EXISTS Admin CASCADE;
 DROP TABLE IF EXISTS SystemManager CASCADE;
@@ -31,6 +32,15 @@ DROP FUNCTION IF EXISTS set_auction_winner;
 DROP FUNCTION IF EXISTS prevent_owner_bid;
 DROP FUNCTION IF EXISTS prevent_duplicate_report;
 DROP FUNCTION IF EXISTS prevent_duplicate_follow;
+DROP FUNCTION IF EXISTS prevent_owner_receive_money;
+DROP FUNCTION IF EXISTS send_comment_notification;
+DROP FUNCTION IF EXISTS send_bid_notification;
+DROP FUNCTION IF EXISTS send_upgrade_notification;
+DROP FUNCTION IF EXISTS send_downgrade_notification;
+DROP FUNCTION IF EXISTS send_auction_notification;
+DROP FUNCTION IF EXISTS auto_follow;
+DROP FUNCTION IF EXISTS update_owner_rating;
+DROP FUNCTION IF EXISTS prevent_auction_winner_active;
 
 /*
 
@@ -44,6 +54,7 @@ CREATE TYPE notification_type AS ENUM (
     'auction_finished',
     'auction_approved',
     'auction_denied',
+    'auction_resumed', 
     'auction_comment',
     'auction_bid',
     'user_upgrade',
@@ -86,6 +97,7 @@ CREATE TABLE users (
   city VARCHAR(255) NOT NULL,
   zip_code VARCHAR(10) NOT NULL,
   country VARCHAR(255) NOT NULL,
+  rating FLOAT CHECK (rating >= 0 AND rating <= 5) DEFAULT NULL,
   image BYTEA
 );
 
@@ -106,13 +118,21 @@ CREATE TABLE Auction (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
-  price MONEY CHECK (price >= '0'::MONEY),
+  initial_price MONEY CHECK (initial_price >= '0'::MONEY),
+  price MONEY CHECK (price >= initial_price),
   initial_time TIMESTAMP DEFAULT NULL,
   end_time TIMESTAMP DEFAULT NULL,
   category category_type DEFAULT NULL,
   state auction_state NOT NULL,
-  owner INT REFERENCES users(id) ON UPDATE CASCADE,
-  auction_winner INT REFERENCES users(id) ON UPDATE CASCADE DEFAULT NULL
+  owner INT REFERENCES users(id) ON UPDATE CASCADE
+);
+
+--AuctionWinner table
+CREATE TABLE AuctionWinner (
+  auction_id INT REFERENCES Auction(id) ON UPDATE CASCADE NOT NULL,
+  user_id INT REFERENCES users(id) ON UPDATE CASCADE NOT NULL,
+  rating INT CHECK (rating >= 0 AND rating <= 5) DEFAULT NULL,
+  PRIMARY KEY (user_id, auction_id)
 );
 
 -- AuctionPhoto table
@@ -289,9 +309,9 @@ BEGIN
     UPDATE Auction
     SET owner = anonymous_user_id
     WHERE owner = OLD.id;
-    UPDATE Auction
-    SET auction_winner = anonymous_user_id
-    WHERE auction_winner = OLD.id;
+    UPDATE AuctionWinner
+    SET user_id = anonymous_user_id
+    WHERE user_id = OLD.id;
   END IF;
   DELETE FROM Admin
   WHERE user_id = OLD.id;
@@ -328,7 +348,7 @@ BEFORE UPDATE ON Auction
 FOR EACH ROW
 EXECUTE FUNCTION prevent_auction_cancellation();
 
--- Trigger (T04)
+-- Trigger (T03)
 CREATE FUNCTION enforce_bidding_rules()
 RETURNS TRIGGER AS 
 $$
@@ -371,7 +391,7 @@ BEFORE INSERT ON Bid
 FOR EACH ROW
 EXECUTE FUNCTION enforce_bidding_rules();
 
--- Trigger (T05)
+-- Trigger (T04)
 CREATE FUNCTION extend_auction_deadline()
 RETURNS TRIGGER AS 
 $$
@@ -398,7 +418,7 @@ BEFORE INSERT ON Bid
 FOR EACH ROW
 EXECUTE FUNCTION extend_auction_deadline();
 
--- Trigger (T06)
+-- Trigger (T05)
 CREATE FUNCTION prevent_seller_self_follow()
 RETURNS TRIGGER AS 
 $$
@@ -416,7 +436,7 @@ BEFORE INSERT ON follows
 FOR EACH ROW
 EXECUTE FUNCTION prevent_seller_self_follow();
 
--- Trigger (T07)
+-- Trigger (T06)
 CREATE FUNCTION check_bid_date()
 RETURNS TRIGGER AS 
 $$
@@ -440,7 +460,7 @@ BEFORE INSERT ON Bid
 FOR EACH ROW
 EXECUTE FUNCTION check_bid_date();
 
--- Trigger (T08)
+-- Trigger (T07)
 CREATE FUNCTION check_user_age()
 RETURNS TRIGGER AS 
 $$
@@ -462,28 +482,7 @@ BEFORE INSERT ON users
 FOR EACH ROW
 EXECUTE FUNCTION check_user_age();
 
--- Trigger (T09)
-CREATE FUNCTION set_auction_winner()
-RETURNS TRIGGER AS 
-$$
-BEGIN
-  IF NEW.state = 'finished' THEN
-    SELECT user_id INTO NEW.auction_winner
-    FROM Bid
-    WHERE auction_id = NEW.id
-    ORDER BY amount DESC
-    LIMIT 1;
-  END IF;
-  RETURN NEW;
-END;
-$$ 
-LANGUAGE plpgsql;
-CREATE TRIGGER update_auction_winner
-BEFORE UPDATE ON Auction
-FOR EACH ROW
-EXECUTE FUNCTION set_auction_winner();
-
--- Trigger (T10)
+-- Trigger (T08)
 CREATE FUNCTION prevent_owner_bid()
 RETURNS TRIGGER AS 
 $$
@@ -500,46 +499,186 @@ BEFORE INSERT ON Bid
 FOR EACH ROW
 EXECUTE FUNCTION prevent_owner_bid();
 
--- Trigger (T11)
-CREATE FUNCTION prevent_duplicate_report()
+-- Trigger (T09)
+CREATE FUNCTION auto_follow()
 RETURNS TRIGGER AS 
 $$
+
 BEGIN
-  IF EXISTS (
-    SELECT 1
-    FROM Report
-    WHERE user_id = NEW.user_id
-    AND (auction_id = NEW.auction_id)
-  ) THEN
-    RAISE EXCEPTION 'A user can only report an auction once.';
+
+  IF((SELECT COUNT(*) FROM follows WHERE auction_id = NEW.auction_id AND user_id = NEW.user_id) = 0) THEN
+    INSERT INTO follows (user_id, auction_id)
+    VALUES (NEW.user_id, NEW.auction_id);
   END IF;
+ 
   RETURN NEW;
+
 END;
 $$ 
 LANGUAGE plpgsql;
-CREATE TRIGGER check_duplicate_report
-BEFORE INSERT ON Report
+CREATE TRIGGER auto_follow_on_bid
+AFTER INSERT ON Bid
 FOR EACH ROW
-EXECUTE FUNCTION prevent_duplicate_report();
+EXECUTE FUNCTION auto_follow(); 
+
+
+-- Trigger (T10)
+CREATE FUNCTION update_owner_rating()
+RETURNS TRIGGER AS 
+$$
+DECLARE 
+  owner_id INT;
+BEGIN
+  SELECT owner into owner_id FROM auction WHERE id = NEW.auction_id;
+
+  UPDATE users
+  SET rating = (
+    SELECT COALESCE(ROUND(AVG(AuctionWinner.rating), 2), 0)
+    FROM AuctionWinner
+    JOIN Auction ON AuctionWinner.auction_id = Auction.id
+    WHERE Auction.owner = owner_id
+  )
+  WHERE id = owner_id;
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER calculate_owner_rating
+AFTER INSERT OR UPDATE ON AuctionWinner
+FOR EACH ROW
+EXECUTE FUNCTION update_owner_rating();
+
+-- Trigger (TR11)
+CREATE FUNCTION prevent_auction_winner_active()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+    IF (SELECT state FROM Auction WHERE id = NEW.auction_id) <> 'finished' THEN
+        RAISE EXCEPTION 'The auction hasnt finished.';
+    END IF;
+    RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER prevent_auction_winner
+BEFORE INSERT ON AuctionWinner
+FOR EACH ROW
+EXECUTE FUNCTION prevent_auction_winner_active();
+
 
 -- Trigger (T12)
-CREATE FUNCTION prevent_duplicate_follow()
+CREATE FUNCTION send_comment_notification()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF EXISTS (
-    SELECT 1
-    FROM follows
-    WHERE user_id = NEW.user_id
-    AND auction_id = NEW.auction_id
-  ) THEN
-    RAISE EXCEPTION 'The user is already following this auction.';
+  INSERT INTO Notification (notification_type, date, receiver_id, comment_id)
+  VALUES ('auction_comment', NEW.time, NEW.user_id, NEW.id);
+
+  INSERT INTO Notification (notification_type, date, receiver_id, comment_id)
+  SELECT 'auction_comment', NEW.time, f.user_id, NEW.id
+  FROM follows AS f
+  WHERE f.auction_id = NEW.auction_id;
+
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER comment_notification
+AFTER INSERT ON Comment
+FOR EACH ROW
+EXECUTE FUNCTION send_comment_notification();
+
+-- Trigger (T13)
+CREATE FUNCTION send_bid_notification()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  INSERT INTO Notification (notification_type, date, receiver_id, bid_id)
+  VALUES ('auction_bid', NEW.time, NEW.user_id, NEW.id);
+
+  INSERT INTO Notification (notification_type, date, receiver_id, bid_id)
+  SELECT 'auction_bid', NEW.time, f.user_id, NEW.id
+  FROM follows AS f
+  WHERE f.auction_id = NEW.auction_id;
+
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER bid_notification
+AFTER INSERT ON Bid
+FOR EACH ROW
+EXECUTE FUNCTION send_bid_notification();
+
+-- Trigger (T14)
+CREATE FUNCTION send_upgrade_notification()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  INSERT INTO Notification (notification_type, date, receiver_id)
+  VALUES ('user_upgrade', NOW(), NEW.user_id);
+
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER upgrade_notification
+AFTER INSERT ON SystemManager
+FOR EACH ROW
+EXECUTE FUNCTION send_Upgrade_notification();
+
+-- Trigger (T15)
+CREATE FUNCTION send_downgrade_notification()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+  INSERT INTO Notification (notification_type, date, receiver_id)
+  VALUES ('user_downgrade', NOW(), NEW.user_id);
+
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER downgrade_notification
+AFTER DELETE ON SystemManager
+FOR EACH ROW
+EXECUTE FUNCTION send_downgrade_notification();
+
+-- Trigger (T16)
+CREATE FUNCTION send_auction_notification()
+RETURNS TRIGGER AS 
+$$
+DECLARE
+  t notification_type;
+BEGIN
+  IF OLD.state = 'active' AND NEW.state = 'paused' THEN
+    t := 'auction_paused';
+  ELSIF OLD.state = 'active' AND NEW.state = 'finished' THEN
+    t := 'auction_finished';
+  ELSIF OLD.state = 'pending' AND NEW.state = 'approved' THEN
+    t := 'auction_approved';
+  ELSIF OLD.state = 'pending' AND NEW.state = 'denied' THEN
+    t := 'auction_denied';
+  ELSIF OLD.state = 'paused' AND NEW.state = 'active' THEN
+    t := 'auction_resumed';
+  ELSE
+    t := NULL;
+  END IF;
+
+  IF t IS NOT NULL THEN
+    INSERT INTO Notification (notification_type, date, receiver_id, auction_id)
+    VALUES (t, NOW(), NEW.owner, NEW.id);
+    
+    INSERT INTO Notification (notification_type, date, receiver_id, auction_id)
+    SELECT t, NOW(), f.user_id, NEW.id
+    FROM follows AS f
+    WHERE f.auction_id = NEW.id;
   END IF;
   RETURN NEW;
 END;
 $$ 
 LANGUAGE plpgsql;
-CREATE TRIGGER check_duplicate_follow
-BEFORE INSERT ON follows
+CREATE TRIGGER auction_notification
+AFTER UPDATE ON Auction
 FOR EACH ROW
-EXECUTE FUNCTION prevent_duplicate_follow();
+EXECUTE FUNCTION send_auction_notification();

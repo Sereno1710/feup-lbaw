@@ -435,7 +435,7 @@ BEGIN
   WHERE auction_id = NEW.auction_id
   ORDER BY amount DESC
   LIMIT 1;
-  SELECT price, state INTO i_price, current_state
+  SELECT initial_price, state INTO i_price, current_state
   FROM Auction
   WHERE id = NEW.auction_id;
   SELECT balance INTO user_balance
@@ -909,6 +909,7 @@ END TRANSACTION;
 
 ```sql
 -- Drop old tables
+-- Drop old tables
 DROP TABLE IF EXISTS follows CASCADE;
 DROP TABLE IF EXISTS Comment CASCADE;
 DROP TABLE IF EXISTS Report CASCADE;
@@ -938,11 +939,7 @@ DROP FUNCTION IF EXISTS extend_auction_deadline;
 DROP FUNCTION IF EXISTS prevent_seller_self_follow;
 DROP FUNCTION IF EXISTS check_bid_date;
 DROP FUNCTION IF EXISTS check_user_age;
-DROP FUNCTION IF EXISTS set_auction_winner;
 DROP FUNCTION IF EXISTS prevent_owner_bid;
-DROP FUNCTION IF EXISTS prevent_duplicate_report;
-DROP FUNCTION IF EXISTS prevent_duplicate_follow;
-DROP FUNCTION IF EXISTS prevent_owner_receive_money;
 DROP FUNCTION IF EXISTS send_comment_notification;
 DROP FUNCTION IF EXISTS send_bid_notification;
 DROP FUNCTION IF EXISTS send_upgrade_notification;
@@ -1274,7 +1271,7 @@ BEGIN
   WHERE auction_id = NEW.auction_id
   ORDER BY amount DESC
   LIMIT 1;
-  SELECT price, state INTO i_price, current_state
+  SELECT initial_price, state INTO i_price, current_state
   FROM Auction
   WHERE id = NEW.auction_id;
   SELECT balance INTO user_balance
@@ -1594,6 +1591,7 @@ FOR EACH ROW
 EXECUTE FUNCTION send_auction_notification();
 
 
+
 ```
 
 ### A.2. Database population
@@ -1611,27 +1609,109 @@ VALUES
   ('webslinger', 'peterparker@email.com', 'spidey', 50000.00, '1995-02-14', 'Web Avenue', 'New York', '54321', 'USA', NULL),
   ('greenqueen', 'pamelaisley@email.com', 'poisonivy', 75000.00, '1987-09-20', 'Vine Lane', 'Gotham City', '67890', 'USA', NULL),
   ('speedster', 'barryallen@email.com', 'flash2023', 90000.00, '1986-03-30', 'Speedster Street', 'Central City', '98765', 'USA', NULL),
+  ('emeraldarcher', 'oliverqueen@email.com', 'arrow', 80000.00, '1981-11-11', 'Arrow Road', 'Star City', '23456', 'USA', NULL),
+  ('manofsteel', 'clarkkent@email.com', 'kryptonite', 95000.00, '1978-07-01', 'Super Lane', 'Metropolis', '76543', 'USA', NULL),
+  ('wonderwoman', 'dianaprince@email.com', 'amazonian', 85000.00, '1985-04-15', 'Paradise Island', 'Themyscira', '78901', 'Amazon', NULL),
+  ('thor', 'thor@email.com', 'mjolnir', 70000.00, '1980-12-25', 'Asgard Road', 'Asgard', '11223', 'Asgard', NULL),
+  ('spymaster', 'natasharomanoff@email.com', 'blackwidow', 60000.00, '1984-08-03', 'Red Room Street', 'Moscow', '00123', 'Russia', NULL),
+  ('starkgenius', 'tonystark@email.com', 'ironman', 1200000.00, '1970-06-21', 'Stark Tower', 'New York', '54321', 'USA', NULL),
+  ('godofthunder', 'loki@email.com', 'trickster', 90000.00, '1972-03-05', 'Asgard Palace', 'Asgard', '11223', 'Asgard', NULL),
+  ('hawkeye', 'clintbarton@email.com', 'hawkeye1', 75000.00, '1976-09-08', 'Archery Way', 'Brooklyn', '45678', 'USA', NULL),
+  ('scarletwitch', 'wandamaximoff@email.com', 'chaosmagic', 70000.00, '1989-12-16', 'Hex Street', 'Transia', '98765', 'Transia', NULL),
+  ('aquaman', 'arthurcurry@email.com', 'kingofthesea', 85000.00, '1982-07-30', 'Atlantis Avenue', 'Atlantis', '54321', 'Atlantis', NULL),
+  ('beastmode', 'hankmccoy@email.com', 'bluefur', 60000.00, '1988-02-04', 'X-Mansion Road', 'Westchester', '33333', 'USA', NULL),
+  ('stormrider', 'ororomunroe@email.com', 'weathergoddess', 95000.00, '1987-06-10', 'Wakanda Avenue', 'Wakanda', '11223', 'Wakanda', NULL),
+  ('greenlantern', 'haljordan@email.com', 'ringpower', 80000.00, '1983-04-20', 'Oa Street', 'Oa', '22222', 'Oa', NULL),
+  ('wolverine', 'logan@email.com', 'adamantium', 70000.00, '1842-03-22', 'Logan Street', 'Alberta', '77777', 'Canada', NULL),
+  ('wallywest', 'wallywest@email.com', 'kidflash', 90000.00, '1992-08-15', 'Speedster Lane', 'Keystone City', '11111', 'USA', NULL),
+  ('wadeywilson', 'wadewilson@email.com', 'deadpool', 80000.00, '1974-02-20', 'Regeneration Road', 'New York', '54321', 'USA', NULL),
+  ('blackpanther', 'tchalla@email.com', 'vibranium', 85000.00, '1980-11-29', 'Wakanda Street', 'Wakanda', '11223', 'Wakanda', NULL),
+  ('magentawitch', 'wandashepherd@email.com', 'wandavision', 75000.00, '1993-05-07', 'Salem Road', 'Westview', '54321', 'USA', NULL),
+  ('ladyhawk', 'katebishop@email.com', 'hawkeye2', 70000.00, '1999-12-03', 'Archer Avenue', 'New York', '45678', 'USA', NULL),
+  ('captainspandex', 'steve@email.com', 'capamerica', 95000.00, '1920-07-04', 'Freedom Street', 'Washington, D.C.', '12345', 'USA', NULL),
+  ('aquaticmariner', 'namor@email.com', 'imperiusrex', 90000.00, '1940-01-10', 'Atlantean Lane', 'Atlantis', '22222', 'Atlantis', NULL),
+  ('starlord', 'peterquill@email.com', 'guardians1', 80000.00, '1982-12-18', 'Milano Avenue', 'Xandar', '98765', 'Xandar', NULL),
+  ('blackbolt', 'blackagar@email.com', 'silentscream', 75000.00, '1975-06-02', 'Inhuman Road', 'Attilan', '54321', 'Attilan', NULL),
+  ('colossus', 'piotrrasputin@email.com', 'steelman', 90000.00, '1978-03-14', 'X-Mansion Lane', 'Westchester', '33333', 'USA', NULL),
+  ('gamora', 'gamora@email.com', 'deadlyassassin', 85000.00, '1984-09-03', 'Zen-Whoberi Street', 'Zen-Whoberi', '11223', 'Zen-Whoberi', NULL),
+  ('antman', 'scottlang@email.com', 'shrinkandgrow', 70000.00, '1980-01-22', 'Pym Particles Lane', 'New York', '45678', 'USA', NULL),
+  ('zatanna', 'zatannazatara@email.com', 'magicwords', 80000.00, '1986-10-31', 'Mystic Road', 'Shadowcrest', '54321', 'USA', NULL),
+  ('stormqueen', 'auroramunroe@email.com', 'elementalpowers', 90000.00, '1985-07-19', 'Wakanda Lane', 'Wakanda', '98765', 'Wakanda', NULL),
+  ('redskull', 'johannschmidt@email.com', 'hydra123', 75000.00, '1941-11-02', 'Nazi Avenue', 'Berlin', '00123', 'Germany', NULL),
+  ('mysterio', 'quentinbeck@email.com', 'illusions', 70000.00, '1969-04-15', 'Fishbowl Street', 'New York', '54321', 'USA', NULL),
+  ('cyclops', 'scottsummers@email.com', 'opticblast', 85000.00, '1973-08-26', 'X-Mansion Avenue', 'Westchester', '33333', 'USA', NULL),
+  ('rogue', 'annamarie@email.com', 'drainpowers', 90000.00, '1987-06-04', 'Mississippi Road', 'Caldecott', '54321', 'USA', NULL),
+  ('iceprincess', 'bobbydrake@email.com', 'iceman', 70000.00, '1982-03-30', 'Frost Lane', 'North Salem', '11223', 'USA', NULL),
+  ('blacksuit', 'eddieredmayne@email.com', 'venomized', 80000.00, '1988-12-14', 'Symbiote Street', 'New York', '45678', 'USA', NULL),
+  ('scarecrow', 'jonathancrane@email.com', 'feargas', 75000.00, '1970-10-20', 'Fear Lane', 'Gotham City', '00123', 'USA', NULL),
+  ('invisiblewoman', 'susanstorm@email.com', 'invisibility', 90000.00, '1983-07-22', 'Fantastic Road', 'New York', '54321', 'USA', NULL),
+  ('nightcrawler', 'kurtwagner@email.com', 'teleportation', 85000.00, '1984-05-05', 'Bamf Avenue', 'Bavaria', '22222', 'Germany', NULL),
+  ('lizardking', 'drconnors@email.com', 'reptilian', 80000.00, '1977-09-11', 'Reptile Lane', 'New York', '98765', 'USA', NULL),
+  ('rocketraccoon', 'rocket@email.com', 'blaster', 75000.00, '1990-12-05', 'Guardian Avenue', 'Halfworld', '54321', 'Halfworld', NULL),
+  ('sandman', 'flintmarko@email.com', 'sandpowers', 90000.00, '1965-03-18', 'Desert Lane', 'New York', '11223', 'USA', NULL),
+  ('starfire', 'koriandrs@email.com', 'starbolts', 85000.00, '1988-07-29', 'Tamaran Road', 'Tamaran', '12345', 'Tamaran', NULL),
+  ('juggernaut', 'cainmarko@email.com', 'unstoppable', 80000.00, '1971-02-03', 'Juggernaut Street', 'Cain Marko', '33333', 'Marko', NULL),
+  ('raven', 'rachelroth@email.com', 'darkmagic', 70000.00, '1980-10-26', 'Azarath Lane', 'Azarath', '54321', 'Azarath', NULL),
+  ('magneto', 'eriklensherr@email.com', 'magnetism', 90000.00, '1963-06-05', 'Mutant Lane', 'Genosha', '22222', 'Genosha', NULL),
+  ('hulk', 'brucebanner@email.com', 'smash', 85000.00, '1962-05-02', 'Gamma Road', 'New York', '98765', 'USA', NULL);
 
-INSERT INTO Auction (name, description, price, initial_time, end_time, category, state, owner)
+INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner)
 VALUES
-  ('Rare Acoustic Guitar', 'A vintage acoustic guitar with a unique sound.', 80.00, '2023-09-01 10:00:00', '2024-10-24 01:30:00', 'strings', 'active', 3),
-  ('Handcrafted Flute', 'A beautifully handcrafted flute with exquisite details.', 70.00, '2023-09-05 14:00:00', '2024-11-20 14:00:00', 'woodwinds', 'active', 4),
-  ('Vintage Bass Guitar', 'An old-school bass guitar with a unique vibe.', 30.00, '2023-09-03 12:00:00', '2024-11-18 12:00:00', 'brass', 'active', 5),
-  ('Handmade Drum Set', 'A custom-made drum set for professional drummers.', 25.00, '2023-09-10 15:00:00', '2024-11-25 15:00:00', 'percussion', 'active', 6),
-  ('Grand Piano', 'A beautifully maintained grand piano with a rich, deep tone.', 60.00, '2023-09-07 11:00:00', '2024-11-22 11:00:00', 'strings', 'active', 7),
-  ('Vintage Trumpet', 'A classic trumpet with a warm and mellow sound.', 27.00, '2023-09-02 09:00:00', '2024-11-17 09:00:00', 'brass', 'active', 8),
-  ('Electric Guitar Kit', 'A DIY electric guitar kit for guitar enthusiasts.', 45.00, '2023-09-04 13:00:00', '2024-11-19 13:00:00', 'strings', 'active', 9),
-  ('Cajon Drum', 'A versatile and portable cajon drum for musicians on the go.', 60.00, '2023-09-08 16:00:00', '2024-11-23 16:00:00', 'percussion', 'active', 10),
-  ('Saxophone Quartet', 'A set of four saxophones for ensemble performances.', 35.00, '2023-09-06 10:00:00', '2024-11-21 10:00:00', 'woodwinds', 'active', 11),
-  ('Electronic Keyboard', 'A modern electronic keyboard with various sound options.', 20.00, '2023-09-09 14:00:00', '2024-11-24 14:00:00', 'percussion', 'active', 12),
+  ('Rare Acoustic Guitar', 'A vintage acoustic guitar with a unique sound.', 80.00, 90.00,'2023-09-01 10:00:00', '2024-10-26 01:30:00', 'strings', 'active', 3),
+  ('Handcrafted Flute', 'A beautifully handcrafted flute with exquisite details.', 70.00, 380.00, '2023-09-05 14:00:00', '2024-11-20 14:00:00', 'woodwinds', 'active', 4),
+  ('Vintage Bass Guitar', 'An old-school bass guitar with a unique vibe.', 30.00, 290.00 , '2023-09-03 12:00:00', '2024-11-18 12:00:00', 'brass', 'active', 5),
+  ('Handmade Drum Set', 'A custom-made drum set for professional drummers.', 25.00, 250.00 , '2023-09-10 15:00:00', '2024-11-25 15:00:00', 'percussion', 'active', 6),
+  ('Grand Piano', 'A beautifully maintained grand piano with a rich, deep tone.', 60.00, 230.00 ,'2023-09-07 11:00:00', '2024-11-22 11:00:00', 'strings', 'active', 7),
+  ('Vintage Trumpet', 'A classic trumpet with a warm and mellow sound.', 27.00, 245.00 ,'2023-09-02 09:00:00', '2024-11-17 09:00:00', 'brass', 'active', 8),
+  ('Electric Guitar Kit', 'A DIY electric guitar kit for guitar enthusiasts.', 45.00, 260.00 ,'2023-09-04 13:00:00', '2024-11-19 13:00:00', 'strings', 'active', 9),
+  ('Cajon Drum', 'A versatile and portable cajon drum for musicians on the go.', 60.00, 250.00, '2023-09-08 16:00:00', '2024-11-23 16:00:00', 'percussion', 'active', 10),
+  ('Saxophone Quartet', 'A set of four saxophones for ensemble performances.', 35.00, 35.00 ,'2023-09-06 10:00:00', '2024-11-21 10:00:00', 'woodwinds', 'active', 11),
+  ('Electronic Keyboard', 'A modern electronic keyboard with various sound options.', 20.00, 20.00 ,'2023-09-09 14:00:00', '2024-10-24 14:00:00', 'percussion', 'finished', 12),
+  ('Violin and Bow Set', 'A high-quality violin with a matching bow.', 18.00, 190.00 , '2023-10-11 10:00:00', '2023-10-25 10:00:00', 'strings', 'finished', 3),
+  ('Classic Flute', 'A classic flute for professional musicians.',30.00 ,300.00, '2023-10-12 11:00:00', '2023-10-26 11:00:00', 'woodwinds', 'finished', 3),
+  ('Vintage Drum Machine', 'A vintage drum machine for electronic music production.',40.00 ,90.00, '2023-09-13 12:00:00', '2023-10-27 12:00:00', 'percussion', 'finished', 3),
+  ('Saxophone Solo', 'A high-end saxophone for solo performances.', 400.00 ,400.00, '2023-10-14 13:00:00', '2023-10-28 13:00:00', 'woodwinds', 'active', 19),
+  ('Trumpet Masterclass', 'A masterclass session with a renowned trumpet player.', 150.00,150.00, '2023-10-15 14:00:00', '2023-10-29 14:00:00', 'brass', 'active', 21),
+  ('Bass Guitar Workshop', 'A workshop on advanced bass guitar techniques.',50.00 , 180.00, '2023-09-25 15:00:00', '2023-10-22 15:00:00', 'brass', 'finished', 23),
+  ('Piano Concerto Tickets', 'Tickets for a grand piano concerto event.', 80.00, 120.00, '2023-10-17 16:00:00', '2023-10-31 16:00:00', 'strings', 'finished', 25),
+  ('Electronic Music Production Course', 'A comprehensive course on electronic music production.', 200.00 , 220.00, '2023-10-18 17:00:00', '2023-11-01 17:00:00', 'percussion', 'finished', 27),
+  ('Accordion Performance', 'A live performance featuring accordion music.',10, 180.00, '2023-10-19 18:00:00', '2023-11-02 18:00:00', 'woodwinds', 'finished', 29),
+  ('Drumming Masterclass', 'A masterclass session on advanced drumming techniques.',350.00, 350.00, '2023-10-20 19:00:00', '2023-11-03 19:00:00', 'percussion', 'finished', 31),
+  ('Guitar Effects Pedal', 'A high-quality effects pedal for electric guitars.', 80.00 ,80.00, '2023-10-21 10:00:00', '2023-11-04 10:00:00', 'strings', 'paused', 33),
+  ('Digital Piano', 'A digital piano with realistic piano sound.',300.00 ,300.00, '2023-10-22 11:00:00', '2023-11-05 11:00:00', 'strings', 'paused', 34),
+  ('Trombone Ensemble', 'A set of trombones for ensemble performances.',180.00 ,180.00, '2023-10-23 12:00:00', '2023-11-06 12:00:00', 'brass', 'paused', 35),
+  ('Synthesizer Keyboard', 'A synthesizer keyboard for electronic music artists.', 250.00 , 250.00, '2023-10-24 13:00:00', '2023-11-07 13:00:00', 'percussion', 'paused', 36),
+  ('Harmonica Set', 'A set of harmonicas for blues and folk music.',100.00 ,100.00, '2023-10-25 14:00:00', '2023-11-08 14:00:00', 'woodwinds', 'paused', 37),
+  ('Drumming Workshop', 'A workshop on drumming techniques for beginners.', 150.00, 150.00, '2023-10-26 15:00:00', '2023-11-09 15:00:00', 'percussion', 'paused', 38),
+  ('Guitar and Vocal Lessons', 'Lessons for both guitar and vocal training.',200.00, 200.00, '2023-10-27 16:00:00', '2023-11-10 16:00:00', 'strings', 'paused', 39),
+  ('Flute Duet', 'A duet of high-quality flutes for musicians.',180.00, 180.00, '2023-10-28 17:00:00', '2023-11-11 17:00:00', 'woodwinds', 'paused', 40),
+  ('Percussion Ensemble', 'An ensemble performance featuring various percussion instruments.', 300.00,300.00, '2023-10-29 18:00:00', '2023-11-12 18:00:00', 'percussion', 'paused', 41),
+  ('Saxophone Solo Performance', 'A live solo performance with a saxophone.',150.00 ,150.00, '2023-10-30 19:00:00', '2023-11-13 19:00:00', 'woodwinds', 'paused', 42),
+  ('Electric Violin', 'An electric violin with modern sound capabilities.',400.00 ,400.00, '2023-11-01 10:00:00', '2023-11-15 10:00:00', 'strings', 'approved', 43),
+  ('Clarinet Duet', 'A duet of high-quality clarinets for musicians.',300.00 , 300.00, '2023-11-02 11:00:00', '2023-11-16 11:00:00', 'woodwinds', 'approved', 44),
+  ('Trumpet Quartet', 'A quartet of trumpets for ensemble performances.', 250.00 ,250.00, '2023-11-03 12:00:00', '2023-11-17 12:00:00', 'brass', 'approved', 45),
+  ('Guitar Masterclass', 'A masterclass session with a renowned guitarist.', 350.00, 350.00, '2023-11-04 13:00:00', '2023-11-18 13:00:00', 'strings', 'approved', 46),
+  ('Piano Duet', 'A duet of grand pianos for classical music lovers.', 500.00 ,500.00, '2023-11-05 14:00:00', '2023-11-19 14:00:00', 'strings', 'approved', 47),
+  ('Drumming Workshop', 'A workshop on advanced drumming techniques.', 250.00 ,250.00, '2023-11-06 15:00:00', '2023-11-20 15:00:00', 'percussion', 'approved', 48),
+  ('Accordion Ensemble', 'An ensemble performance featuring accordions.',200.00, 200.00, '2023-11-07 16:00:00', '2023-11-21 16:00:00', 'woodwinds', 'approved', 49),
+  ('Saxophone Solo Performance', 'A live solo performance with a saxophone.', 300.00 , 300.00, '2023-11-08 17:00:00', '2023-11-22 17:00:00', 'woodwinds', 'approved', 50),
+  ('Vocal Masterclass', 'A masterclass session with a renowned vocalist.',200.00 ,200.00, '2023-11-09 18:00:00', '2023-11-23 18:00:00', 'percussion', 'approved', 51),
+  ('Bass Guitar Solo', 'A live solo performance featuring a bass guitar.',150.00 ,150.00, '2023-11-10 19:00:00', '2023-11-24 19:00:00', 'brass', 'approved', 52),
+  ('Xylophone Set', 'A set of xylophones for school and ensemble use.', 200.00 , 200.00, '2023-11-11 10:00:00', '2023-11-25 10:00:00', 'percussion', 'denied', 53),
+  ('Keyboard Ensemble', 'An ensemble performance featuring electronic keyboards.', 180.00 ,180.00, '2023-11-12 11:00:00', '2023-11-26 11:00:00', 'percussion', 'disabled', 54),
+  ('Harmonica Masterclass', 'A masterclass session for harmonica enthusiasts.', 250.00,250.00, '2023-11-13 12:00:00', '2023-11-27 12:00:00', 'woodwinds', 'denied', 55),
+  ('Drumming Solo', 'A live solo drumming performance by a professional.', 200.00 , 200.00, '2023-11-14 13:00:00', '2023-11-28 13:00:00', 'percussion', 'denied', 26),
+  ('Guitar Ensemble', 'An ensemble performance featuring various guitars.', 300.00, 300.00 ,'2023-11-15 14:00:00', '2023-11-29 14:00:00', 'strings', 'denied', 20),
+  ('Brass Quartet', 'A quartet of brass instruments for ensemble performances.', 180.00, 180.00,'2023-11-16 15:00:00', '2023-11-30 15:00:00', 'brass', 'disabled', 5),
+  ('Piano Solo Performance', 'A live solo piano performance by a professional pianist.', 250.00, 250.00 ,'2023-11-17 16:00:00', '2023-12-01 16:00:00', 'strings', 'denied', 7),
+  ('Flute Solo', 'A live solo flute performance by a professional flutist.', 200.00, 200.00 ,'2023-11-18 17:00:00', '2023-12-02 17:00:00', 'woodwinds', 'denied', 9),
+  ('Trumpet Masterclass', 'A masterclass session with a renowned trumpet player.', 300.00, 300.00,'2023-11-19 18:00:00', '2023-12-03 18:00:00', 'brass', 'denied', 6),
+  ('Accordion Workshop', 'A workshop on accordion playing for beginners.', 150.00, 150.00 ,'2023-11-20 19:00:00', '2023-12-04 19:00:00', 'woodwinds', 'denied', 23);
 
 INSERT INTO AuctionWinner (user_id, auction_id, rating)
 VALUES
-  (14, 11, 5),
   (16, 12, 4),
   (18, 13, 3),
-  (20, 14, NULL),
-  (22, 15, NULL),
   (24, 16, NULL),
   (26, 17, NULL),
   (28, 18, NULL),
@@ -1650,6 +1730,44 @@ VALUES
   (12, 2, 290.00, '2023-09-24 09:15:00'),
   (17, 2, 320.00, '2023-09-24 13:30:00'),
   (9, 2, 350.00, '2023-09-30 15:45:00'),
+  (8, 2, 380.00, '2023-10-01 18:00:00'),
+  (19, 3, 130.00, '2023-09-20 09:30:00'),
+  (20, 3, 160.00, '2023-09-21 13:15:00'),
+  (21, 3, 190.00, '2023-09-23 15:45:00'),
+  (18, 3, 220.00, '2023-09-24 18:00:00'),
+  (23, 3, 260.00, '2023-09-26 09:15:00'),
+  (22, 3, 290.00, '2023-09-27 12:30:00'),
+  (26, 4, 100.00, '2023-09-21 11:30:00'),
+  (28, 4, 130.00, '2023-09-23 14:45:00'),
+  (27, 4, 150.00, '2023-09-24 17:00:00'),
+  (24, 4, 180.00, '2023-09-25 19:15:00'),
+  (30, 4, 220.00, '2023-09-27 09:30:00'),
+  (29, 4, 250.00, '2023-09-28 13:00:00'),
+  (34, 5, 80.00, '2023-09-22 09:30:00'),
+  (36, 5, 110.00, '2023-09-23 11:45:00'),
+  (35, 5, 140.00, '2023-09-24 14:00:00'),
+  (32, 5, 170.00, '2023-09-25 16:15:00'),
+  (38, 5, 200.00, '2023-09-26 18:30:00'),
+  (37, 5, 230.00, '2023-09-27 20:45:00'),
+  (42, 6, 95.00, '2023-09-22 12:00:00'),
+  (45, 6, 125.00, '2023-09-23 14:15:00'),
+  (44, 6, 155.00, '2023-09-24 16:30:00'),
+  (41, 6, 185.00, '2023-09-25 18:45:00'),
+  (47, 6, 215.00, '2023-09-26 21:00:00'),
+  (46, 6, 245.00, '2023-09-28 09:15:00'),
+  (51, 7, 109.00, '2023-09-23 11:30:00'),
+  (53, 7, 140.00, '2023-09-24 13:45:00'),
+  (52, 7, 170.00, '2023-09-25 16:00:00'),
+  (49, 7, 200.00, '2023-09-26 18:15:00'),
+  (55, 7, 230.00, '2023-09-27 20:30:00'),
+  (54, 7, 260.00, '2023-09-28 22:45:00'),
+  (2, 8, 100.00, '2023-09-24 09:30:00'),
+  (5, 8, 130.00, '2023-09-25 11:45:00'),
+  (3, 8, 160.00, '2023-09-26 14:00:00'),
+  (43, 8, 190.00, '2023-09-27 16:15:00'),
+  (2, 8, 220.00, '2023-09-28 18:30:00'),
+  (3, 8, 250.00, '2023-09-29 20:45:00');
+
 
 INSERT INTO follows (user_id, auction_id)
 VALUES
@@ -1663,6 +1781,34 @@ VALUES
   (8, 3),
   (9, 3),
   (10, 4),
+  (11, 4),
+  (12, 4),
+  (13, 4),
+  (14, 5),
+  (15, 5),
+  (16, 5),
+  (17, 5),
+  (18, 6),
+  (19, 6),
+  (20, 6),
+  (21, 6),
+  (22, 7),
+  (23, 7),
+  (24, 7),
+  (25, 7),
+  (26, 8),
+  (27, 8),
+  (28, 8),
+  (29, 8),
+  (30, 9),
+  (31, 9),
+  (32, 9),
+  (33, 9),
+  (34, 10),
+  (35, 10),
+  (36, 10),
+  (37, 10);
+
 
 INSERT INTO Report (user_id, auction_id, description)
 VALUES 
@@ -1687,6 +1833,47 @@ VALUES
   (8, 2, 'What type of wood was used for the flute? It looks exquisite.', '2023-09-25 11:30:00'),
   (9, 3, 'The bass guitar has a unique vibe. Im eager to bid.', '2023-09-26 15:25:00'),
   (10, 4, 'I love the drum set! Can you ship it internationally?', '2023-09-27 17:10:00'),
+  (11, 5, 'Is the piano tuned and in good condition? Ready to place a bid.', '2023-09-28 10:00:00'),
+  (12, 1, 'Great to see so many musical instruments available.', '2023-09-29 12:30:00'),
+  (13, 2, 'I hope the flute has a clear and crisp sound.', '2023-09-30 14:45:00'),
+  (14, 3, 'Im excited about the bass guitar! It has a fantastic design.', '2023-09-21 10:15:00'),
+  (15, 4, 'Im ready to bid on the drum set. Whats the current price?', '2023-09-22 16:20:00'),
+  (16, 5, 'The piano is exactly what Ive been looking for. Placing a bid.', '2023-09-23 09:45:00'),
+  (17, 1, 'How long is the guitar warranty? Interested in bidding.', '2023-09-24 13:50:00'),
+  (18, 2, 'I play the flute, and this one looks top-notch. Cant wait to get it!', '2023-09-25 11:30:00'),
+  (19, 3, 'The bass guitars vintage vibe is so appealing. Ready to bid.', '2023-09-26 15:25:00'),
+  (20, 4, 'The drum set is calling my name. Hows the sound quality?', '2023-09-27 17:10:00'),
+  (21, 5, 'The pianos craftsmanship is outstanding. Placing a competitive bid.', '2023-09-28 10:00:00'),
+  (22, 1, 'Im considering bidding on the guitar. Any accessories included?', '2023-09-29 12:30:00'),
+  (23, 2, 'The flute is exquisite. I hope it sounds as good as it looks.', '2023-09-30 14:45:00'),
+  (24, 3, 'The bass guitars design is a work of art. Ready to make an offer.', '2023-09-21 10:15:00'),
+  (25, 4, 'Im serious about the drum set. Can you provide shipping details?', '2023-09-22 16:20:00'),
+  (26, 5, 'The piano will be the highlight of my collection. Placing a significant bid.', '2023-09-23 09:45:00'),
+  (27, 1, 'I love the guitar. Is it suitable for beginners? Ready to bid.', '2023-09-24 13:50:00'),
+  (28, 2, 'Im a flute enthusiast, and this one is on my list. Cant wait to play it!', '2023-09-25 11:30:00'),
+  (29, 3, 'The bass guitars character is unique. Im eager to start bidding.', '2023-09-26 15:25:00'),
+  (30, 4, 'I have a studio and need the drum set. Please share the specs.', '2023-09-27 17:10:00'),
+  (31, 5, 'The piano will complete my music room. Placing a competitive bid.', '2023-09-28 10:00:00'),
+  (32, 1, 'Im thinking about the guitar for a project. Any discount available?', '2023-09-29 12:30:00'),
+  (33, 2, 'I perform with flutes regularly. This one looks perfect for me.', '2023-09-30 14:45:00'),
+  (34, 3, 'The bass guitar has a timeless design. Ready to make a serious bid.', '2023-09-21 10:15:00'),
+  (35, 4, 'The drum set is just what my band needs. Can you provide shipping options?', '2023-09-22 16:20:00'),
+  (36, 5, 'The piano will be the centerpiece of my music studio. Placing a substantial bid.', '2023-09-23 09:45:00'),
+  (37, 1, 'Im considering the guitar for a gift. Do you offer gift wrapping?', '2023-09-24 13:50:00'),
+  (38, 2, 'The flutes craftsmanship is impressive. Cant wait to add it to my collection.', '2023-09-25 11:30:00'),
+  (39, 3, 'The bass guitar has a classic vibe. Im excited to place a bid.', '2023-09-26 15:25:00'),
+  (40, 4, 'Im ready to make a substantial bid on the drum set. Please provide details.', '2023-09-27 17:10:00'),
+  (41, 5, 'The piano is a dream come true. Placing a competitive bid to secure it.', '2023-09-28 10:00:00'),
+  (42, 1, 'The guitar has a fantastic design. Is it available for immediate purchase?', '2023-09-29 12:30:00'),
+  (43, 2, 'Ive been searching for the perfect flute. This might be it!', '2023-09-30 14:45:00'),
+  (44, 3, 'The bass guitars tone seems promising. Im eager to place a serious bid.', '2023-09-21 10:15:00'),
+  (45, 4, 'Im a drummer in a band. This set is what we need. Shipping options, please.', '2023-09-22 16:20:00'),
+  (46, 5, 'The piano will complete my home studio. Placing a significant bid to secure it.', '2023-09-23 09:45:00'),
+  (47, 1, 'Im ready to bid on the guitar. Can you provide more photos?', '2023-09-24 13:50:00'),
+  (48, 2, 'Ive played many flutes, and this one looks exceptional. Ready to make an offer.', '2023-09-25 11:30:00'),
+  (49, 3, 'The bass guitars character is unique. Im eager to start bidding.', '2023-09-26 15:25:00'),
+  (50, 4, 'Im a drummer, and this set is on my wishlist. Shipping information, please.', '2023-09-27 17:10:00');
+
 
 INSERT INTO SystemManager (user_id)
 SELECT id
@@ -1753,6 +1940,7 @@ VALUES
   (2, 5),
   (3, 3),
   (3, 6);
+
 
 ```
 

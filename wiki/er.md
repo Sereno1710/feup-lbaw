@@ -147,8 +147,8 @@ Table 3: User stories for the Visitor
 | US15 | Bid on Auction | As an authenticated user, I want to be able to place bids on active auctions so that I can use it for making purchases and bidding on the website. | High |
 | US16 | View Own Profile | As an authenticated user, I want a section where I can see my own profile so that I can see all my activity and information about my account. | High |
 | US17 | Edit Profile | As an authenticated user, I want to be able to edit and update my user profile information so that I can keep my personal details and preferences updated. | High |
-| US18 | View My Bidding History | As an authenticated user, I want to be able to view all the bids I've done on the platform so that I can keep track of my history. | Medium |
-| US19 | Deposit Money on Account | As an authenticated user, I want to be able to deposit money into my account so that I can use that money to participate in active auctions. | Medium |
+| US18 | Deposit Money on Account | As an authenticated user, I want to be able to deposit money into my account so that I can use that money to participate in active auctions. | High |
+| US19 | View My Bidding History | As an authenticated user, I want to be able to view all the bids I've done on the platform so that I can keep track of my history. | Medium |
 | US20 | View My Auctions | As an authenticated user, I want to be able to view my auctions so that I can see all the items I'm selling and all the items I've bought. | Medium |
 | US21 | View Followed Auctions | As an authenticated user, I want to be able to see all the auctions I've followed so that I can keep track of those auctions. | Medium |
 | US22 | Delete Account | As an authenticated user, I want to be able to delete my account permanently so that I can create a brand new account using the same credentials or never use the website again. | Medium |
@@ -167,7 +167,7 @@ Table 4: User stories for the Authenticated User
 | US28 | View Auction Bidding History | As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise. | High |
 | US29 | Rate Seller | As a bidder, I want to be able to give a rating from 1 to 5 to a seller I've purchased something from, so that I can give my opinion on them. | Medium |
 | US30 | New bid on Participating Auction Notification | As a bidder, I want to get a notification when someone outbids me, so that I can get a chance to send another bid immediately. | Medium |
-| US31 | Participating Auction Ending Notification | As a bidder, I want to get a notification when an auction I'm participating in is 1 minute away from ending, so that I can keep up with it in the closing moments. | Medium |
+| US31 | Participating Auction Ending Notification | As a bidder, I want to get a notification when an auction I'm participating in is 30 minute away from ending, so that I can keep up with it in the closing moments. | Medium |
 | US32 | Participating Auction Ended Notification | As a bidder, I want to get a notification when an auction I'm participating in ends, so that I know the winning bid as soon as possible. | Medium |
 | US33 | Participating Auction Cancelled Notification | As a bidder, I want to get a notification when an auction I'm participating in is cancelled, so that I know exactly when that happens. | Medium |
 
@@ -190,10 +190,9 @@ Table 6: User stories for the Seller
 | US37 | Approve Auction | As a system manager, I want to be able to approve pending auctions, so that they can be ready to be bid on. | High |
 | US38 | Pause Auctions | As a system manager, I want to be able to stop an auction, so that I can delay the auction process in case of technical issues, guideline violations, or other necessary reasons. | Medium |
 | US39 | Resume Auctions | As an administrator, I want to be able to resume a previously paused auction, so that I can allow users to continue bidding. | Medium |
-| US40 | Close Auctions | As a system manager, I want to be able to close an auction, so that I can end the bidding process without declaring a winner before the auction reaches its intended end time. | Medium |
-| US41 | Disable Auctions | As a system manager, I want to be able to disable an auction, so that I can hide content that does not follow the guidelines. | Medium |
-| US42 | Ban/Unban User Accounts | As a system manager, I want to be able to ban and unban user accounts, so that I can keep the user base healthy and punish those that don't follow the guidelines. | Medium |
-| US43 | Manage Report System | As a system manager/administrator, I want to have the ability to manage the report system, including reviewing and responding to user and auction reports, so that I can take appropriate actions to address the reported issues. | Medium |
+| US40 | Disable Auctions | As a system manager, I want to be able to disable an auction, so that I can hide content that does not follow the guidelines. | Medium |
+| US41 | Ban/Unban User Accounts | As a system manager, I want to be able to ban and unban user accounts, so that I can keep the user base healthy and punish those that don't follow the guidelines. | Medium |
+| US42 | Manage Report System | As a system manager/administrator, I want to have the ability to manage the report system, including reviewing and responding to user and auction reports, so that I can take appropriate actions to address the reported issues. | Medium |
 
 Table 7: User stories for the System Manager
 
@@ -201,10 +200,10 @@ Table 7: User stories for the System Manager
 
 | Identifier | Name | Description | Priority |
 | --- | --- | --- | --- |
-| US44 | Manage User Accounts | As an administrator, I want to have the ability to manage users, including the ability to edit existing user profiles, create new accounts, search for certain users, and add system managers, so that I can have total control over the users. | High |
-| US45 | Delete User Accounts | As an administrator, I want to be able to delete user accounts, so that I can remove inactive or unauthorized users from the system completely. | Medium |
-| US46 | Manage Filter Categories | As an administrator, I want to be able to manage filter categories, so that I can add or edit categories when deemed necessary. | Low |
-| US47 | Access System Manager Activity Log | As an administrator, I want to access a system manager activity log, which includes records of all system manager's actions and the time they happened, so that I can investigate any irregularities or issues effectively. | Low |
+| US43 | Manage User Accounts | As an administrator, I want to have the ability to manage users, including the ability to edit existing user profiles, create new accounts, search for certain users, and add system managers, so that I can have total control over the users. | High |
+| US44 | Delete User Accounts | As an administrator, I want to be able to delete user accounts, so that I can remove inactive or unauthorized users from the system completely. | Medium |
+| US45 | Manage Filter Categories | As an administrator, I want to be able to manage filter categories, so that I can add or edit categories when deemed necessary. | Low |
+| US46 | Access System Manager Activity Log | As an administrator, I want to access a system manager activity log, which includes records of all system manager's actions and the time they happened, so that I can investigate any irregularities or issues effectively. | Low |
 
 
 Table 8: User stories for the Administrator
@@ -370,12 +369,17 @@ Changes made to the first submisson:
 
 - José Santos (Editor)
 
+### 26/10/2023
+1. Removed one user story that we found unnecessary
+2. Changed priority in one user story (US18 was medium)
+3. Changed description in US31
+
 ***
 
-GROUP0202, 24/10/2023
+GROUP0202, 26/10/2023
 
 * Daniel Gago, up202108791@edu.fe.up.pt 
-* Eduardo Oliveira, up202108843@edu.fe.up.pt
-* José Santos, up202108729@edu.fe.up.pt (Editor)
+* Eduardo Oliveira, up202108843@edu.fe.up.pt (Editor)
+* José Santos, up202108729@edu.fe.up.pt
 * Máximo Pereira, up202108887@edu.fe.up.pt
 

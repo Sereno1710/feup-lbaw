@@ -374,6 +374,7 @@ Changes made to the first submisson:
 2. Changed priority in one user story (US18 was medium)
 3. Changed description in US31
 
+- Eduardo Oliveira (Editor)
 ***
 
 GROUP0202, 26/10/2023

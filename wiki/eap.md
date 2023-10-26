@@ -8,11 +8,23 @@
 
 ### 1. Overview
 
-> Identify and overview the modules that will be part of the application.  
+> Identify and overview the modules that will be part of the application. 
+
+| Modules | Description |
+|---------|-------------|
+| Authentication and Individual Profile| Web resources for user authentication and individual profile administration. These encompass key functionalities such as user login/logout, registration, password recovery, and the ability to view and edit personal profile details. |
+| Works | Web resources associated with  |
 
 ### 2. Permissions
 
 > Define the permissions used by each module, necessary to access its data and features.  
+
+| Identifier | Name | Description |
+|------------|------|-------------|
+| VIS | Visitor | An unauthenticated user |
+| USR | User | An authenticated user |
+| SYS | System Manager | Manages the platform |
+| ADM | Admin | Administrates the platform |
 
 ### 3. OpenAPI Specification
 

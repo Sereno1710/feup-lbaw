@@ -199,7 +199,7 @@ To develop a well-designed database, it is crucial to have a clear understanding
 | --- | --- | --- | --- |
 | R01 | Users | 10k | 10 | 
 | R02 | SystemManager | 10 | 1 |
-| R03 | Admin | 1 | 1 |
+| R03 | Admin | 1 | 0 |
 | R04 | Auction | 1k | 1 |
 | R05 | AuctionWinner | 1k | 1 |
 | R06 | AuctionPhoto | 1k | 1 |
@@ -267,10 +267,10 @@ Full-text search must be provided for our system. User, Auction and category bas
 | **Index** | IDX04 |
 | --- | --- |
 | **Relation** | user |
-| **Attribute** | username |
+| **Attribute** | name, username |
 | **Type** | GIN |
 | **Clustering** | No |
-| **Justification** | To provide full-text search features to look for users based on matching usernames. The GIN index type is chosen because the indexed fields are not expected to change often. |
+| **Justification** | To provide full-text search features to look for users based on matching names and usernames. The GIN index type is chosen because the indexed fields are not expected to change often. |
 ```sql
 ALTER TABLE users
 ADD COLUMN tsvectors TSVECTOR;
@@ -279,13 +279,15 @@ CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
-            setweight(to_tsvector('english', NEW.username), 'B')
+            setweight(to_tsvector('english', NEW.username), 'B') ||
+            setweight(to_tsvector('english', NEW.name), 'A')
         );
     END IF;
     IF TG_OP = 'UPDATE' THEN
         IF NEW.username <> OLD.username THEN
             NEW.tsvectors = (
-                setweight(to_tsvector('english', NEW.username), 'B')
+                setweight(to_tsvector('english', NEW.username), 'B') ||
+                setweight(to_tsvector('english', NEW.name), 'A')
             );
         END IF;
     END IF;
@@ -303,10 +305,10 @@ CREATE INDEX search_user ON users USING GIN (tsvectors);
 | **Index**           | IDX05                                  |
 | ---                 | ---                                    |
 | **Relation**        | auction  |
-| **Attribute**       | name, category   |
+| **Attribute**       | name, category, description   |
 | **Type**            | GIN              |
 | **Clustering**      | No               |
-| **Justification**   | To provide full-text search features to look for auctions based on matching names and categories. The GIN index type is chosen because the indexed fields are not expected to change often.   |
+| **Justification**   | To provide full-text search features to look for auctions based on matching names, categories and descriptions. The GIN index type is chosen because the indexed fields are not expected to change often.   |
 ```sql
 ALTER TABLE Auction
 ADD COLUMN tsvectors TSVECTOR;
@@ -316,14 +318,16 @@ BEGIN
     IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
             setweight(to_tsvector('english', NEW.name), 'B') ||
-            setweight(to_tsvector('english', NEW.category::text), 'A')
+            setweight(to_tsvector('english', NEW.category::text), 'A') ||
+            setweight(to_tsvector('english', NEW.description), 'C')
         );
     END IF;
     IF TG_OP = 'UPDATE' THEN
         IF NEW.name <> OLD.name OR NEW.category <> OLD.category THEN
             NEW.tsvectors = (
                 setweight(to_tsvector('english', NEW.name), 'B') ||
-                setweight(to_tsvector('english', NEW.category::text), 'A')
+                setweight(to_tsvector('english', NEW.category::text), 'A') ||
+                setweight(to_tsvector('english', NEW.description), 'C')
             );
         END IF;
     END IF;
@@ -1949,12 +1953,18 @@ VALUES
 
 ## Revision history
 
-No changes have been made to the first submission yet.
+Changes made to the first submission:
+
+### 9/11/2023
+1. Changed admin estimation growth to 0
+2. Changed Full-Text Search indices(added search by name to user and added search by description to auction)
+
+- Eduardo Olveira (Editor)
 
 ***
 GROUP0202, 25/10/2023
 
-* Daniel Gago, up202108791@edu.fe.up.pt (Editor)
-* Eduardo Oliveira, up202108843@edu.fe.up.pt
+* Daniel Gago, up202108791@edu.fe.up.pt
+* Eduardo Oliveira, up202108843@edu.fe.up.pt (Editor)
 * José Santos, up202108729@edu.fe.up.pt 
 * Máximo Pereira, up202108887@edu.fe.up.pt

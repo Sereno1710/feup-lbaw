@@ -18,15 +18,15 @@ Figure 7: UML Class diagram
  
 Some more business rules:
 
-| Identifier | Description |
-| --- | --- |
-| BR09 | The auction winner is the user with the highest bid on the auction when it ends. |
-| BR10 | A user cannot bid in its own auction. |
-| BR11 | A user can only report an auction once. |
-| BR12 | A user cannot bid in an auction where he is the highest bid. |
-| BR13 | A user cannot follow an auction that he is already following. |
-| BR14 | A user will automatically follow an auction after bidding on an auction for the first time. |
-| BR15 | A user can only bid if he has enough money in his accounts |
+| Identifier | Description                                                                                 |
+|------------|---------------------------------------------------------------------------------------------|
+| BR09       | The auction winner is the user with the highest bid on the auction when it ends.            |
+| BR10       | A user cannot bid in its own auction.                                                       |
+| BR11       | A user can only report an auction once.                                                     |
+| BR12       | A user cannot bid in an auction where he is the highest bid.                                |
+| BR13       | A user cannot follow an auction that he is already following.                               |
+| BR14       | A user will automatically follow an auction after bidding on an auction for the first time. |
+| BR15       | A user can only bid if he has enough money in his accounts                                  |
 
 ## A5: Relational Schema, validation and schema refinement
 
@@ -37,22 +37,22 @@ It also represents the database structure, including all entities and relations.
 
 This section contains the relational schema that resulted from the UML Class Diagram. It shows all the atributes,domains,keys and integrity rules in case of need.
 
-| Relation reference | Relation Compact Notation |
-| --- | --- |
-| R01 | users (id **PK**, username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country, rating **CK** rating >= 0 && rating <= 5  **DF N**, **NN** image) |
-| R02 | SystemManager (id -> users(id) **PK**) |
-| R03 | Admin (id -> users(id) **PK**) |
-| R04 | Auction (id **PK**, name **NN**, description **NN**, initial_price **CK** initial_price > 0, price **CK** price >= initial_price, initial_time  **DF N**, end_time **DF N**, category **DF NN**, state **NN DF**, **FK** owner -> users(id), **FK** auction_winner -> users(id) **DF N**) |
-| R05 | AuctionWinner (**FK** user_id -> users(id) **PK**, **FK** auction_id ->  Auction(id) **PK**, rating **CK** (rating >= 0 && rating <= 5 ) **DF N**) |
-| R06 | AuctionPhoto (id **PK**, **FK** auction_id -> Auction(id), image **NN**) |
-| R07 | Bid (id **PK**, **FK** user_id -> users(id), **FK** auction_id ->  Auction(id), amount **NN** **CK** amount > 0, time **CK** time <= today) |
-| R08 | Report (**FK** user_id -> users(id) **PK**, **FK** auction_id ->  Auction(id) **PK**, description **NN**) |
-| R09 | follows (**FK** user_id -> users(id) **PK**, **FK** auction_id -> Auction(id) **PK**) |
-| R10 | Comment(id **PK**, **FK** user_id -> users(id) **PK**, **FK** auction_id -> Auction(id) **PK**, message **NN**, time **CK** time <= today) |
-| R11 | MetaInfo(name **PK**) |
-| R12 | MetaInfoValue(id **PK**, **FK** meta_info_name -> MetaInfo(name), value **NN**) |
-| R13 | AuctionMetaInfoValue(**FK** auction_id -> Auction(id) **PK**, **FK** meta_info_value_id -> MetaInfoValue(id) **PK**) |
-| R14 | Notification (id **PK**, notification_type **NN**, date **NN CK** date <= today, viewed **NN DF false**, **FK** receiver_id ->  users(id), **FK** bid_id -> Bid(id), **FK** auction_id -> Auction(id), **FK** comment_id -> Comment(id)) | 
+| Relation reference | Relation Compact Notation                                                                                                                                                                                                                                                                 |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R01                | users (id **PK**, username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country, rating **CK** rating >= 0 && rating <= 5  **DF N**, **NN** image)                                                 |
+| R02                | SystemManager (id -> users(id) **PK**)                                                                                                                                                                                                                                                    |
+| R03                | Admin (id -> users(id) **PK**)                                                                                                                                                                                                                                                            |
+| R04                | Auction (id **PK**, name **NN**, description **NN**, initial_price **CK** initial_price > 0, price **CK** price >= initial_price, initial_time  **DF N**, end_time **DF N**, category **DF NN**, state **NN DF**, **FK** owner -> users(id), **FK** auction_winner -> users(id) **DF N**) |
+| R05                | AuctionWinner (**FK** user_id -> users(id) **PK**, **FK** auction_id ->  Auction(id) **PK**, rating **CK** (rating >= 0 && rating <= 5 ) **DF N**)                                                                                                                                        |
+| R06                | AuctionPhoto (id **PK**, **FK** auction_id -> Auction(id), image **NN**)                                                                                                                                                                                                                  |
+| R07                | Bid (id **PK**, **FK** user_id -> users(id), **FK** auction_id ->  Auction(id), amount **NN** **CK** amount > 0, time **CK** time <= today)                                                                                                                                               |
+| R08                | Report (**FK** user_id -> users(id) **PK**, **FK** auction_id ->  Auction(id) **PK**, description **NN**)                                                                                                                                                                                 |
+| R09                | follows (**FK** user_id -> users(id) **PK**, **FK** auction_id -> Auction(id) **PK**)                                                                                                                                                                                                     |
+| R10                | Comment(id **PK**, **FK** user_id -> users(id) **PK**, **FK** auction_id -> Auction(id) **PK**, message **NN**, time **CK** time <= today)                                                                                                                                                |
+| R11                | MetaInfo(name **PK**)                                                                                                                                                                                                                                                                     |
+| R12                | MetaInfoValue(id **PK**, **FK** meta_info_name -> MetaInfo(name), value **NN**)                                                                                                                                                                                                           |
+| R13                | AuctionMetaInfoValue(**FK** auction_id -> Auction(id) **PK**, **FK** meta_info_value_id -> MetaInfoValue(id) **PK**)                                                                                                                                                                      |
+| R14                | Notification (id **PK**, notification_type **NN**, date **NN CK** date <= today, viewed **NN DF false**, **FK** receiver_id ->  users(id), **FK** bid_id -> Bid(id), **FK** auction_id -> Auction(id), **FK** comment_id -> Comment(id))                                                  | 
 
 Annotation:
 
@@ -80,69 +80,69 @@ Specification of aditional domains:
 
 Function dependencies identified as well as if it is in BCNF.
 
-| **TABLE R01** | users |
-| --- | --- |
-| **Keys** | { id }, { email }, { username }, { id, email }, { id, username}, { email, username}, { id, email, username } |
-| **Functional Dependencies** | |
-| FD0101 | id → { username, email, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD0102 | email → { id, username, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD0103 | username → { id, email, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD0104 | { email, username } → { id, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD0105 | { id, email } → { username, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD0106 | {id, username} → { email, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD107 | { id, email, username } → { password, balance, date_of_birth, street, city, zip_code, country, image, rating} |
+| **TABLE R01**               | users                                                                                                          |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | { id }, { email }, { username }, { id, email }, { id, username}, { email, username}, { id, email, username }   |
+| **Functional Dependencies** |                                                                                                                |
+| FD0101                      | id → { username, email, password, balance, date_of_birth, street, city, zip_code, country, image, rating }     |
+| FD0102                      | email → { id, username, password, balance, date_of_birth, street, city, zip_code, country, image, rating }     |
+| FD0103                      | username → { id, email, password, balance, date_of_birth, street, city, zip_code, country, image, rating }     |
+| FD0104                      | { email, username } → { id, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
+| FD0105                      | { id, email } → { username, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
+| FD0106                      | {id, username} → { email, password, balance, date_of_birth, street, city, zip_code, country, image, rating }   |
+| FD107                       | { id, email, username } → { password, balance, date_of_birth, street, city, zip_code, country, image, rating}  |
 
 | **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
-| **TABLE RO2** | SystemManager |
-| --- | --- |
-| **Keys** | { id } |
+| **TABLE RO2**               | SystemManager                                                 |
+|-----------------------------|---------------------------------------------------------------|
+| **Keys**                    | { id }                                                        |
 | **Functional Dependencies** |
-| FD0101 | none |
-| **NORMAL FORM** | BCNF because there is no attribute that is not a primary key. |
+| FD0101                      | none                                                          |
+| **NORMAL FORM**             | BCNF because there is no attribute that is not a primary key. |
 
-| **TABLE RO3** | Admin |
-| --- | --- |
-| **Keys** | { id } |
+| **TABLE RO3**               | Admin                                                          |
+|-----------------------------|----------------------------------------------------------------|
+| **Keys**                    | { id }                                                         |
 | **Functional Dependencies** |
-| FD0101 | none |
-| **NORMAL FORM** | BCNF because there is no attribute that is not a primary key.. |
+| FD0101                      | none                                                           |
+| **NORMAL FORM**             | BCNF because there is no attribute that is not a primary key.. |
 
-| **TABLE R04** | Auction |
-| --- | --- |
-| **Keys** | { id } |
-| **Functional Dependencies** | |
-| FD0401 | id → { name, description, initial_price, price, initial_time, end_time, category, state, owner } |
-| **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+| **TABLE R04**               | Auction                                                                                                                                                                                                                                                                                                 |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | { id }                                                                                                                                                                                                                                                                                                  |
+| **Functional Dependencies** |                                                                                                                                                                                                                                                                                                         |
+| FD0401                      | id → { name, description, initial_price, price, initial_time, end_time, category, state, owner }                                                                                                                                                                                                        |
+| **NORMAL FORM**             | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
-| **TABLE R05** | AuctionWinner |
-| --- | --- |
-| **Keys** | {user_id , auction_id}|
-| **Functional Dependencies** |    |
-| FD0501 | {user_id , auction_id} -> {rating}|
-|**NORMAL FORM**| BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+| **TABLE R05**               | AuctionWinner                                                                                                                                                                                                                                                                                           |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | {user_id , auction_id}                                                                                                                                                                                                                                                                                  |
+| **Functional Dependencies** |                                                                                                                                                                                                                                                                                                         |
+| FD0501                      | {user_id , auction_id} -> {rating}                                                                                                                                                                                                                                                                      |
+| **NORMAL FORM**             | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
 
-| **TABLE R06** | AuctionPhoto |
-| --- | --- |
-| **Keys** | { id } |
-| **Functional Dependencies** | |
-| FD0501 | id → { auction_id, image } |
-| **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+| **TABLE R06**               | AuctionPhoto                                                                                                                                                                                                                                                                                            |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | { id }                                                                                                                                                                                                                                                                                                  |
+| **Functional Dependencies** |                                                                                                                                                                                                                                                                                                         |
+| FD0501                      | id → { auction_id, image }                                                                                                                                                                                                                                                                              |
+| **NORMAL FORM**             | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
-| **TABLE R07** | Bid |
-| --- | --- |
-| **Keys** | { id } |
-| **Functional Dependencies** | |
-| FD0601 | id → { user_id, auction_id, amount, time } |
-| **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+| **TABLE R07**               | Bid                                                                                                                                                                                                                                                                                                     |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | { id }                                                                                                                                                                                                                                                                                                  |
+| **Functional Dependencies** |                                                                                                                                                                                                                                                                                                         |
+| FD0601                      | id → { user_id, auction_id, amount, time }                                                                                                                                                                                                                                                              |
+| **NORMAL FORM**             | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
-| **TABLE R08** | Report |
-| --- | --- |
-| **Keys** | { user_id, auction_id } |
-| **Functional Dependencies** | |
-| FD0701 | { user_id, auction_id } → { description } |
-| **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+| **TABLE R08**               | Report                                                                                                                                                                                                                                                                                                  |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | { user_id, auction_id }                                                                                                                                                                                                                                                                                 |
+| **Functional Dependencies** |                                                                                                                                                                                                                                                                                                         |
+| FD0701                      | { user_id, auction_id } → { description }                                                                                                                                                                                                                                                               |
+| **NORMAL FORM**             | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
 | **TABLE R09** | follows |
 | --- | --- |
@@ -195,22 +195,22 @@ This artifact delves into key strategies for optimizing databases. These encompa
  
 To develop a well-designed database, it is crucial to have a clear understanding of how tables will grow and how often they will be accessed. The following table presents these growth predictions:
 
-| **Relation reference** | **Relation Name** | **Order of magnitude**        | **Estimated growth** |
-| --- | --- | --- | --- |
-| R01 | Users | 10k | 10 | 
-| R02 | SystemManager | 10 | 1 |
-| R03 | Admin | 1 | 0 |
-| R04 | Auction | 1k | 1 |
-| R05 | AuctionWinner | 1k | 1 |
-| R06 | AuctionPhoto | 1k | 1 |
-| R07 | Bid | 10k | 10 |
-| R08 | Report | 100 | 1 |
-| R09 | Follows | 1k | 1 |
-| R10 | Comment | 10k | 10 |
-| R11 | MetaInfo | 1 | 0 |
-| R12 | MetaInfoValue | 100 | 0 | 
-| R13 | AuctionMetaInfoValue | 10k | 10 |
-| R14 | Notification | 100k | 1k |
+| **Relation reference** | **Relation Name**    | **Order of magnitude** | **Estimated growth** |
+|------------------------|----------------------|------------------------|----------------------|
+| R01                    | Users                | 10k                    | 10                   | 
+| R02                    | SystemManager        | 10                     | 1                    |
+| R03                    | Admin                | 1                      | 0                    |
+| R04                    | Auction              | 1k                     | 1                    |
+| R05                    | AuctionWinner        | 1k                     | 1                    |
+| R06                    | AuctionPhoto         | 1k                     | 1                    |
+| R07                    | Bid                  | 10k                    | 10                   |
+| R08                    | Report               | 100                    | 1                    |
+| R09                    | Follows              | 1k                     | 1                    |
+| R10                    | Comment              | 10k                    | 10                   |
+| R11                    | MetaInfo             | 1                      | 0                    |
+| R12                    | MetaInfoValue        | 100                    | 0                    | 
+| R13                    | AuctionMetaInfoValue | 10k                    | 10                   |
+| R14                    | Notification         | 100k                   | 1k                   |
 
 
 

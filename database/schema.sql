@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS Bid CASCADE;
 DROP TABLE IF EXISTS AuctionPhoto CASCADE;
 DROP TABLE IF EXISTS AuctionWinner CASCADE;
 DROP TABLE IF EXISTS Auction CASCADE;
+DROP TABLE IF EXISTS Transfer CASCADE;
 DROP TABLE IF EXISTS Admin CASCADE;
 DROP TABLE IF EXISTS SystemManager CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
@@ -17,6 +18,7 @@ DROP TABLE IF EXISTS Notification CASCADE;
 DROP TYPE IF EXISTS notification_type;
 DROP TYPE IF EXISTS category_type;
 DROP TYPE IF EXISTS auction_state;
+DROP TYPE IF EXISTS transfer_state;
 
 DROP FUNCTION IF EXISTS user_fullsearch_update;
 DROP FUNCTION IF EXISTS auction_search_update;
@@ -75,6 +77,13 @@ CREATE TYPE auction_state AS ENUM (
     'disabled'
 );
 
+
+CREATE TYPE transfer_state AS ENUM (
+    'pending',
+    'accepted',
+    'denied'
+);
+
 /*
 
 TABLES
@@ -85,6 +94,7 @@ TABLES
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(255) NOT NULL UNIQUE,
+  name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   balance MONEY NOT NULL DEFAULT 0,
@@ -109,6 +119,13 @@ CREATE TABLE Admin (
   PRIMARY KEY (user_id)
 );
 
+CREATE TABLE Transfer (
+  user_id INT REFERENCES users(id),
+  amount MONEY  CHECK (amount > 0),
+  state transfer_state DEFAULT 'pending'
+);
+
+
 -- Auction table
 CREATE TABLE Auction (
   id SERIAL PRIMARY KEY,
@@ -119,7 +136,7 @@ CREATE TABLE Auction (
   initial_time TIMESTAMP DEFAULT NULL,
   end_time TIMESTAMP DEFAULT NULL,
   category category_type DEFAULT NULL,
-  state auction_state NOT NULL,
+  state auction_state DEFAULT 'pending',
   owner INT REFERENCES users(id) ON UPDATE CASCADE
 );
 

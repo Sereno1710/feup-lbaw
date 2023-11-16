@@ -1,40 +1,34 @@
 openapi: 3.0.0
 
 info:
- version: '1.0'
- title: 'SoundSello Web API'
- description: 'Web Resources Specification (A7) for SoundSello'
+  version: '1.0'
+  title: 'SoundSello Web API'
+  description: 'Web Resources Specification (A7) for SoundSello'
 
 servers:
-- url: https://lbaw2322.lbaw.fe.up.pt
-  description: Production server
+  - url: https://lbaw2322.lbaw.fe.up.pt
+    description: Production server
 
 externalDocs:
- description: More info here.
- url: https://git.fe.up.pt/lbaw/lbaw2324/lbaw2322/wiki/eap
+  description: More info here.
+  url: https://git.fe.up.pt/lbaw/lbaw2324/lbaw2322/wiki/eap
 
 tags:
- - name: 'M01: Authentication'
- - name: 'M02: Users'
- - name: 'M03: Auctions'
- - name: 'M04: Search'
- - name: 'M05: Administration'
+  - name: 'M01: Authentication'
+  - name: 'M02: Users'
+  - name: 'M03: Auctions'
+  - name: 'M04: Search'
+  - name: 'M05: Administration'
 
 paths:
 
-############################################ AUTENTICATION ############################################
-
-######### LOGIN #########
-
   /login:
-
     get:
       operationId: R101
       summary: 'R101: Login Form'
       description: 'Provide login form. Access: VIS'
       tags:
         - 'M01: Authentication'
-
       responses:
         '200':
           description: 'OK. Show log-in UI'
@@ -45,12 +39,12 @@ paths:
       description: 'Processes the login form submission. Access: VIS'
       tags:
         - 'M01: Authentication'
-
       requestBody:
         required: true
         content:
-          application/x-www-form-urllencoded:
+          application/x-www-form-urlencoded:
             schema:
+              type: object
               properties:
                 email:
                   type: string
@@ -59,9 +53,8 @@ paths:
                   type: string
                   format: password
               required:
-                  - email
-                  - password
-
+                - email
+                - password
       responses:
         '302':
           description: 'Redirect after processing the new user information.'
@@ -77,17 +70,13 @@ paths:
                   description: 'You shall not pass. Redirect again to login form.'
                   value: '/login'
 
-######### LOGOUT #########
-
   /logout:
-
     get:
       operationId: R103
-      summary: 'R103 : Logout Action'
-      description: 'Logout the current logged user. Access: USR, SYS ,ADM'
+      summary: 'R103: Logout Action'
+      description: 'Logout the current logged user. Access: USR, SYS, ADM'
       tags:
         - 'M01: Authentication'
-
       responses:
         '302':
           description: 'Redirect after processing logout.'
@@ -100,28 +89,23 @@ paths:
                   description: 'Successful logout. Redirect to public feed.'
                   value: '/'
 
-######### REGISTER #########
-
   /register:
-
     get:
       operationId: R104
-      summary: 'R104 : Register Form'
+      summary: 'R104: Register Form'
       description: 'Register a new user. Access: VIS'
       tags:
         - 'M01: Authentication'
-
       responses:
         '200':
           description: 'Ok. Lets Sign-up.'
 
     post:
       operationId: R105
-      summary: 'R105 : Register Action'
+      summary: 'R105: Register Action'
       description: 'Processes the new user registration form submission. Access: VIS'
       tags:
         - 'M01: Authentication'
-
       requestBody:
         required: true
         content:
@@ -130,6 +114,8 @@ paths:
               type: object
               properties:
                 username:
+                  type: string
+                name:
                   type: string
                 email:
                   type: string
@@ -148,12 +134,11 @@ paths:
                   format: address
               required:
                 - username
+                - name
                 - email
                 - password
                 - confirm_password
-                - date_of_birth;
-## ask address----------------
-
+                - date_of_birth
       responses:
         '302':
           description: 'Redirect after processing the new user information.'
@@ -162,96 +147,71 @@ paths:
               schema:
                 type: string
               example:
-                  302Success:
-                    description: 'Successful registration. Redirect to home page.'
-                    value: '/home'
-                  302Failure:
-                    description: 'Failed registration. Redirect again to register form.'
-                    value: '/register'
-
-
-############################################ USERS ############################################
-
-######### PROFILE #########
+                302Success:
+                  description: 'Successful registration. Redirect to home page.'
+                  value: '/home'
+                302Failure:
+                  description: 'Failed registration. Redirect again to register form.'
+                  value: '/register'
 
   /user/{id}:
-
     get:
       operationId: R201
       summary: 'R201: View user profile'
-      description: 'Show the profile for an individual user, Access: CRE, ADM, SYS , VIS, CRE'
+      description: 'Show the profile for an individual user. Access: CRE, ADM, SYS, VIS, CRE'
       tags:
         - 'M02: Users'
-
       parameters:
         - in: path
           name: id
           schema:
             type: integer
-          required: True
-
+          required: true
       responses:
         '200':
           description: 'OK. Show the profile for an individual user'
 
-######### VIEW USER AUCTIONS #########
-
-/users/{id}/auctions:
-
-      get: 
-        operationId: R202
-        summary: 'R202: View users auctions'
-        description: 'Show auctions owned by a certain user, Access: CRE, SYS, ADM'
-        tags:
-          - 'M02: Users'
-
-        parameters:
-          -in: path
+  /users/{id}/auctions:
+    get:
+      operationId: R202
+      summary: 'R202: View users auctions'
+      description: 'Show auctions owned by a certain user. Access: CRE, SYS, ADM'
+      tags:
+        - 'M02: Users'
+      parameters:
+        - in: path
           name: id
           schema:
             type: integer
-          required: True
+          required: true
+      responses:
+        '200':
+          description: 'OK. Show list of auctions of an individual user'
 
-        responses:
-         '200':
-           description: 'OK. Show list of auctions of an individual user'
-
-######### VIEW USER FOLLOWED AUCTIONS #########
-
-/users/{id}/followed_auctions:
-
-      get: 
-        operationId: R203
-        summary: 'R203: View users follows auctions'
-        description: 'Show auctions followed by a certain user, Access: CRE, SYS, ADM'
-        tags:
-          - 'M02: Users'
-
-        parameters:
-          -in: path
+  /users/{id}/followed_auctions:
+    get:
+      operationId: R203
+      summary: 'R203: View users follows auctions'
+      description: 'Show auctions followed by a certain user. Access: CRE, SYS, ADM'
+      tags:
+        - 'M02: Users'
+      parameters:
+        - in: path
           name: id
           schema:
             type: integer
-          required: True
-
-        responses:
-         '200':
+          required: true
+      responses:
+        '200':
           description: 'OK. Show list of auctions followed by a user'
 
-
-############################################ AUCTIONS ############################################
-
-######### CREATE AUCTION #########
-
-/auction/create:
-
+  /auction/create:
     post:
       operationId: R301
       summary: 'R301: Create auction action'
       description: 'Auction post. Access: USR, SYS, ADM'
       tags:
         - 'M03: Auctions'
-
       requestBody:
         required: true
         content:
@@ -266,7 +226,7 @@ paths:
                   format: binary
                 description:
                   type: string
-                initial_price: 
+                initial_price:
                   type: integer
                 initial_date:
                   type: string
@@ -274,177 +234,158 @@ paths:
                 end_date:
                   type: string
                   format: date
-                
       responses:
         '201':
           description: 'Auction created successfully.'
           headers:
-            Location: 
+            Location:
               schema:
                 type: string
+              example: '/auctions/{id}'
 
-
-######### VIEW AUCTION DETAILS #########
-
-/auctions/{id}:
-  get:
-    operationId: R302
-    summary: 'R302: Retrieve details of an auction'
-    description: 'Retrieve details of a specific auction. Access: VIS, USR, CRE, SYS, ADM'
-    tags:
-      - 'M03: Auctions'
-    parameters:
-      - name: id
-        in: path
-        required: true
-        description: 'Unique identifier of the auction.'
-        schema:
-          type: string
-    responses:
-      '200':
-        description: 'Auction details retrieved successfully.'
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                description:
-                  type: string
-                initial_price:
-                  type: number
-                current_price:
-                  type: number
-                initial_date:
-                  type: string
-                end_date:
-                  type: string
-                owner:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                    username:
-                      type: string
-              ## ver categorias e estados
-      '404':
-        description: 'Not found. Auction does not exist.'
-
-  put:
-    operationId: R503
-    summary: 'R503: Change the state of an auction'
-    description: 'Change the state of a specific auction. Access: CRE, SYS, ADM'
-    tags:
-      - 'Auctions'
-    parameters:
-      - name: id
-        in: path
-        required: true
-        description: 'Unique identifier of the auction.'
-        schema:
-          type: string
-    requestBody:
-      required: true
-      content:
-        application/json:
+  /auctions/{id}:
+    get:
+      operationId: R302
+      summary: 'R302: Retrieve details of an auction'
+      description: 'Retrieve details of a specific auction. Access: VIS, USR, CRE, SYS, ADM'
+      tags:
+        - 'M03: Auctions'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 'Unique identifier of the auction.'
           schema:
-            type: object
-            properties:
-              auction_state:
-                type: string
-    responses:
-      '200':
-        description: 'Auction state changed successfully.'
+            type: string
+      responses:
+        '200':
+          description: 'Auction details retrieved successfully.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  initial_price:
+                    type: number
+                  current_price:
+                    type: number
+                  initial_date:
+                    type: string
+                  end_date:
+                    type: string
+                  owner:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      username:
+                        type: string
+                  ## ver categorias e estados
+        '404':
+          description: 'Not found. Auction does not exist.'
+
+    put:
+      operationId: R503
+      summary: 'R503: Change the state of an auction'
+      description: 'Change the state of a specific auction. Access: CRE, SYS, ADM'
+      tags:
+        - 'Auctions'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 'Unique identifier of the auction.'
+          schema:
+            type: string
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
               properties:
-                message:
+                auction_state:
                   type: string
-                new_state:
-                  type: string
-      '400':
-        description: 'Bad request. Invalid status change data.'
-      '401':
-        description: 'Unauthorized. User not authenticated.'
-      '403':
-        description: 'Forbidden. User does not have permission to change the status.'
-      '404':
-        description: 'Not found. Auction does not exist.'
-
-
-##### FOLLOW AUCTION #####
+      responses:
+        '200':
+          description: 'Auction state changed successfully.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  new_state:
+                    type: string
+        '400':
+          description: 'Bad request. Invalid status change data.'
+        '401':
+          description: 'Unauthorized. User not authenticated.'
+        '403':
+          description: 'Forbidden. User does not have permission to change the status.'
+        '404':
+          description: 'Not found. Auction does not exist.'
 
   /auctions/{id}/follow:
-
     post:
       operationId: R303
       summary: 'R303: Follows Auction.'
       description: 'Follows auction. Access: USR, SYS, ADM'
       tags:
         - 'M03: Auctions'
-
       requestBody:
-          required: true
-          content:
-            application/x-www-form-urlencoded:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                required:
-                  - id
-
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+              required:
+                - id
       responses:
         '200':
           description: 'Ok. You followed a user.'
         '403':
-          description: 'Forbiden action.'
-
-######### UNFOLLOW AUCTION #########
+          description: 'Forbidden action.'
 
   /auctions/{id}/unfollow:
-
     post:
       operationId: R304
       summary: 'R304: Unfollows auction.'
-      description: 'Unfollows auction. Access: USR, SYS , ADM'
+      description: 'Unfollows auction. Access: USR, SYS, ADM'
       tags:
         - 'M03: Auctions'
-
       requestBody:
-          required: true
-          content:
-            application/x-www-form-urlencoded:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                required:
-                  - id
-
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+              required:
+                - id
       responses:
         '200':
           description: 'Ok. You unfollowed an auction.'
         '403':
-          description: 'Forbiden action.'
-
-
-######### BID IN AUCTION #########
+          description: 'Forbidden action.'
 
   /auctions/{id}/bid:
-
     post:
       operationId: R305
       summary: 'R305: Place Bid'
       description: 'Place Bid. Access: USR, SYS, ADM'
       tags:
         - 'M03: Auctions'
-
       parameters:
         - name: auction_id
           in: path
@@ -452,7 +393,6 @@ paths:
           description: 'Unique identifier of the auction.'
           schema:
             type: string
-
       requestBody:
         required: true
         content:
@@ -475,17 +415,13 @@ paths:
                   new_highest_bid:
                     type: number
 
-######### COMMENT IN AUCTION #########
-
-/auctions/{id}/comment:
-
+  /auctions/{id}/comment:
     post:
       operationId: R306
       summary: 'R306: Add a comment to an auction'
-      description: 'Add a comment to a specific auction. Access: USR, CRE , SYS, ADM'
+      description: 'Add a comment to a specific auction. Access: USR, CRE, SYS, ADM'
       tags:
         - 'M03: Auctions'
-
       parameters:
         - name: id
           in: path
@@ -493,7 +429,6 @@ paths:
           description: 'Unique identifier of the auction.'
           schema:
             type: string
-
       requestBody:
         required: true
         content:
@@ -507,39 +442,34 @@ paths:
                   type: string
                 timestamp:
                   type: string
+        responses:
+          '201':
+            description: 'Comment added successfully.'
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    comment:
+                      type: string
+                    id:
+                      type: string
+                    date:
+                      type: string
+          '400':
+            description: 'Bad request. Invalid comment data.'
+          '401':
+            description: 'Unauthorized. User not authenticated.'
+          '403':
+            description: 'Forbidden. User does not have permission to add comments.'
 
-      responses:
-        '201':
-          description: 'Comment added successfully.'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  comment:
-                    type: string
-                  id:
-                    type: string
-                  date:
-                    type: string
-        '400':
-          description: 'Bad request. Invalid comment data.'
-        '401':
-          description: 'Unauthorized. User not authenticated.'
-        '403':
-          description: 'Forbidden. User does not have permission to add comments.'
-
-############################################ SEARCH ############################################
-
-/api/user:
-
+  /api/user:
     get:
       operationId: R401
-      summary: 'R401 : Search users'
-      description: 'Search users. Access: VIS, USR, SYS,ADM'
+      summary: 'R401: Search users'
+      description: 'Search users. Access: VIS, USR, SYS, ADM'
       tags:
         - 'M04: Search'
-
       parameters:
         - in: query
           name: search
@@ -547,23 +477,17 @@ paths:
           schema:
             type: string
           required: true
-
       responses:
         '200':
           description: 'Success. Returns a list of users information.'
 
-
-####### SEARCH AUCTION ######
-
-/api/auctions:
-
+  /api/auctions:
     get:
       operationId: R402
       summary: 'R402: Search for auctions'
       description: 'Search for auctions based on specific criteria. Access: AUTH'
       tags:
-        - 'Auctions'
-
+        - 'M03: Auctions'
       parameters:
         - in: query
           name: search
@@ -571,41 +495,32 @@ paths:
           schema:
             type: string
           required: true
-
       responses:
         '200':
           description: 'Success. Returns a list of auctions information'
 
-############################################ ADMINISTRATION ############################################
-
-######### ADMIN PAGE #########
-
-/admin:
-
+  /admin:
     get:
       operationId: R501
       summary: 'R501: View admin page'
-      description: 'Show admin page UI, Access: ADM'
+      description: 'Show admin page UI. Access: ADM'
       tags:
         - 'M05: Administration'
-
       responses:
         '200':
           description: 'OK. Show the admin page UI'
         '403':
           description: 'This action is unauthorized.'
 
-/admin/users:
-
-    get: 
+  /admin/users:
+    get:
       operationId: R502
-      summary: '502: View all users'
+      summary: 'R502: View all users'
       description: 'View all users'
       tags:
         - 'M05'
-
       responses:
-          '200':
-            description: 'OK. Show all users page UI'
-          '403':
-            description: 'This action is unauthorized.'
+        '200':
+          description: 'OK. Show all users page UI'
+        '403':
+          description: 'This action is unauthorized.'

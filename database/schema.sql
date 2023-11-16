@@ -5,8 +5,8 @@ DROP TABLE IF EXISTS Report CASCADE;
 DROP TABLE IF EXISTS Bid CASCADE;
 DROP TABLE IF EXISTS AuctionPhoto CASCADE;
 DROP TABLE IF EXISTS AuctionWinner CASCADE;
+DROP TABLE IF EXISTS Transfers CASCADE;
 DROP TABLE IF EXISTS Auction CASCADE;
-DROP TABLE IF EXISTS Transfer CASCADE;
 DROP TABLE IF EXISTS Admin CASCADE;
 DROP TABLE IF EXISTS SystemManager CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS Notification CASCADE;
 DROP TYPE IF EXISTS notification_type;
 DROP TYPE IF EXISTS category_type;
 DROP TYPE IF EXISTS auction_state;
+DROP TYPE IF EXISTS report_state;
 DROP TYPE IF EXISTS transfer_state;
 
 DROP FUNCTION IF EXISTS user_fullsearch_update;
@@ -77,6 +78,12 @@ CREATE TYPE auction_state AS ENUM (
     'disabled'
 );
 
+CREATE TYPE report_state as ENUM (
+    'listed',
+    'reviewed',
+    'unrelated'
+);
+
 
 CREATE TYPE transfer_state AS ENUM (
     'pending',
@@ -119,9 +126,9 @@ CREATE TABLE Admin (
   PRIMARY KEY (user_id)
 );
 
-CREATE TABLE Transfer (
+CREATE TABLE Transfers (
   user_id INT REFERENCES users(id),
-  amount MONEY  CHECK (amount > 0),
+  amount MONEY  CHECK (amount > 0.00),
   state transfer_state DEFAULT 'pending'
 );
 
@@ -169,6 +176,7 @@ CREATE TABLE Report (
   user_id INT REFERENCES users(id) ON UPDATE CASCADE NOT NULL,
   auction_id INT REFERENCES Auction(id) ON UPDATE CASCADE NOT NULL,
   description TEXT NOT NULL,
+  state report_state DEFAULT 'listed',
   PRIMARY KEY (user_id, auction_id)
 );
 
@@ -262,6 +270,8 @@ FOR EACH ROW
 EXECUTE FUNCTION user_fullsearch_update();
 CREATE INDEX search_user ON users USING GIN (tsvectors);
 
+--'
+
 -- Index (IDX05)
 ALTER TABLE Auction
 ADD COLUMN tsvectors TSVECTOR;
@@ -298,34 +308,29 @@ CREATE INDEX search_auction ON Auction USING GIN (tsvectors);
 TRIGGERS
 
 */
-
+--'
 -- Trigger (T01)
 CREATE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
 $$
-DECLARE anonymous_user_id INT;
+DECLARE 
+  anonymous_name VARCHAR(255);
+  anonymous_username VARCHAR(255);
 BEGIN
-  SELECT id INTO anonymous_user_id FROM users WHERE username = 'Anonymous';
-  IF anonymous_user_id IS NOT NULL THEN
-    UPDATE Comment
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE Report
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE Bid
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE follows
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE Auction
-    SET owner = anonymous_user_id
-    WHERE owner = OLD.id;
-    UPDATE AuctionWinner
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-  END IF;
+  SELECT username, name INTO anonymous_name, anonymous_username FROM users WHERE username = OLD.id;
+    UPDATE users
+    SET username = Concat('Anonymous', OLD.id),
+        name = 'Anonymous',
+        email = NULL,
+        password = NULL,
+        date_of_birth = NULL,
+        street = NULL,
+        city = NULL,
+        zip_code = NULL,
+        country = NULL,
+        rating = NULL,
+        image = NULL
+    WHERE id = OLD.id;
   DELETE FROM Admin
   WHERE user_id = OLD.id;
   DELETE FROM SystemManager
@@ -335,7 +340,7 @@ END;
 $$ 
 LANGUAGE plpgsql;
 CREATE TRIGGER anonymize_user_data_trigger
-BEFORE DELETE ON users
+BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION anonymize_user_data();
 

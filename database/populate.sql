@@ -221,17 +221,17 @@ VALUES
   (37, 10);
 
 
-INSERT INTO Report (user_id, auction_id, description)
+INSERT INTO Report (user_id, auction_id, description, state)
 VALUES 
-  (2, 1, 'Suspicious activity.'),
-  (3, 1, 'Possible fraud.'),
-  (4, 1, 'Unusual behavior.'),
-  (5, 1, 'Concerns about the auction.'),
-  (6, 1, 'Reporting irregularities.'),
-  (7, 1, 'Please investigate.'),
-  (8, 1, 'Alerting to potential issues.'),
-  (9, 1, 'Flagging this auction.'),
-  (10, 1, 'Noticed something strange.');
+  (2, 1, 'Suspicious activity.', 'pending'),
+  (3, 1, 'Possible fraud.', 'reviewed'),
+  (4, 1, 'Unusual behavior.', 'unrelated'),
+  (5, 1, 'Concerns about the auction.', 'unrelated'),
+  (6, 1, 'Reporting irregularities.', 'pending'),
+  (7, 1, 'Please investigate.', 'unrelated'),
+  (8, 1, 'Alerting to potential issues.', 'reviewed'),
+  (9, 1, 'Flagging this auction.', 'pending'),
+  (10, 1, 'Noticed something strange.', 'unrelated');
 
 INSERT INTO Comment (user_id, auction_id, message, time)
 VALUES

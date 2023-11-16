@@ -200,15 +200,15 @@ paths:
 
       get: 
         operationId: R202
-        summary: 'R202: View user's auctions'
+        summary: 'R202: View users auctions'
         description: 'Show auctions owned by a certain user, Access: CRE, SYS, ADM'
         tags:
           - 'M02: Users'
 
         parameters:
           -in: path
-           name: id
-           schema:
+          name: id
+          schema:
             type: integer
           required: True
 
@@ -222,28 +222,28 @@ paths:
 
       get: 
         operationId: R203
-        summary: 'R203: View user's follows auctions'
+        summary: 'R203: View users follows auctions'
         description: 'Show auctions followed by a certain user, Access: CRE, SYS, ADM'
         tags:
           - 'M02: Users'
 
         parameters:
           -in: path
-           name: id
-           schema:
+          name: id
+          schema:
             type: integer
           required: True
 
         responses:
          '200':
-           description: 'OK. Show list of auctions followed by a user'
+          description: 'OK. Show list of auctions followed by a user'
 
-           
+
 ############################################ AUCTIONS ############################################
 
 ######### CREATE AUCTION #########
 
-  /auction/create:
+/auction/create:
 
     post:
       operationId: R301
@@ -277,7 +277,7 @@ paths:
                 
       responses:
         '201':
-                    description: 'Auction created successfully.'
+          description: 'Auction created successfully.'
           headers:
             Location: 
               schema:
@@ -286,54 +286,93 @@ paths:
 
 ######### VIEW AUCTION DETAILS #########
 
-    /auctions/{id}:
-
-      get:
-        operationId: R302
-        summary: 'R302: Retrieve details of an auction'
-        description: 'Retrieve details of a specific auction. Access: VIS , USR, CRE , SYS , ADM'
-        tags:
-          - 'M03: Auctions'
-
-        parameters:
-          - name: id
-            in: path
-            required: true
-            description: 'Unique identifier of the auction.'
+/auctions/{id}:
+  get:
+    operationId: R302
+    summary: 'R302: Retrieve details of an auction'
+    description: 'Retrieve details of a specific auction. Access: VIS, USR, CRE, SYS, ADM'
+    tags:
+      - 'M03: Auctions'
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: 'Unique identifier of the auction.'
+        schema:
+          type: string
+    responses:
+      '200':
+        description: 'Auction details retrieved successfully.'
+        content:
+          application/json:
             schema:
-              type: string
-
-        responses:
-          '200':
-            description: 'Auction details retrieved successfully.'
-            content:
-              application/json:
-                schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                initial_price:
+                  type: number
+                current_price:
+                  type: number
+                initial_date:
+                  type: string
+                end_date:
+                  type: string
+                owner:
                   type: object
                   properties:
-                    title:
+                    id:
                       type: string
-                    description:
+                    username:
                       type: string
-                    initial_price:
-                      type: number  
-                    current_price:
-                      type: number
-                    initial_date:
-                      type: string
-                    end_date:
-                      type: string
-                    owner:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        username:
-                          type: string
-                  ## ver categorias e estados
-          '404':
-            description: 'Not found. Auction does not exist.'
+              ## ver categorias e estados
+      '404':
+        description: 'Not found. Auction does not exist.'
 
+  put:
+    operationId: R503
+    summary: 'R503: Change the state of an auction'
+    description: 'Change the state of a specific auction. Access: CRE, SYS, ADM'
+    tags:
+      - 'Auctions'
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: 'Unique identifier of the auction.'
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              auction_state:
+                type: string
+    responses:
+      '200':
+        description: 'Auction state changed successfully.'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                new_state:
+                  type: string
+      '400':
+        description: 'Bad request. Invalid status change data.'
+      '401':
+        description: 'Unauthorized. User not authenticated.'
+      '403':
+        description: 'Forbidden. User does not have permission to change the status.'
+      '404':
+        description: 'Not found. Auction does not exist.'
 
 
 ##### FOLLOW AUCTION #####
@@ -483,7 +522,6 @@ paths:
                     type: string
                   date:
                     type: string
-
         '400':
           description: 'Bad request. Invalid comment data.'
         '401':
@@ -491,11 +529,9 @@ paths:
         '403':
           description: 'Forbidden. User does not have permission to add comments.'
 
-
-
 ############################################ SEARCH ############################################
 
-  /api/user:
+/api/user:
 
     get:
       operationId: R401
@@ -514,7 +550,7 @@ paths:
 
       responses:
         '200':
-          description: 'Success. Returns a list of users information'
+          description: 'Success. Returns a list of users information.'
 
 
 ####### SEARCH AUCTION ######
@@ -544,7 +580,7 @@ paths:
 
 ######### ADMIN PAGE #########
 
-  /admin:
+/admin:
 
     get:
       operationId: R501
@@ -559,7 +595,7 @@ paths:
         '403':
           description: 'This action is unauthorized.'
 
-  /admin/users:
+/admin/users:
 
     get: 
       operationId: R502
@@ -568,57 +604,8 @@ paths:
       tags:
         - 'M05'
 
-        responses:
+      responses:
           '200':
             description: 'OK. Show all users page UI'
           '403':
             description: 'This action is unauthorized.'
-
-/auctions/{id}:
-
-    put:
-      operationId: R503
-      summary: 'R503: Change the state of an auction'
-      description: 'Change the state of a specific auction. Access: CRE, SYS , ADM'
-      tags:
-        - 'Auctions'
-
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: 'Unique identifier of the auction.'
-          schema:
-            type: string
-
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                auction_state:
-                  type: string
-
-      responses:
-        '200':
-          description: 'Auction state changed successfully.'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  new_state:
-                    type: string
-        '400':
-          description: 'Bad request. Invalid status change data.'
-        '401':
-          description: 'Unauthorized. User not authenticated.'
-        '403':
-          description: 'Forbidden. User does not have permission to change the status.'
-        '404':
-          description: 'Not found. Auction does not exist.'
-

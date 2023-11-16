@@ -26,19 +26,19 @@ paths:
     get:
       operationId: R101
       summary: 'R101: Login Form'
-      description: 'Provide login form. Access: VIS'
+      description: 'Provide login form. Access: PUB'
       tags:
-        - 'M01: Authentication'
+        - 'M01: Authentication and Individual Profile'
       responses:
         '200':
-          description: 'OK. Show log-in UI'
-
+          description: 'Ok. Show log-in UI'
     post:
       operationId: R102
       summary: 'R102: Login Action'
-      description: 'Processes the login form submission. Access: VIS'
+      description: 'Processes the login form submission. Access: PUB'
       tags:
-        - 'M01: Authentication'
+        - 'M01: Authentication and Individual Profile'
+ 
       requestBody:
         required: true
         content:
@@ -46,37 +46,45 @@ paths:
             schema:
               type: object
               properties:
-                email:
+                username:    # <!--- form field name
                   type: string
-                  format: email
-                password:
+                name:   # <!--- form field name
+                  type: string  
+                email:          # <!--- form field name
                   type: string
-                  format: password
+                password:    # <!--- form field name
+                  type: string
+                date_of_birth:    # <!--- form field name
+                  type: string
               required:
+                - username
+                - name
                 - email
                 - password
+                - date_of_birth
       responses:
         '302':
-          description: 'Redirect after processing the new user information.'
+          description: 'Redirect after processing the login credentials.'
           headers:
             Location:
               schema:
                 type: string
               examples:
                 302Success:
-                  description: 'OK. You are in. Redirect to homepage.'
-                  value: '/home'
-                302Failure:
-                  description: 'You shall not pass. Redirect again to login form.'
+                  description: 'Successful authentication. Redirect to user profile.'
+                  value: '/users/{id}'
+                302Error:
+                  description: 'Failed authentication. Redirect to login form.'
                   value: '/login'
-
+ 
   /logout:
-    get:
+
+    post:
       operationId: R103
       summary: 'R103: Logout Action'
-      description: 'Logout the current logged user. Access: USR, SYS, ADM'
+      description: 'Logout the current authenticated used. Access: USR, ADM'
       tags:
-        - 'M01: Authentication'
+        - 'M01: Authentication and Individual Profile'
       responses:
         '302':
           description: 'Redirect after processing logout.'
@@ -86,26 +94,27 @@ paths:
                 type: string
               examples:
                 302Success:
-                  description: 'Successful logout. Redirect to public feed.'
-                  value: '/'
+                  description: 'Successful logout. Redirect to login form.'
+                  value: '/login'
 
   /register:
     get:
       operationId: R104
       summary: 'R104: Register Form'
-      description: 'Register a new user. Access: VIS'
+      description: 'Provide new user registration form. Access: PUB'
       tags:
-        - 'M01: Authentication'
+        - 'M01: Authentication and Individual Profile'
       responses:
         '200':
-          description: 'Ok. Lets Sign-up.'
+          description: 'Ok. Show sign-up UI'
 
     post:
       operationId: R105
       summary: 'R105: Register Action'
-      description: 'Processes the new user registration form submission. Access: VIS'
+      description: 'Processes the new user registration form submission. Access: PUB'
       tags:
-        - 'M01: Authentication'
+        - 'M01: Authentication and Individual Profile'
+
       requestBody:
         required: true
         content:
@@ -113,29 +122,17 @@ paths:
             schema:
               type: object
               properties:
-                username:
-                  type: string
                 name:
                   type: string
                 email:
                   type: string
-                  format: email
-                password:
+                picture:
                   type: string
-                  format: password
-                confirm_password:
-                  type: string
-                  format: password
-                date_of_birth:
-                  type: string
-                  format: date
+                  format: binary
               required:
-                - username
-                - name
                 - email
                 - password
-                - confirm_password
-                - date_of_birth
+
       responses:
         '302':
           description: 'Redirect after processing the new user information.'
@@ -143,11 +140,31 @@ paths:
             Location:
               schema:
                 type: string
-              example:
+              examples:
                 302Success:
-                  description: 'Successful registration. Redirect to home page.'
-                  value: '/home'
+                  description: 'Successful authentication. Redirect to user profile.'
+                  value: '/users/{id}'
                 302Failure:
-                  description: 'Failed registration. Redirect again to register form.'
-                  value: '/register'
+                  description: 'Failed authentication. Redirect to login form.'
+                  value: '/login'
+
+  /users/{id}:
+    get:
+      operationId: R106
+      summary: 'R106: View user profile'
+      description: 'Show the individual user profile. Access: USR'
+      tags:
+        - 'M01: Authentication and Individual Profile'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        '200':
+          description: 'Ok. Show view profile UI'
+
 

@@ -24,7 +24,6 @@
             <div class="featured-auctions-container">
         <div class="featured-auctions-title">Featured Auctions</div>
         <div class="featured-auctions-grid">
-            <!-- Featured Auctions (ocuparão a linha completa) -->
             <div class="auction-card">
                 <h4><a href="{{ url('/auction/1') }}">Auction Title 1</a></h4>
                 <img src="path/to/auction_image_1.jpg" alt="Auction Image 1">

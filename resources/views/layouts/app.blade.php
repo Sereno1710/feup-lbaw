@@ -2,6 +2,7 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
     <link href="{{ asset('css/layout.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/profile.css') }}" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -10,6 +11,14 @@
             <div class="header-buttons">
                 <a href="{{ url('/auctions') }}" class="button">View Auctions</a>
                 @if (Auth::check())
+                    <a href="{{ url('/deposit-money') }}" class="button">Deposit Money</a>
+                    <a href="{{ url('/submit-auction') }}" class="button">Submit Auction</a>
+                    <div class="user-info">
+                        <span class="username">{{ Auth::user()->name }}</span>
+                        <span class="user-balance">${{ Auth::user()->balance }}</span> 
+                        <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
+                    </div>
+                    <a href="{{ url('/profile') }}" class="button">Profile</a>
                     <a href="{{ url('/logout') }}" class="button">Logout</a>
                 @else
                     <a href="{{ url('/login') }}" class="button">Sign In</a>

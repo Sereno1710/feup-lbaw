@@ -157,3 +157,51 @@ footer {
 .auction-card p {
     color: #ccc;
 }
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40vh; 
+}
+
+.auth-form {
+    max-width: 300px; 
+    width: 100%;
+    text-align: center;
+    padding: 20px; 
+    border-radius: 10px; 
+    background-color: #fff; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 10px; 
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px; 
+    box-sizing: border-box; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+}
+
+.auth-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.auth-form a {
+    display: block;
+    margin-top: 10px; /* Adiciona espaço entre o botão e o link */
+    text-decoration: none;
+    color: #333;
+}

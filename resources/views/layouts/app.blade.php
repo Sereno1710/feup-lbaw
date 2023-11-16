@@ -1,36 +1,44 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!-- CSRF Token -->
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <title>{{ config('app.name', 'Laravel') }}</title>
-
-        <!-- Styles -->
-        <link href="{{ url('css/milligram.min.css') }}" rel="stylesheet">
-        <link href="{{ url('css/app.css') }}" rel="stylesheet">
-        <script type="text/javascript">
-            // Fix for Firefox autofocus CSS bug
-            // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
-        </script>
-        <script type="text/javascript" src={{ url('js/app.js') }} defer>
-        </script>
-    </head>
-    <body>
-        <main>
-            <header>
-                <h1><a href="{{ url('/cards') }}">Thingy!</a></h1>
+<head>
+    <link href="{{ asset('css/layout.css') }}" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1><a href="{{ url('/home') }}">SoundSello</a></h1>
+            <div class="header-buttons">
+                <a href="{{ url('/auctions') }}" class="button">View Auctions</a>
                 @if (Auth::check())
-                    <a class="button" href="{{ url('/logout') }}"> Logout </a> <span>{{ Auth::user()->name }}</span>
+                    <a href="{{ url('/logout') }}" class="button">Logout</a>
+                @else
+                    <a href="{{ url('/login') }}" class="button">Sign In</a>
+                    <a href="{{ url('/register') }}" class="button">Sign Up</a>
                 @endif
-            </header>
-            <section id="content">
-                @yield('content')
-            </section>
-        </main>
-    </body>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section id="content">
+            @yield('content')
+        </section>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <p class="footer-brand">SoundSello</p>
+                <ul>
+                    <li><a href="{{ url('/about-us') }}">About Us</a></li>
+                    <li><a href="{{ url('/faq') }}">FAQ</a></li>
+                    <li><a href="{{ url('/contacts') }}">Contacts</a></li>
+                    <li><a href="{{ url('/terms-of-use') }}">Terms of Use</a></li>
+                    <li><a href="{{ url('/privacy-policy') }}">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-right">
+                <p>&copy; 2023</p>
+            </div>
+        </div>
+    </footer>
+</body>
 </html>

@@ -199,7 +199,20 @@ footer {
 
 .auth-form a {
     display: block;
-    margin-top: 10px; /* Adiciona espaço entre o botão e o link */
+    margin-top: 10px;
     text-decoration: none;
     color: #333;
 }
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Alinha os itens à direita */
+    margin-bottom: 10px;
+}
+
+.remember-me input[type="checkbox"] {
+    margin-left: 10px; 
+}
+
+

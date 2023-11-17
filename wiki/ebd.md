@@ -18,15 +18,15 @@ Figure 7: UML Class diagram
  
 Some more business rules:
 
-| Identifier | Description |
-| --- | --- |
-| BR09 | The auction winner is the user with the highest bid on the auction when it ends. |
-| BR10 | A user cannot bid in its own auction. |
-| BR11 | A user can only report an auction once. |
-| BR12 | A user cannot bid in an auction where he is the highest bid. |
-| BR13 | A user cannot follow an auction that he is already following. |
-| BR14 | A user will automatically follow an auction after bidding on an auction for the first time. |
-| BR15 | A user can only bid if he has enough money in his accounts |
+| Identifier | Description                                                                                 |
+|------------|---------------------------------------------------------------------------------------------|
+| BR09       | The auction winner is the user with the highest bid on the auction when it ends.            |
+| BR10       | A user cannot bid in its own auction.                                                       |
+| BR11       | A user can only report an auction once.                                                     |
+| BR12       | A user cannot bid in an auction where he is the highest bid.                                |
+| BR13       | A user cannot follow an auction that he is already following.                               |
+| BR14       | A user will automatically follow an auction after bidding on an auction for the first time. |
+| BR15       | A user can only bid if he has enough money in his accounts                                  |
 
 ## A5: Relational Schema, validation and schema refinement
 
@@ -37,22 +37,23 @@ It also represents the database structure, including all entities and relations.
 
 This section contains the relational schema that resulted from the UML Class Diagram. It shows all the atributes,domains,keys and integrity rules in case of need.
 
-| Relation reference | Relation Compact Notation |
-| --- | --- |
-| R01 | users (id **PK**, username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country, rating **CK** rating >= 0 && rating <= 5  **DF N**, **NN** image) |
-| R02 | SystemManager (id -> users(id) **PK**) |
-| R03 | Admin (id -> users(id) **PK**) |
-| R04 | Auction (id **PK**, name **NN**, description **NN**, initial_price **CK** initial_price > 0, price **CK** price >= initial_price, initial_time  **DF N**, end_time **DF N**, category **DF NN**, state **NN DF**, **FK** owner -> users(id), **FK** auction_winner -> users(id) **DF N**) |
-| R05 | AuctionWinner (**FK** user_id -> users(id) **PK**, **FK** auction_id ->  Auction(id) **PK**, rating **CK** (rating >= 0 && rating <= 5 ) **DF N**) |
-| R06 | AuctionPhoto (id **PK**, **FK** auction_id -> Auction(id), image **NN**) |
-| R07 | Bid (id **PK**, **FK** user_id -> users(id), **FK** auction_id ->  Auction(id), amount **NN** **CK** amount > 0, time **CK** time <= today) |
-| R08 | Report (**FK** user_id -> users(id) **PK**, **FK** auction_id ->  Auction(id) **PK**, description **NN**) |
-| R09 | follows (**FK** user_id -> users(id) **PK**, **FK** auction_id -> Auction(id) **PK**) |
-| R10 | Comment(id **PK**, **FK** user_id -> users(id) **PK**, **FK** auction_id -> Auction(id) **PK**, message **NN**, time **CK** time <= today) |
-| R11 | MetaInfo(name **PK**) |
-| R12 | MetaInfoValue(id **PK**, **FK** meta_info_name -> MetaInfo(name), value **NN**) |
-| R13 | AuctionMetaInfoValue(**FK** auction_id -> Auction(id) **PK**, **FK** meta_info_value_id -> MetaInfoValue(id) **PK**) |
-| R14 | Notification (id **PK**, notification_type **NN**, date **NN CK** date <= today, viewed **NN DF false**, **FK** receiver_id ->  users(id), **FK** bid_id -> Bid(id), **FK** auction_id -> Auction(id), **FK** comment_id -> Comment(id)) | 
+| Relation reference | Relation Compact Notation                                                                                                                                                                                                                                                                 |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R01                | users (id **PK**,name **NN** ,username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country, rating **CK** rating >= 0 && rating <= 5  **DF N**, is_anonymizing **DF** false,**NN** image)                                                 |
+| R02                | SystemManager (id -> users(id) **PK**)                                                                                                                                                                                                                    |
+| R03                | Admin (id -> users(id) **PK**)              |                                               
+| R04                | moneys (id **PK**,**FK** user_id(id) **PK**, amount **CK** (amount > 0), type **NN**, state **CK** transfer_state)                          |
+| R05                | Auction (id **PK**, name **NN**, description **NN**, initial_price **CK** initial_price > 0, price **CK** price >= initial_price, initial_time  **DF N**, end_time **DF N**, category **DF NN**, state **CK** auction_state, **FK** owner -> users(id), **FK** auction_winner -> users(id) **DF N**) |
+| R06               | AuctionWinner (**FK** user_id -> users(id) **PK**, **FK** auction_id ->  Auction(id) **PK**, rating **CK** (rating >= 0 && rating <= 5 ) **DF N**)                                                                                                                                        |
+| R07               | AuctionPhoto (id **PK**, **FK** auction_id -> Auction(id), image **NN**)                                                                                                                                                                                                                  |
+| R08                | Bid (id **PK**, **FK** user_id -> users(id), **FK** auction_id ->  Auction(id), amount **NN** **CK** amount > 0, time **CK** time <= today)                                                                                                                                               |
+| R09                | Report (**FK** user_id -> users(id) **PK**,**FK** auction_id ->  Auction(id) **PK**, description **NN**, state **CK** report_state )                                                                                                                                                                                 |
+| R10                | follows (**FK** user_id -> users(id) **PK**, **FK** auction_id -> Auction(id) **PK**)                                                                                                                                                                                                     |
+| R11                | Comment(id **PK**, **FK** user_id -> users(id) **PK**, **FK** auction_id -> Auction(id) **PK**, message **NN**, time **CK** time <= today)                                                                                                                                                |
+| R12                | MetaInfo(name **PK**)                                                                                                                                                                                                                                                                     |
+| R13                | MetaInfoValue(id **PK**, **FK** meta_info_name -> MetaInfo(name), value **NN**)                                                                                                                                                                                                           |
+| R14                | AuctionMetaInfoValue(**FK** auction_id -> Auction(id) **PK**, **FK** meta_info_value_id -> MetaInfoValue(id) **PK**)                                                                                                                                                                      |
+| R15                | Notification (id **PK**, notification_type **NN**, date **NN CK** date <= today, viewed **NN DF false**, **FK** receiver_id ->  users(id), **FK** bid_id -> Bid(id), **FK** auction_id -> Auction(id), **FK** comment_id -> Comment(id))                                                  | 
 
 Annotation:
 
@@ -74,116 +75,125 @@ Specification of aditional domains:
 | notification | ENUM ('auction_comment', 'auction_bid', 'user_upgrade', 'user_downgrade', 'auction_paused', 'auction_finished', 'auction_approved', 'auction_denied', 'auction_resumed') |
 | auction_state | ENUM ('pending', 'active', 'finished', 'paused', 'approved', 'denied','disabled') |
 | category_type | ENUM ('strings', 'woodwinds', 'bass', 'percussion') |
+| transfer_state | ENUM ('pending', 'approved', 'denied') |
+| report_state | ENUM ('listed', 'reviewed', 'unrelated')|
 
 
 ### 3. Schema validation
 
 Function dependencies identified as well as if it is in BCNF.
 
-| **TABLE R01** | users |
-| --- | --- |
-| **Keys** | { id }, { email }, { username }, { id, email }, { id, username}, { email, username}, { id, email, username } |
-| **Functional Dependencies** | |
-| FD0101 | id → { username, email, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD0102 | email → { id, username, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD0103 | username → { id, email, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD0104 | { email, username } → { id, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD0105 | { id, email } → { username, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD0106 | {id, username} → { email, password, balance, date_of_birth, street, city, zip_code, country, image, rating } |
-| FD107 | { id, email, username } → { password, balance, date_of_birth, street, city, zip_code, country, image, rating} |
-
+| **TABLE R01**               | users                                                                                                          |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | { id }, { email }, { username }, { id, email }, { id, username}, { email, username}, { id, email, username }   |
+| **Functional Dependencies** |                                                                                                                |
+| FD0101                      | id → { username,name, email, password, balance, date_of_birth, street, city, zip_code, country, image,is_anonymizing, rating }     |
+| FD0102                      | email → { id, username,name, password, balance, date_of_birth, street, city, zip_code, country, image, rating }     |
+| FD0103                      | username → { id,name, email, password, balance, date_of_birth, street, city, zip_code, country, image, is_anonymizing, rating }     |
+| FD0104                      | { email, username } → { id, name,password, balance, date_of_birth, street, city, zip_code, country, image,is_anonymizing, rating } |
+| FD0105                      | { id, email } → { username, name,password, balance, date_of_birth, street, city, zip_code, country, image,is_anonymizing, rating } |
+| FD0106                      | {id, username} → { name,email, password, balance, date_of_birth, street, city, zip_code, country, image, is_anonymizing, rating }   |
+| FD107                       | { id, email, username } → {name, password, balance, date_of_birth, street, city, zip_code, country, image,is_anonymizing, rating}  |
 | **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
-| **TABLE RO2** | SystemManager |
-| --- | --- |
-| **Keys** | { id } |
+| **TABLE RO2**               | SystemManager                                                 |
+|-----------------------------|---------------------------------------------------------------|
+| **Keys**                    | { id }                                                        |
 | **Functional Dependencies** |
-| FD0101 | none |
-| **NORMAL FORM** | BCNF because there is no attribute that is not a primary key. |
+| FD0201                      | none                                                          |
+| **NORMAL FORM**             | BCNF because there is no attribute that is not a primary key. |
 
-| **TABLE RO3** | Admin |
-| --- | --- |
-| **Keys** | { id } |
+| **TABLE RO3**               | Admin                                                          |
+|-----------------------------|----------------------------------------------------------------|
+| **Keys**                    | { id }                                                         |
 | **Functional Dependencies** |
-| FD0101 | none |
-| **NORMAL FORM** | BCNF because there is no attribute that is not a primary key.. |
-
-| **TABLE R04** | Auction |
-| --- | --- |
-| **Keys** | { id } |
-| **Functional Dependencies** | |
-| FD0401 | id → { name, description, initial_price, price, initial_time, end_time, category, state, owner } |
-| **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
-
-| **TABLE R05** | AuctionWinner |
-| --- | --- |
-| **Keys** | {user_id , auction_id}|
-| **Functional Dependencies** |    |
-| FD0501 | {user_id , auction_id} -> {rating}|
-|**NORMAL FORM**| BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+| FD0301                      | none                                                           |
+| **NORMAL FORM**             | BCNF because there is no attribute that is not a primary key.. |
 
 
-| **TABLE R06** | AuctionPhoto |
-| --- | --- |
-| **Keys** | { id } |
-| **Functional Dependencies** | |
-| FD0501 | id → { auction_id, image } |
-| **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+| **TABLE R04** | moneys | 
+|-----------------------------|------------|
+| **Keys** | {id} |
+| **Functional Dependencies**| |
+| FD401 |  id -> {user_id, amount, type, state}|
+|**Normal Form**| BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF.  |
 
-| **TABLE R07** | Bid |
-| --- | --- |
-| **Keys** | { id } |
-| **Functional Dependencies** | |
-| FD0601 | id → { user_id, auction_id, amount, time } |
-| **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+| **TABLE R05**               | Auction                                                                    |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | { id }  |                      |
+| **Functional Dependencies** |                                                             |
+| FD0501                      | id → { name, description, initial_price, price, initial_time, end_time, category, state, owner }                                                                                                                                                                                                        |
+| **NORMAL FORM**             | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
-| **TABLE R08** | Report |
+| **TABLE R06**               | AuctionWinner                                                      |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | {user_id , auction_id}        |
+| **Functional Dependencies** |                                                    |
+| FD0601                      | {user_id , auction_id} -> {rating}                                                    |
+| **NORMAL FORM**             | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+
+
+| **TABLE R07**               | AuctionPhoto        |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | { id }                                                                                                                                                                                                                                                                                                  |
+| **Functional Dependencies** |                                                                                                                                                                                                                                                                                                         |
+| FD0701                      | id → { auction_id, image }                                                                                                                                                                                                                                                                              |
+| **NORMAL FORM**             | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+
+| **TABLE R08**               | Bid                                                                                                                                                                                                                                                                                                     |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | { id }                                                                                                                                                                                                                                                                                                  |
+| **Functional Dependencies** |                                                                                                                                                                                                                                                                                                         |
+| FD0801                      | id → { user_id, auction_id, amount, time }                                                                                                                                                                                                                                                              |
+| **NORMAL FORM**             | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+
+| **TABLE R09**               | Report                                                                                                                                                                                                                                                                                                  |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keys**                    | { user_id, auction_id }                                                                                                                                                                                                                                                                                 |
+| **Functional Dependencies** |                                                                                                                                                                                                                                                                                                         |
+| FD0901                      | { user_id, auction_id } → { description }                                                                                                                                                                                                                                                               |
+| **NORMAL FORM**             | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
+
+| **TABLE R10** | follows |
 | --- | --- |
 | **Keys** | { user_id, auction_id } |
 | **Functional Dependencies** | |
-| FD0701 | { user_id, auction_id } → { description } |
-| **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
-
-| **TABLE R09** | follows |
-| --- | --- |
-| **Keys** | { user_id, auction_id } |
-| **Functional Dependencies** | |
-| FD0801 | { user_id, auction_id } → {} |
+| FD1001 | { user_id, auction_id } → {} |
 | **NORMAL FORM** | BCNF because there is no attribute that is not a primary key. |
 
-| **TABLE R10** | Comment |
+| **TABLE R11** | Comment |
 | --- | --- |
 | **Keys** | { id, user_id, auction_id } |
 | **Functional Dependencies** | |
-| FD0901 | { id, user_id, auction_id } → { message, time } |
+| FD1101 | { id, user_id, auction_id } → { message, time } |
 | **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
-| **TABLE R11** | MetaInfo |
+| **TABLE R12** | MetaInfo |
 | --- | --- |
 | **Keys** | { name } |
 | **Functional Dependencies** | |
-| FD1001 | { name } → {} |
+| FD1201 | { name } → {} |
 | **NORMAL FORM** | BCNF because there is no attribute that is not a primary key. |
 
-| **TABLE R12** | MetaInfoValue |
+| **TABLE R13** | MetaInfoValue |
 | --- | --- |
 | **Keys** | { id } |
 | **Functional Dependencies** | |
-| FD1101 | id → { meta_info_name, value } |
+| FD1301 | id → { meta_info_name, value } |
 | **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
-| **TABLE R13** | AuctionMetaInfoValue |
+| **TABLE R14** | AuctionMetaInfoValue |
 | --- | --- |
 | **Keys** | { auction_id, meta_info_value_id } |
 | **Functional Dependencies** | |
-| FD1201 | { auction_id, meta_info_value_id } → {} |
+| FD1401 | { auction_id, meta_info_value_id } → {} |
 | **NORMAL FORM** | BCNF because there is no attribute that is not a primary key. |
 
-| **TABLE R14** | Notification |
+| **TABLE R15** | Notification |
 | --- | --- |
 | **Keys** | { id } |
 | **Functional Dependencies** | |
-| FD1301 | id → { date, viewed, receiver_id, bid_id, auction_id, comment_id } |
+| FD1501 | id → { date, viewed, receiver_id, bid_id, auction_id, comment_id } |
 | **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
 
@@ -195,22 +205,23 @@ This artifact delves into key strategies for optimizing databases. These encompa
  
 To develop a well-designed database, it is crucial to have a clear understanding of how tables will grow and how often they will be accessed. The following table presents these growth predictions:
 
-| **Relation reference** | **Relation Name** | **Order of magnitude**        | **Estimated growth** |
-| --- | --- | --- | --- |
-| R01 | Users | 10k | 10 | 
-| R02 | SystemManager | 10 | 1 |
-| R03 | Admin | 1 | 0 |
-| R04 | Auction | 1k | 1 |
-| R05 | AuctionWinner | 1k | 1 |
-| R06 | AuctionPhoto | 1k | 1 |
-| R07 | Bid | 10k | 10 |
-| R08 | Report | 100 | 1 |
-| R09 | Follows | 1k | 1 |
-| R10 | Comment | 10k | 10 |
-| R11 | MetaInfo | 1 | 0 |
-| R12 | MetaInfoValue | 100 | 0 | 
-| R13 | AuctionMetaInfoValue | 10k | 10 |
-| R14 | Notification | 100k | 1k |
+| **Relation reference** | **Relation Name**    | **Order of magnitude** | **Estimated growth** |
+|------------------------|----------------------|------------------------|----------------------|
+| R01                    | Users                | 10k                    | 10                   | 
+| R02                    | SystemManager        | 10                     | 1                    |
+| R03                    | Admin                | 1                      | 0                    |
+| R04 | Transfer | 1k | 1|
+| R05                    | Auction              | 1k                     | 1                    |
+| R06                    | AuctionWinner        | 1k                     | 1                    |
+| R07                    | AuctionPhoto         | 1k                     | 1                    |
+| R08                    | Bid                  | 10k                    | 10                   |
+| R09                    | Report               | 100                    | 1                    |
+| R10                    | Follows              | 1k                     | 1                    |
+| R11                    | Comment              | 10k                    | 10                   |
+| R12                    | MetaInfo             | 1                      | 0                    |
+| R13                    | MetaInfoValue        | 100                    | 0                    | 
+| R14                    | AuctionMetaInfoValue | 10k                    | 10                   |
+| R15                    | Notification         | 100k                   | 1k                   |
 
 
 
@@ -351,42 +362,30 @@ Triggers are used to enforce complex integrity rules that can't be achieved thro
 | **Description** | Upon account deletion, shared user data (e.g. comments, reviews, likes) is kept but is made anonymous, in order to maintain system integrity. (BR01) |
 
 ```sql
-CREATE FUNCTION anonymize_user_data()
+CREATE OR REPLACE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
 $$
-DECLARE anonymous_user_id INT;
 BEGIN
-  SELECT id INTO anonymous_user_id FROM users WHERE username = 'Anonymous';
-  IF anonymous_user_id IS NOT NULL THEN
-    UPDATE Comment
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE Report
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE Bid
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE follows
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE Auction
-    SET owner = anonymous_user_id
-    WHERE owner = OLD.id;
-    UPDATE AuctionWinner
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
+  IF NEW.is_anonymizing THEN
+    NEW.username := 'anonymous' || OLD.id;
+    NEW.name := 'Anonymous';
+    NEW.email := 'anonymous' || OLD.id || '@anonymous.com';
+    NEW.password := 'anonymous';
+    NEW.date_of_birth := '1900-01-01';
+    NEW.balance := 0.00;
+    NEW.street := NULL;
+    NEW.city := NULL;
+    NEW.zip_code := NULL;
+    NEW.country := NULL;
+    NEW.rating := NULL;
+    NEW.image := NULL;
   END IF;
-  DELETE FROM Admin
-  WHERE user_id = OLD.id;
-  DELETE FROM SystemManager
-  WHERE user_id = OLD.id;
-  RETURN OLD;
+  RETURN NEW;
 END;
 $$ 
 LANGUAGE plpgsql;
 CREATE TRIGGER anonymize_user_data_trigger
-BEFORE DELETE ON users
+BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION anonymize_user_data();
 ```
@@ -824,6 +823,39 @@ FOR EACH ROW
 EXECUTE FUNCTION send_auction_notification();
  ```
 
+| **TRIGGER** | TRIGGER17 |
+|-------------|-----------|
+| **Description** |  After admin updates transfer request (changing its state to accepted), it adds or removes transfer amount if possible.|
+
+```sql
+
+CREATE FUNCTION transfer_approved()
+RETURNS TRIGGER AS
+$$
+DECLARE
+  bal MONEY;
+BEGIN
+  SELECT balance INTO bal FROM users WHERE id = OLD.user_id;
+  IF OLD.state = 'pending' AND NEW.state = 'accepted'  AND  NEW.type = true THEN
+    UPDATE users
+    SET balance = balance + NEW.amount
+    WHERE id = OLD.user_id;
+  ELSIF OLD.state = 'pending' AND NEW.state = 'accepted'  AND  NEW.type = false AND bal >= NEW.amount THEN
+    UPDATE users
+    SET balance = balance - NEW.amount
+    WHERE id = OLD.user_id;
+  END IF;
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+CREATE TRIGGER transfer_approved
+AFTER UPDATE ON moneys
+FOR EACH ROW
+EXECUTE FUNCTION transfer_approved();
+
+```
+
 ### 4. Transactions
  
 The following transactions ensure data integrity when multiple operations are conducted and deemed essential.
@@ -913,14 +945,15 @@ END TRANSACTION;
 
 ```sql
 -- Drop old tables
--- Drop old tables
 DROP TABLE IF EXISTS follows CASCADE;
 DROP TABLE IF EXISTS Comment CASCADE;
 DROP TABLE IF EXISTS Report CASCADE;
 DROP TABLE IF EXISTS Bid CASCADE;
+
 DROP TABLE IF EXISTS AuctionPhoto CASCADE;
 DROP TABLE IF EXISTS AuctionWinner CASCADE;
 DROP TABLE IF EXISTS Auction CASCADE;
+DROP TABLE IF EXISTS moneys CASCADE;
 DROP TABLE IF EXISTS Admin CASCADE;
 DROP TABLE IF EXISTS SystemManager CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
@@ -932,6 +965,8 @@ DROP TABLE IF EXISTS Notification CASCADE;
 DROP TYPE IF EXISTS notification_type;
 DROP TYPE IF EXISTS category_type;
 DROP TYPE IF EXISTS auction_state;
+DROP TYPE IF EXISTS transfer_state;
+DROP TYPE IF EXISTS report_state;
 
 DROP FUNCTION IF EXISTS user_fullsearch_update;
 DROP FUNCTION IF EXISTS auction_search_update;
@@ -952,6 +987,7 @@ DROP FUNCTION IF EXISTS send_auction_notification;
 DROP FUNCTION IF EXISTS auto_follow;
 DROP FUNCTION IF EXISTS update_owner_rating;
 DROP FUNCTION IF EXISTS prevent_auction_winner_active;
+DROP FUNCTION IF EXISTS transfer_approved;
 
 /*
 
@@ -990,6 +1026,18 @@ CREATE TYPE auction_state AS ENUM (
     'disabled'
 );
 
+
+CREATE TYPE transfer_state AS ENUM (
+    'pending',
+    'accepted',
+    'denied'
+);
+
+CREATE TYPE report_state AS ENUM (
+    'listed',
+    'reviewed',
+    'unrelated'
+);
 /*
 
 TABLES
@@ -1000,18 +1048,19 @@ TABLES
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(255) NOT NULL UNIQUE,
+  name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   balance MONEY NOT NULL DEFAULT 0,
   date_of_birth DATE NOT NULL,
-  street VARCHAR(255) NOT NULL,
-  city VARCHAR(255) NOT NULL,
-  zip_code VARCHAR(10) NOT NULL,
-  country VARCHAR(255) NOT NULL,
+  street VARCHAR(255) DEFAULT NULL,
+  city VARCHAR(255) DEFAULT NULL,
+  zip_code VARCHAR(10) DEFAULT NULL,
+  country VARCHAR(255) DEFAULT NULL,
   rating FLOAT CHECK (rating >= 0 AND rating <= 5) DEFAULT NULL,
   image BYTEA
 );
-
+  ALTER TABLE users ADD COLUMN is_anonymizing BOOLEAN DEFAULT false;
 -- SystemManager table
 CREATE TABLE SystemManager (
   user_id INT REFERENCES users(id) ON UPDATE CASCADE,
@@ -1024,6 +1073,15 @@ CREATE TABLE Admin (
   PRIMARY KEY (user_id)
 );
 
+CREATE TABLE moneys (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON UPDATE CASCADE,
+  amount MONEY  CHECK (amount > '0'::MONEY),
+  type BOOL NOT NULL,
+  state transfer_state DEFAULT 'pending'
+);
+
+
 -- Auction table
 CREATE TABLE Auction (
   id SERIAL PRIMARY KEY,
@@ -1034,7 +1092,7 @@ CREATE TABLE Auction (
   initial_time TIMESTAMP DEFAULT NULL,
   end_time TIMESTAMP DEFAULT NULL,
   category category_type DEFAULT NULL,
-  state auction_state NOT NULL,
+  state auction_state DEFAULT 'pending',
   owner INT REFERENCES users(id) ON UPDATE CASCADE
 );
 
@@ -1067,6 +1125,7 @@ CREATE TABLE Report (
   user_id INT REFERENCES users(id) ON UPDATE CASCADE NOT NULL,
   auction_id INT REFERENCES Auction(id) ON UPDATE CASCADE NOT NULL,
   description TEXT NOT NULL,
+  state report_state DEFAULT 'listed',
   PRIMARY KEY (user_id, auction_id)
 );
 
@@ -1116,6 +1175,7 @@ CREATE TABLE Notification (
   auction_id INT REFERENCES Auction(id) ON UPDATE CASCADE,
   comment_id INT REFERENCES Comment(id) ON UPDATE CASCADE
 );
+
 
 /*
 
@@ -1198,44 +1258,37 @@ TRIGGERS
 */
 
 -- Trigger (T01)
-CREATE FUNCTION anonymize_user_data()
+CREATE OR REPLACE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
 $$
-DECLARE anonymous_user_id INT;
 BEGIN
-  SELECT id INTO anonymous_user_id FROM users WHERE username = 'Anonymous';
-  IF anonymous_user_id IS NOT NULL THEN
-    UPDATE Comment
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE Report
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE Bid
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE follows
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
-    UPDATE Auction
-    SET owner = anonymous_user_id
-    WHERE owner = OLD.id;
-    UPDATE AuctionWinner
-    SET user_id = anonymous_user_id
-    WHERE user_id = OLD.id;
+  IF NEW.is_anonymizing THEN
+    NEW.username := 'anonymous' || OLD.id;
+    NEW.name := 'Anonymous';
+    NEW.email := 'anonymous' || OLD.id || '@anonymous.com';
+    NEW.password := 'anonymous';
+    NEW.date_of_birth := '1900-01-01';
+    NEW.balance := 0.00;
+    NEW.street := NULL;
+    NEW.city := NULL;
+    NEW.zip_code := NULL;
+    NEW.country := NULL;
+    NEW.rating := NULL;
+    NEW.image := NULL;
   END IF;
-  DELETE FROM Admin
-  WHERE user_id = OLD.id;
-  DELETE FROM SystemManager
-  WHERE user_id = OLD.id;
-  RETURN OLD;
+
+  RETURN NEW;
 END;
 $$ 
 LANGUAGE plpgsql;
+
 CREATE TRIGGER anonymize_user_data_trigger
-BEFORE DELETE ON users
+BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION anonymize_user_data();
+
+
+
 
 -- Trigger (T02)
 CREATE FUNCTION prevent_auction_cancellation()
@@ -1595,69 +1648,104 @@ FOR EACH ROW
 EXECUTE FUNCTION send_auction_notification();
 
 
+-- Trigger (T17)
+CREATE FUNCTION transfer_approved()
+RETURNS TRIGGER AS
+$$
+DECLARE
+  bal MONEY;
+BEGIN
+  SELECT balance INTO bal FROM users WHERE id = OLD.user_id;
+  IF OLD.state = 'pending' AND NEW.state = 'accepted'  AND  NEW.type = true THEN
+    UPDATE users
+    SET balance = balance + NEW.amount
+    WHERE id = OLD.user_id;
+  ELSIF OLD.state = 'pending' AND NEW.state = 'accepted'  AND  NEW.type = false AND bal >= NEW.amount THEN
+    UPDATE users
+    SET balance = balance - NEW.amount
+    WHERE id = OLD.user_id;
+  END IF;
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+CREATE TRIGGER transfer_approved
+AFTER UPDATE ON moneys
+FOR EACH ROW
+EXECUTE FUNCTION transfer_approved();
+
+
+
 
 ```
 
 ### A.2. Database population
 
 ```sql
-INSERT INTO users (username, email, password, balance, date_of_birth, street, city, zip_code, country, rating)
+INSERT INTO users (username, name , email, password, balance, date_of_birth, street, city, zip_code, country, rating)
 VALUES
-  ('Anonymous', ' ', ' ', 0.00, '1970-01-01', ' ', ' ', ' ', ' ',  NULL),  
-  ('gago', 'daniel@email.com', 'danielpass', 3500.00, '2003-11-15', 'Rua do Twistzz', 'Faro', '12345', 'Portugal', NULL),
-  ('sereno', 'jose@email.com', 'josepass', 2000.00, '2003-03-23', 'Avenida dos Desdentados', 'Guimaraes', '123123', 'Portugal', NULL),
-  ('edu', 'eduardo@email.com', 'edupass', 1.05, '2003-07-21', 'Praça dos Maluquinhos', 'Santo Tirso', '4780-666', 'Portugal', NULL),
-  ('max', 'maximo@email.com', 'maxpass', 1000.00, '2003-01-13', 'Rua do Inspetor', 'Gondomar', '4420-123', 'Portugal', NULL),
-  ('zemanel', 'zemanel@hotmail.com', 'password123', 5.00, '1992-02-10', 'Rua Santa Catarina', 'Porto', '34567', 'Portugal', NULL),
-  ('darkknight', 'brucewayne@email.com', 'batman123', 1000000.00, '1980-05-10', 'Gotham Street', 'Gotham City', '12345', 'USA', NULL),
-  ('webslinger', 'peterparker@email.com', 'spidey', 50000.00, '1995-02-14', 'Web Avenue', 'New York', '54321', 'USA', NULL),
-  ('greenqueen', 'pamelaisley@email.com', 'poisonivy', 75000.00, '1987-09-20', 'Vine Lane', 'Gotham City', '67890', 'USA', NULL),
-  ('speedster', 'barryallen@email.com', 'flash2023', 90000.00, '1986-03-30', 'Speedster Street', 'Central City', '98765', 'USA', NULL),
-  ('emeraldarcher', 'oliverqueen@email.com', 'arrow', 80000.00, '1981-11-11', 'Arrow Road', 'Star City', '23456', 'USA', NULL),
-  ('manofsteel', 'clarkkent@email.com', 'kryptonite', 95000.00, '1978-07-01', 'Super Lane', 'Metropolis', '76543', 'USA', NULL),
-  ('wonderwoman', 'dianaprince@email.com', 'amazonian', 85000.00, '1985-04-15', 'Paradise Island', 'Themyscira', '78901', 'Amazon', NULL),
-  ('thor', 'thor@email.com', 'mjolnir', 70000.00, '1980-12-25', 'Asgard Road', 'Asgard', '11223', 'Asgard', NULL),
-  ('spymaster', 'natasharomanoff@email.com', 'blackwidow', 60000.00, '1984-08-03', 'Red Room Street', 'Moscow', '00123', 'Russia', NULL),
-  ('starkgenius', 'tonystark@email.com', 'ironman', 1200000.00, '1970-06-21', 'Stark Tower', 'New York', '54321', 'USA', NULL),
-  ('godofthunder', 'loki@email.com', 'trickster', 90000.00, '1972-03-05', 'Asgard Palace', 'Asgard', '11223', 'Asgard', NULL),
-  ('hawkeye', 'clintbarton@email.com', 'hawkeye1', 75000.00, '1976-09-08', 'Archery Way', 'Brooklyn', '45678', 'USA', NULL),
-  ('scarletwitch', 'wandamaximoff@email.com', 'chaosmagic', 70000.00, '1989-12-16', 'Hex Street', 'Transia', '98765', 'Transia', NULL),
-  ('aquaman', 'arthurcurry@email.com', 'kingofthesea', 85000.00, '1982-07-30', 'Atlantis Avenue', 'Atlantis', '54321', 'Atlantis', NULL),
-  ('beastmode', 'hankmccoy@email.com', 'bluefur', 60000.00, '1988-02-04', 'X-Mansion Road', 'Westchester', '33333', 'USA', NULL),
-  ('stormrider', 'ororomunroe@email.com', 'weathergoddess', 95000.00, '1987-06-10', 'Wakanda Avenue', 'Wakanda', '11223', 'Wakanda', NULL),
-  ('greenlantern', 'haljordan@email.com', 'ringpower', 80000.00, '1983-04-20', 'Oa Street', 'Oa', '22222', 'Oa', NULL),
-  ('wolverine', 'logan@email.com', 'adamantium', 70000.00, '1842-03-22', 'Logan Street', 'Alberta', '77777', 'Canada', NULL),
-  ('wallywest', 'wallywest@email.com', 'kidflash', 90000.00, '1992-08-15', 'Speedster Lane', 'Keystone City', '11111', 'USA', NULL),
-  ('wadeywilson', 'wadewilson@email.com', 'deadpool', 80000.00, '1974-02-20', 'Regeneration Road', 'New York', '54321', 'USA', NULL),
-  ('blackpanther', 'tchalla@email.com', 'vibranium', 85000.00, '1980-11-29', 'Wakanda Street', 'Wakanda', '11223', 'Wakanda', NULL),
-  ('magentawitch', 'wandashepherd@email.com', 'wandavision', 75000.00, '1993-05-07', 'Salem Road', 'Westview', '54321', 'USA', NULL),
-  ('ladyhawk', 'katebishop@email.com', 'hawkeye2', 70000.00, '1999-12-03', 'Archer Avenue', 'New York', '45678', 'USA', NULL),
-  ('captainspandex', 'steve@email.com', 'capamerica', 95000.00, '1920-07-04', 'Freedom Street', 'Washington, D.C.', '12345', 'USA', NULL),
-  ('aquaticmariner', 'namor@email.com', 'imperiusrex', 90000.00, '1940-01-10', 'Atlantean Lane', 'Atlantis', '22222', 'Atlantis', NULL),
-  ('starlord', 'peterquill@email.com', 'guardians1', 80000.00, '1982-12-18', 'Milano Avenue', 'Xandar', '98765', 'Xandar', NULL),
-  ('blackbolt', 'blackagar@email.com', 'silentscream', 75000.00, '1975-06-02', 'Inhuman Road', 'Attilan', '54321', 'Attilan', NULL),
-  ('colossus', 'piotrrasputin@email.com', 'steelman', 90000.00, '1978-03-14', 'X-Mansion Lane', 'Westchester', '33333', 'USA', NULL),
-  ('gamora', 'gamora@email.com', 'deadlyassassin', 85000.00, '1984-09-03', 'Zen-Whoberi Street', 'Zen-Whoberi', '11223', 'Zen-Whoberi', NULL),
-  ('antman', 'scottlang@email.com', 'shrinkandgrow', 70000.00, '1980-01-22', 'Pym Particles Lane', 'New York', '45678', 'USA', NULL),
-  ('zatanna', 'zatannazatara@email.com', 'magicwords', 80000.00, '1986-10-31', 'Mystic Road', 'Shadowcrest', '54321', 'USA', NULL),
-  ('stormqueen', 'auroramunroe@email.com', 'elementalpowers', 90000.00, '1985-07-19', 'Wakanda Lane', 'Wakanda', '98765', 'Wakanda', NULL),
-  ('redskull', 'johannschmidt@email.com', 'hydra123', 75000.00, '1941-11-02', 'Nazi Avenue', 'Berlin', '00123', 'Germany', NULL),
-  ('mysterio', 'quentinbeck@email.com', 'illusions', 70000.00, '1969-04-15', 'Fishbowl Street', 'New York', '54321', 'USA', NULL),
-  ('cyclops', 'scottsummers@email.com', 'opticblast', 85000.00, '1973-08-26', 'X-Mansion Avenue', 'Westchester', '33333', 'USA', NULL),
-  ('rogue', 'annamarie@email.com', 'drainpowers', 90000.00, '1987-06-04', 'Mississippi Road', 'Caldecott', '54321', 'USA', NULL),
-  ('iceprincess', 'bobbydrake@email.com', 'iceman', 70000.00, '1982-03-30', 'Frost Lane', 'North Salem', '11223', 'USA', NULL),
-  ('blacksuit', 'eddieredmayne@email.com', 'venomized', 80000.00, '1988-12-14', 'Symbiote Street', 'New York', '45678', 'USA', NULL),
-  ('scarecrow', 'jonathancrane@email.com', 'feargas', 75000.00, '1970-10-20', 'Fear Lane', 'Gotham City', '00123', 'USA', NULL),
-  ('invisiblewoman', 'susanstorm@email.com', 'invisibility', 90000.00, '1983-07-22', 'Fantastic Road', 'New York', '54321', 'USA', NULL),
-  ('nightcrawler', 'kurtwagner@email.com', 'teleportation', 85000.00, '1984-05-05', 'Bamf Avenue', 'Bavaria', '22222', 'Germany', NULL),
-  ('lizardking', 'drconnors@email.com', 'reptilian', 80000.00, '1977-09-11', 'Reptile Lane', 'New York', '98765', 'USA', NULL),
-  ('rocketraccoon', 'rocket@email.com', 'blaster', 75000.00, '1990-12-05', 'Guardian Avenue', 'Halfworld', '54321', 'Halfworld', NULL),
-  ('sandman', 'flintmarko@email.com', 'sandpowers', 90000.00, '1965-03-18', 'Desert Lane', 'New York', '11223', 'USA', NULL),
-  ('starfire', 'koriandrs@email.com', 'starbolts', 85000.00, '1988-07-29', 'Tamaran Road', 'Tamaran', '12345', 'Tamaran', NULL),
-  ('juggernaut', 'cainmarko@email.com', 'unstoppable', 80000.00, '1971-02-03', 'Juggernaut Street', 'Cain Marko', '33333', 'Marko', NULL),
-  ('raven', 'rachelroth@email.com', 'darkmagic', 70000.00, '1980-10-26', 'Azarath Lane', 'Azarath', '54321', 'Azarath', NULL),
-  ('magneto', 'eriklensherr@email.com', 'magnetism', 90000.00, '1963-06-05', 'Mutant Lane', 'Genosha', '22222', 'Genosha', NULL),
-  ('hulk', 'brucebanner@email.com', 'smash', 85000.00, '1962-05-02', 'Gamma Road', 'New York', '98765', 'USA', NULL);
+  ('gago','Daniel Gago' ,'daniel@email.com', 'danielpass', 3500.00, '2003-11-15', 'Rua do Twistzz', 'Faro', '12345', 'Portugal', NULL),
+  ('sereno','José Santos', 'jose@email.com', 'josepass', 2000.00, '2003-03-23', 'Avenida dos Desdentados', 'Guimaraes', '123123', 'Portugal', NULL),
+  ('edu','Eduardo Oliveira' ,'eduardo@email.com', 'edupass', 1000.00, '2003-07-21', 'Praça dos Maluquinhos', 'Santo Tirso', '4780-666', 'Portugal', NULL),
+  ('max',' Máximo Pereira','maximo@email.com', 'maxpass', 1000.00, '2003-01-13', 'Rua do Inspetor', 'Gondomar', '4420-123', 'Portugal', NULL),
+  ('zemanel','José Manuel' ,'zemanel@hotmail.com', 'password123', 5.00, '1992-02-10', 'Rua Santa Catarina', 'Porto', '34567', 'Portugal', NULL),
+  ('darkknight','Bruce Wayne' ,'brucewayne@email.com', 'batman123', 1000000.00, '1980-05-10', 'Gotham Street', 'Gotham City', '12345', 'USA', NULL),
+  ('webslinger','Peter Parker' ,'peterparker@email.com', 'spidey', 50000.00, '1995-02-14', 'Web Avenue', 'New York', '54321', 'USA', NULL),
+  ('greenqueen','Pamela Isley', 'pamelaisley@email.com', 'poisonivy', 75000.00, '1987-09-20', 'Vine Lane', 'Gotham City', '67890', 'USA', NULL),
+  ('speedster','Barry Allen' ,'barryallen@email.com', 'flash2023', 90000.00, '1986-03-30', 'Speedster Street', 'Central City', '98765', 'USA', NULL),
+  ('emeraldarcher','Oliver Queen', 'oliverqueen@email.com', 'arrow', 80000.00, '1981-11-11', 'Arrow Road', 'Star City', '23456', 'USA', NULL),
+  ('manofsteel','Clark Kent' ,'clarkkent@email.com', 'kryptonite', 95000.00, '1978-07-01', 'Super Lane', 'Metropolis', '76543', 'USA', NULL),
+  ('wonderwoman','Diana Prince' ,'dianaprince@email.com', 'amazonian', 85000.00, '1985-04-15', 'Paradise Island', 'Themyscira', '78901', 'Amazon', NULL),
+  ('thor','Thor Odinson' ,'thor@email.com', 'mjolnir', 70000.00, '1980-12-25', 'Asgard Road', 'Asgard', '11223', 'Asgard', NULL),
+  ('spymaster', 'Natasha Romanoff','natasharomanoff@email.com', 'blackwidow', 60000.00, '1984-08-03', 'Red Room Street', 'Moscow', '00123', 'Russia', NULL),
+  ('starkgenius', 'Tony Stark','tonystark@email.com', 'ironman', 1200000.00, '1970-06-21', 'Stark Tower', 'New York', '54321', 'USA', NULL),
+  ('godofthunder', 'Loki Odinson','loki@email.com', 'trickster', 90000.00, '1972-03-05', 'Asgard Palace', 'Asgard', '11223', 'Asgard', NULL),
+  ('hawkeye', 'Clint Barton','clintbarton@email.com', 'hawkeye1', 75000.00, '1976-09-08', 'Archery Way', 'Brooklyn', '45678', 'USA', NULL),
+  ('scarletwitch', 'Wanda Maximoff' ,'wandamaximoff@email.com', 'chaosmagic', 70000.00, '1989-12-16', 'Hex Street', 'Transia', '98765', 'Transia', NULL),
+  ('aquaman', 'Arthur Curry' ,'arthurcurry@email.com', 'kingofthesea', 85000.00, '1982-07-30', 'Atlantis Avenue', 'Atlantis', '54321', 'Atlantis', NULL),
+  ('beastmode','Hank Mccoy' ,'hankmccoy@email.com', 'bluefur', 60000.00, '1988-02-04', 'X-Mansion Road', 'Westchester', '33333', 'USA', NULL),
+  ('stormrider','Ororo Munroe' ,'ororomunroe@email.com', 'weathergoddess', 95000.00, '1987-06-10', 'Wakanda Avenue', 'Wakanda', '11223', 'Wakanda', NULL),
+  ('greenlantern','Hal Jordan' ,'haljordan@email.com', 'ringpower', 80000.00, '1983-04-20', 'Oa Street', 'Oa', '22222', 'Oa', NULL),
+  ('wolverine','James Howlett','logan@email.com', 'adamantium', 70000.00, '1842-03-22', 'Logan Street', 'Alberta', '77777', 'Canada', NULL),
+  ('wallywest','Wally West' ,'wallywest@email.com', 'kidflash', 90000.00, '1992-08-15', 'Speedster Lane', 'Keystone City', '11111', 'USA', NULL),
+  ('wadeywilson','Wade Wilson' ,'wadewilson@email.com', 'deadpool', 80000.00, '1974-02-20', 'Regeneration Road', 'New York', '54321', 'USA', NULL),
+  ('blackpanther','Tchalla' ,'tchalla@email.com', 'vibranium', 85000.00, '1980-11-29', 'Wakanda Street', 'Wakanda', '11223', 'Wakanda', NULL),
+  ('magentawitch','Wanda Sheperd' ,'wandashepherd@email.com', 'wandavision', 75000.00, '1993-05-07', 'Salem Road', 'Westview', '54321', 'USA', NULL),
+  ('ladyhawk','Katelyn' ,'katebishop@email.com', 'hawkeye2', 70000.00, '1999-12-03', 'Archer Avenue', 'New York', '45678', 'USA', NULL),
+  ('captainspandex','Steve' ,'steve@email.com', 'capamerica', 95000.00, '1920-07-04', 'Freedom Street', 'Washington, D.C.', '12345', 'USA', NULL),
+  ('aquaticmariner','Namor' ,'namor@email.com', 'imperiusrex', 90000.00, '1940-01-10', 'Atlantean Lane', 'Atlantis', '22222', 'Atlantis', NULL),
+  ('starlord','Peter Quill' ,'peterquill@email.com', 'guardians1', 80000.00, '1982-12-18', 'Milano Avenue', 'Xandar', '98765', 'Xandar', NULL),
+  ('blackbolt','Black Agar' ,'blackagar@email.com', 'silentscream', 75000.00, '1975-06-02', 'Inhuman Road', 'Attilan', '54321', 'Attilan', NULL),
+  ('colossus','Piotr rasputin' ,'piotrrasputin@email.com', 'steelman', 90000.00, '1978-03-14', 'X-Mansion Lane', 'Westchester', '33333', 'USA', NULL),
+  ('gamora', 'Gamora','gamora@email.com', 'deadlyassassin', 85000.00, '1984-09-03', 'Zen-Whoberi Street', 'Zen-Whoberi', '11223', 'Zen-Whoberi', NULL),
+  ('antman','Scott Lang' ,'scottlang@email.com', 'shrinkandgrow', 70000.00, '1980-01-22', 'Pym Particles Lane', 'New York', '45678', 'USA', NULL),
+  ('zatanna','Zatanna Zatara' ,'zatannazatara@email.com', 'magicwords', 80000.00, '1986-10-31', 'Mystic Road', 'Shadowcrest', '54321', 'USA', NULL),
+  ('stormqueen','Aurora Munroe' ,'auroramunroe@email.com', 'elementalpowers', 90000.00, '1985-07-19', 'Wakanda Lane', 'Wakanda', '98765', 'Wakanda', NULL),
+  ('redskull','Johann Schmidt' ,'johannschmidt@email.com', 'hydra123', 75000.00, '1941-11-02', 'Nazi Avenue', 'Berlin', '00123', 'Germany', NULL),
+  ('mysterio','Quentin Beck' ,'quentinbeck@email.com', 'illusions', 70000.00, '1969-04-15', 'Fishbowl Street', 'New York', '54321', 'USA', NULL),
+  ('cyclops','Scott Summer' ,'scottsummers@email.com', 'opticblast', 85000.00, '1973-08-26', 'X-Mansion Avenue', 'Westchester', '33333', 'USA', NULL),
+  ('rogue','Anna Marie' ,'annamarie@email.com', 'drainpowers', 90000.00, '1987-06-04', 'Mississippi Road', 'Caldecott', '54321', 'USA', NULL),
+  ('iceprincess','Bobby Drake' ,'bobbydrake@email.com', 'iceman', 70000.00, '1982-03-30', 'Frost Lane', 'North Salem', '11223', 'USA', NULL),
+  ('blacksuit','Eddie Mayne' ,'eddieredmayne@email.com', 'venomized', 80000.00, '1988-12-14', 'Symbiote Street', 'New York', '45678', 'USA', NULL),
+  ('scarecrow', 'John Crane','jonathancrane@email.com', 'feargas', 75000.00, '1970-10-20', 'Fear Lane', 'Gotham City', '00123', 'USA', NULL),
+  ('invisiblewoman','Susan Storm' ,'susanstorm@email.com', 'invisibility', 90000.00, '1983-07-22', 'Fantastic Road', 'New York', '54321', 'USA', NULL),
+  ('nightcrawler','Kurt Wagner' ,'kurtwagner@email.com', 'teleportation', 85000.00, '1984-05-05', 'Bamf Avenue', 'Bavaria', '22222', 'Germany', NULL),
+  ('lizardking','Connor','drconnors@email.com', 'reptilian', 80000.00, '1977-09-11', 'Reptile Lane', 'New York', '98765', 'USA', NULL),
+  ('rocketraccoon','Rocket' ,'rocket@email.com', 'blaster', 75000.00, '1990-12-05', 'Guardian Avenue', 'Halfworld', '54321', 'Halfworld', NULL),
+  ('sandman', 'Flint','flintmarko@email.com', 'sandpowers', 90000.00, '1965-03-18', 'Desert Lane', 'New York', '11223', 'USA', NULL),
+  ('starfire', 'Korian' ,'koriandrs@email.com', 'starbolts', 85000.00, '1988-07-29', 'Tamaran Road', 'Tamaran', '12345', 'Tamaran', NULL),
+  ('juggernaut','Cain' ,'cainmarko@email.com', 'unstoppable', 80000.00, '1971-02-03', 'Juggernaut Street', 'Cain Marko', '33333', 'Marko', NULL),
+  ('raven', 'Rachel','rachelroth@email.com', 'darkmagic', 70000.00, '1980-10-26', 'Azarath Lane', 'Azarath', '54321', 'Azarath', NULL),
+  ('magneto', 'Erik Lensherr' ,'eriklensherr@email.com', 'magnetism', 90000.00, '1963-06-05', 'Mutant Lane', 'Genosha', '22222', 'Genosha', NULL),
+  ('hulk', 'Bruce Banner','brucebanner@email.com', 'smash', 85000.00, '1962-05-02', 'Gamma Road', 'New York', '98765', 'USA', NULL);
+
+INSERT INTO moneys (id,user_id, amount,type, state) 
+VALUES 
+  (1,1,10.00,true,'pending'),
+  (2,2,200.00,false, 'denied'),
+  (3,3, 400.00,true, 'accepted'),
+  (4,4, 250.00,false, 'pending'),
+  (5,5, 100.00,true, 'accepted');
 
 INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner)
 VALUES
@@ -1702,8 +1790,8 @@ VALUES
   ('Vocal Masterclass', 'A masterclass session with a renowned vocalist.',200.00 ,200.00, '2023-11-09 18:00:00', '2023-11-23 18:00:00', 'percussion', 'approved', 51),
   ('Bass Guitar Solo', 'A live solo performance featuring a bass guitar.',150.00 ,150.00, '2023-11-10 19:00:00', '2023-11-24 19:00:00', 'brass', 'approved', 52),
   ('Xylophone Set', 'A set of xylophones for school and ensemble use.', 200.00 , 200.00, '2023-11-11 10:00:00', '2023-11-25 10:00:00', 'percussion', 'denied', 53),
-  ('Keyboard Ensemble', 'An ensemble performance featuring electronic keyboards.', 180.00 ,180.00, '2023-11-12 11:00:00', '2023-11-26 11:00:00', 'percussion', 'disabled', 54),
-  ('Harmonica Masterclass', 'A masterclass session for harmonica enthusiasts.', 250.00,250.00, '2023-11-13 12:00:00', '2023-11-27 12:00:00', 'woodwinds', 'denied', 55),
+  ('Keyboard Ensemble', 'An ensemble performance featuring electronic keyboards.', 180.00 ,180.00, '2023-11-12 11:00:00', '2023-11-26 11:00:00', 'percussion', 'disabled', 45),
+  ('Harmonica Masterclass', 'A masterclass session for harmonica enthusiasts.', 250.00,250.00, '2023-11-13 12:00:00', '2023-11-27 12:00:00', 'woodwinds', 'denied', 52),
   ('Drumming Solo', 'A live solo drumming performance by a professional.', 200.00 , 200.00, '2023-11-14 13:00:00', '2023-11-28 13:00:00', 'percussion', 'denied', 26),
   ('Guitar Ensemble', 'An ensemble performance featuring various guitars.', 300.00, 300.00 ,'2023-11-15 14:00:00', '2023-11-29 14:00:00', 'strings', 'denied', 20),
   ('Brass Quartet', 'A quartet of brass instruments for ensemble performances.', 180.00, 180.00,'2023-11-16 15:00:00', '2023-11-30 15:00:00', 'brass', 'disabled', 5),
@@ -1763,10 +1851,8 @@ VALUES
   (53, 7, 140.00, '2023-09-24 13:45:00'),
   (52, 7, 170.00, '2023-09-25 16:00:00'),
   (49, 7, 200.00, '2023-09-26 18:15:00'),
-  (55, 7, 230.00, '2023-09-27 20:30:00'),
-  (54, 7, 260.00, '2023-09-28 22:45:00'),
   (2, 8, 100.00, '2023-09-24 09:30:00'),
-  (5, 8, 130.00, '2023-09-25 11:45:00'),
+  (11, 8, 130.00, '2023-09-25 11:45:00'),
   (3, 8, 160.00, '2023-09-26 14:00:00'),
   (43, 8, 190.00, '2023-09-27 16:15:00'),
   (2, 8, 220.00, '2023-09-28 18:30:00'),
@@ -1814,17 +1900,17 @@ VALUES
   (37, 10);
 
 
-INSERT INTO Report (user_id, auction_id, description)
+INSERT INTO Report (user_id, auction_id, description, state)
 VALUES 
-  (2, 1, 'Suspicious activity.'),
-  (3, 1, 'Possible fraud.'),
-  (4, 1, 'Unusual behavior.'),
-  (5, 1, 'Concerns about the auction.'),
-  (6, 1, 'Reporting irregularities.'),
-  (7, 1, 'Please investigate.'),
-  (8, 1, 'Alerting to potential issues.'),
-  (9, 1, 'Flagging this auction.'),
-  (10, 1, 'Noticed something strange.');
+  (2, 1, 'Suspicious activity.', 'listed'),
+  (3, 1, 'Possible fraud.', 'reviewed'),
+  (4, 1, 'Unusual behavior.', 'unrelated'),
+  (5, 1, 'Concerns about the auction.', 'unrelated'),
+  (6, 1, 'Reporting irregularities.', 'listed'),
+  (7, 1, 'Please investigate.', 'unrelated'),
+  (8, 1, 'Alerting to potential issues.', 'reviewed'),
+  (9, 1, 'Flagging this auction.', 'listed'),
+  (10, 1, 'Noticed something strange.', 'unrelated');
 
 INSERT INTO Comment (user_id, auction_id, message, time)
 VALUES
@@ -1876,7 +1962,7 @@ VALUES
   (47, 1, 'Im ready to bid on the guitar. Can you provide more photos?', '2023-09-24 13:50:00'),
   (48, 2, 'Ive played many flutes, and this one looks exceptional. Ready to make an offer.', '2023-09-25 11:30:00'),
   (49, 3, 'The bass guitars character is unique. Im eager to start bidding.', '2023-09-26 15:25:00'),
-  (50, 4, 'Im a drummer, and this set is on my wishlist. Shipping information, please.', '2023-09-27 17:10:00');
+  (50, 4, 'Im a drummer, and this seTransfert is on my wishlist. Shipping information, please.', '2023-09-27 17:10:00');
 
 
 INSERT INTO SystemManager (user_id)
@@ -1961,10 +2047,23 @@ Changes made to the first submission:
 
 - Eduardo Olveira (Editor)
 
+### 17/11/2023
+
+1. Added moneys table to UML,SQL,Relational Schema
+2. Added deposit and withdrawal trigger
+3. Fixed error in relational schema
+4. Added report_state and transfer_state
+5. Added insert values for new table
+6. Added name and is_anonymizing to users table
+7. Added report_state to reports
+8. Fix anonymaze_user_data() trigger
+
+- José Santos (Editor)
+
 ***
 GROUP0202, 25/10/2023
 
 * Daniel Gago, up202108791@edu.fe.up.pt
-* Eduardo Oliveira, up202108843@edu.fe.up.pt (Editor)
-* José Santos, up202108729@edu.fe.up.pt 
+* Eduardo Oliveira, up202108843@edu.fe.up.pt 
+* José Santos, up202108729@edu.fe.up.pt (Editor)
 * Máximo Pereira, up202108887@edu.fe.up.pt

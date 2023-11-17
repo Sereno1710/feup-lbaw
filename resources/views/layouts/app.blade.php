@@ -14,11 +14,10 @@
                     <a href="{{ url('/deposit-money') }}" class="button">Deposit Money</a>
                     <a href="{{ url('/submit-auction') }}" class="button">Submit Auction</a>
                     <div class="user-info">
-                        <span class="username">{{ Auth::user()->name }}</span>
-                        <span class="user-balance">${{ Auth::user()->balance }}</span> 
+                        <a href="{{ url('/profile') }}" class="button">{{ Auth::user()->name }}</a>
+                        <a href="{{ url('/profile') }}" class="button">{{ Auth::user()->balance}}</a>
                         <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
                     </div>
-                    <a href="{{ url('/profile') }}" class="button">Profile</a>
                     <a href="{{ url('/logout') }}" class="button">Logout</a>
                 @else
                     <a href="{{ url('/login') }}" class="button">Sign In</a>

@@ -1,9 +1,8 @@
 INSERT INTO users (username, name , email, password, balance, date_of_birth, street, city, zip_code, country, rating)
 VALUES
-  ('Anonymous', ' ', ' ', 0.00, '1970-01-01', ' ', ' ', ' ', ' ',  NULL),  
   ('gago','Daniel Gago' ,'daniel@email.com', 'danielpass', 3500.00, '2003-11-15', 'Rua do Twistzz', 'Faro', '12345', 'Portugal', NULL),
   ('sereno','José Santos', 'jose@email.com', 'josepass', 2000.00, '2003-03-23', 'Avenida dos Desdentados', 'Guimaraes', '123123', 'Portugal', NULL),
-  ('edu','Eduardo Oliveira' ,'eduardo@email.com', 'edupass', 1.05, '2003-07-21', 'Praça dos Maluquinhos', 'Santo Tirso', '4780-666', 'Portugal', NULL),
+  ('edu','Eduardo Oliveira' ,'eduardo@email.com', 'edupass', 1000.00, '2003-07-21', 'Praça dos Maluquinhos', 'Santo Tirso', '4780-666', 'Portugal', NULL),
   ('max',' Máximo Pereira','maximo@email.com', 'maxpass', 1000.00, '2003-01-13', 'Rua do Inspetor', 'Gondomar', '4420-123', 'Portugal', NULL),
   ('zemanel','José Manuel' ,'zemanel@hotmail.com', 'password123', 5.00, '1992-02-10', 'Rua Santa Catarina', 'Porto', '34567', 'Portugal', NULL),
   ('darkknight','Bruce Wayne' ,'brucewayne@email.com', 'batman123', 1000000.00, '1980-05-10', 'Gotham Street', 'Gotham City', '12345', 'USA', NULL),
@@ -56,15 +55,13 @@ VALUES
   ('magneto', 'Erik Lensherr' ,'eriklensherr@email.com', 'magnetism', 90000.00, '1963-06-05', 'Mutant Lane', 'Genosha', '22222', 'Genosha', NULL),
   ('hulk', 'Bruce Banner','brucebanner@email.com', 'smash', 85000.00, '1962-05-02', 'Gamma Road', 'New York', '98765', 'USA', NULL);
 
-INSERT INTO Transfer (user_id, amount, transfer-state) 
+INSERT INTO moneys (id,user_id, amount,type, state) 
 VALUES 
-  (
-    1,10.00,'pending',
-    2,200.00, 'denied',
-    3, 400.00, 'accepted',
-    4, 250.00, 'pending',
-    5, 100.00, 'accepted'
-  );
+  (1,1,10.00,true,'pending'),
+  (2,2,200.00,false, 'denied'),
+  (3,3, 400.00,true, 'accepted'),
+  (4,4, 250.00,false, 'pending'),
+  (5,5, 100.00,true, 'accepted');
 
 INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner)
 VALUES
@@ -109,8 +106,8 @@ VALUES
   ('Vocal Masterclass', 'A masterclass session with a renowned vocalist.',200.00 ,200.00, '2023-11-09 18:00:00', '2023-11-23 18:00:00', 'percussion', 'approved', 51),
   ('Bass Guitar Solo', 'A live solo performance featuring a bass guitar.',150.00 ,150.00, '2023-11-10 19:00:00', '2023-11-24 19:00:00', 'brass', 'approved', 52),
   ('Xylophone Set', 'A set of xylophones for school and ensemble use.', 200.00 , 200.00, '2023-11-11 10:00:00', '2023-11-25 10:00:00', 'percussion', 'denied', 53),
-  ('Keyboard Ensemble', 'An ensemble performance featuring electronic keyboards.', 180.00 ,180.00, '2023-11-12 11:00:00', '2023-11-26 11:00:00', 'percussion', 'disabled', 54),
-  ('Harmonica Masterclass', 'A masterclass session for harmonica enthusiasts.', 250.00,250.00, '2023-11-13 12:00:00', '2023-11-27 12:00:00', 'woodwinds', 'denied', 55),
+  ('Keyboard Ensemble', 'An ensemble performance featuring electronic keyboards.', 180.00 ,180.00, '2023-11-12 11:00:00', '2023-11-26 11:00:00', 'percussion', 'disabled', 45),
+  ('Harmonica Masterclass', 'A masterclass session for harmonica enthusiasts.', 250.00,250.00, '2023-11-13 12:00:00', '2023-11-27 12:00:00', 'woodwinds', 'denied', 52),
   ('Drumming Solo', 'A live solo drumming performance by a professional.', 200.00 , 200.00, '2023-11-14 13:00:00', '2023-11-28 13:00:00', 'percussion', 'denied', 26),
   ('Guitar Ensemble', 'An ensemble performance featuring various guitars.', 300.00, 300.00 ,'2023-11-15 14:00:00', '2023-11-29 14:00:00', 'strings', 'denied', 20),
   ('Brass Quartet', 'A quartet of brass instruments for ensemble performances.', 180.00, 180.00,'2023-11-16 15:00:00', '2023-11-30 15:00:00', 'brass', 'disabled', 5),
@@ -170,10 +167,8 @@ VALUES
   (53, 7, 140.00, '2023-09-24 13:45:00'),
   (52, 7, 170.00, '2023-09-25 16:00:00'),
   (49, 7, 200.00, '2023-09-26 18:15:00'),
-  (55, 7, 230.00, '2023-09-27 20:30:00'),
-  (54, 7, 260.00, '2023-09-28 22:45:00'),
   (2, 8, 100.00, '2023-09-24 09:30:00'),
-  (5, 8, 130.00, '2023-09-25 11:45:00'),
+  (11, 8, 130.00, '2023-09-25 11:45:00'),
   (3, 8, 160.00, '2023-09-26 14:00:00'),
   (43, 8, 190.00, '2023-09-27 16:15:00'),
   (2, 8, 220.00, '2023-09-28 18:30:00'),
@@ -223,14 +218,14 @@ VALUES
 
 INSERT INTO Report (user_id, auction_id, description, state)
 VALUES 
-  (2, 1, 'Suspicious activity.', 'pending'),
+  (2, 1, 'Suspicious activity.', 'listed'),
   (3, 1, 'Possible fraud.', 'reviewed'),
   (4, 1, 'Unusual behavior.', 'unrelated'),
   (5, 1, 'Concerns about the auction.', 'unrelated'),
-  (6, 1, 'Reporting irregularities.', 'pending'),
+  (6, 1, 'Reporting irregularities.', 'listed'),
   (7, 1, 'Please investigate.', 'unrelated'),
   (8, 1, 'Alerting to potential issues.', 'reviewed'),
-  (9, 1, 'Flagging this auction.', 'pending'),
+  (9, 1, 'Flagging this auction.', 'listed'),
   (10, 1, 'Noticed something strange.', 'unrelated');
 
 INSERT INTO Comment (user_id, auction_id, message, time)
@@ -283,7 +278,7 @@ VALUES
   (47, 1, 'Im ready to bid on the guitar. Can you provide more photos?', '2023-09-24 13:50:00'),
   (48, 2, 'Ive played many flutes, and this one looks exceptional. Ready to make an offer.', '2023-09-25 11:30:00'),
   (49, 3, 'The bass guitars character is unique. Im eager to start bidding.', '2023-09-26 15:25:00'),
-  (50, 4, 'Im a drummer, and this set is on my wishlist. Shipping information, please.', '2023-09-27 17:10:00');
+  (50, 4, 'Im a drummer, and this seTransfert is on my wishlist. Shipping information, please.', '2023-09-27 17:10:00');
 
 
 INSERT INTO SystemManager (user_id)

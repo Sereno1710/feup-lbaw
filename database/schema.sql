@@ -3,10 +3,11 @@ DROP TABLE IF EXISTS follows CASCADE;
 DROP TABLE IF EXISTS Comment CASCADE;
 DROP TABLE IF EXISTS Report CASCADE;
 DROP TABLE IF EXISTS Bid CASCADE;
+
 DROP TABLE IF EXISTS AuctionPhoto CASCADE;
 DROP TABLE IF EXISTS AuctionWinner CASCADE;
-DROP TABLE IF EXISTS Transfers CASCADE;
 DROP TABLE IF EXISTS Auction CASCADE;
+DROP TABLE IF EXISTS moneys CASCADE;
 DROP TABLE IF EXISTS Admin CASCADE;
 DROP TABLE IF EXISTS SystemManager CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
@@ -18,8 +19,8 @@ DROP TABLE IF EXISTS Notification CASCADE;
 DROP TYPE IF EXISTS notification_type;
 DROP TYPE IF EXISTS category_type;
 DROP TYPE IF EXISTS auction_state;
-DROP TYPE IF EXISTS report_state;
 DROP TYPE IF EXISTS transfer_state;
+DROP TYPE IF EXISTS report_state;
 
 DROP FUNCTION IF EXISTS user_fullsearch_update;
 DROP FUNCTION IF EXISTS auction_search_update;
@@ -40,6 +41,7 @@ DROP FUNCTION IF EXISTS send_auction_notification;
 DROP FUNCTION IF EXISTS auto_follow;
 DROP FUNCTION IF EXISTS update_owner_rating;
 DROP FUNCTION IF EXISTS prevent_auction_winner_active;
+DROP FUNCTION IF EXISTS transfer_approved;
 
 /*
 
@@ -78,12 +80,6 @@ CREATE TYPE auction_state AS ENUM (
     'disabled'
 );
 
-CREATE TYPE report_state as ENUM (
-    'listed',
-    'reviewed',
-    'unrelated'
-);
-
 
 CREATE TYPE transfer_state AS ENUM (
     'pending',
@@ -91,6 +87,11 @@ CREATE TYPE transfer_state AS ENUM (
     'denied'
 );
 
+CREATE TYPE report_state AS ENUM (
+    'listed',
+    'reviewed',
+    'unrelated'
+);
 /*
 
 TABLES
@@ -106,14 +107,14 @@ CREATE TABLE users (
   password VARCHAR(255) NOT NULL,
   balance MONEY NOT NULL DEFAULT 0,
   date_of_birth DATE NOT NULL,
-  street VARCHAR(255) NOT NULL,
-  city VARCHAR(255) NOT NULL,
-  zip_code VARCHAR(10) NOT NULL,
-  country VARCHAR(255) NOT NULL,
+  street VARCHAR(255) DEFAULT NULL,
+  city VARCHAR(255) DEFAULT NULL,
+  zip_code VARCHAR(10) DEFAULT NULL,
+  country VARCHAR(255) DEFAULT NULL,
   rating FLOAT CHECK (rating >= 0 AND rating <= 5) DEFAULT NULL,
   image BYTEA
 );
-
+  ALTER TABLE users ADD COLUMN is_anonymizing BOOLEAN DEFAULT false;
 -- SystemManager table
 CREATE TABLE SystemManager (
   user_id INT REFERENCES users(id) ON UPDATE CASCADE,
@@ -126,9 +127,11 @@ CREATE TABLE Admin (
   PRIMARY KEY (user_id)
 );
 
-CREATE TABLE Transfers (
-  user_id INT REFERENCES users(id),
-  amount MONEY  CHECK (amount > 0.00),
+CREATE TABLE moneys (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON UPDATE CASCADE,
+  amount MONEY  CHECK (amount > '0'::MONEY),
+  type BOOL NOT NULL,
   state transfer_state DEFAULT 'pending'
 );
 
@@ -270,8 +273,6 @@ FOR EACH ROW
 EXECUTE FUNCTION user_fullsearch_update();
 CREATE INDEX search_user ON users USING GIN (tsvectors);
 
---'
-
 -- Index (IDX05)
 ALTER TABLE Auction
 ADD COLUMN tsvectors TSVECTOR;
@@ -308,34 +309,27 @@ CREATE INDEX search_auction ON Auction USING GIN (tsvectors);
 TRIGGERS
 
 */
---'
+
 -- Trigger (T01)
-CREATE FUNCTION anonymize_user_data()
+CREATE OR REPLACE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
 $$
-DECLARE 
-  anonymous_name VARCHAR(255);
-  anonymous_username VARCHAR(255);
 BEGIN
-  SELECT username, name INTO anonymous_name, anonymous_username FROM users WHERE username = OLD.id;
-    UPDATE users
-    SET username = Concat('Anonymous', OLD.id),
-        name = 'Anonymous',
-        email = NULL,
-        password = NULL,
-        date_of_birth = NULL,
-        street = NULL,
-        city = NULL,
-        zip_code = NULL,
-        country = NULL,
-        rating = NULL,
-        image = NULL
-    WHERE id = OLD.id;
-  DELETE FROM Admin
-  WHERE user_id = OLD.id;
-  DELETE FROM SystemManager
-  WHERE user_id = OLD.id;
-  RETURN OLD;
+  IF NEW.is_anonymizing THEN
+    NEW.username := 'anonymous' || OLD.id;
+    NEW.name := 'Anonymous';
+    NEW.email := 'anonymous' || OLD.id || '@anonymous.com';
+    NEW.password := 'anonymous';
+    NEW.date_of_birth := '1900-01-01';
+    NEW.balance := 0.00;
+    NEW.street := NULL;
+    NEW.city := NULL;
+    NEW.zip_code := NULL;
+    NEW.country := NULL;
+    NEW.rating := NULL;
+    NEW.image := NULL;
+  END IF;
+  RETURN NEW;
 END;
 $$ 
 LANGUAGE plpgsql;
@@ -343,6 +337,7 @@ CREATE TRIGGER anonymize_user_data_trigger
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION anonymize_user_data();
+
 
 -- Trigger (T02)
 CREATE FUNCTION prevent_auction_cancellation()
@@ -700,3 +695,30 @@ CREATE TRIGGER auction_notification
 AFTER UPDATE ON Auction
 FOR EACH ROW
 EXECUTE FUNCTION send_auction_notification();
+
+
+-- Trigger (T17)
+CREATE FUNCTION transfer_approved()
+RETURNS TRIGGER AS
+$$
+DECLARE
+  bal MONEY;
+BEGIN
+  SELECT balance INTO bal FROM users WHERE id = OLD.user_id;
+  IF OLD.state = 'pending' AND NEW.state = 'accepted'  AND  NEW.type = true THEN
+    UPDATE users
+    SET balance = balance + NEW.amount
+    WHERE id = OLD.user_id;
+  ELSIF OLD.state = 'pending' AND NEW.state = 'accepted'  AND  NEW.type = false AND bal >= NEW.amount THEN
+    UPDATE users
+    SET balance = balance - NEW.amount
+    WHERE id = OLD.user_id;
+  END IF;
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+CREATE TRIGGER transfer_approved
+AFTER UPDATE ON moneys
+FOR EACH ROW
+EXECUTE FUNCTION transfer_approved();

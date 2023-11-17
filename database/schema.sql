@@ -248,29 +248,31 @@ CREATE INDEX auction_state ON Auction USING HASH (state);
 -- Index (IDX04)
 ALTER TABLE users
 ADD COLUMN tsvectors TSVECTOR;
-CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS 
-$$
+
+CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
-            setweight(to_tsvector('english', NEW.username), 'B')
+            setweight(to_tsvector('english', NEW.username), 'B') ||
+            setweight(to_tsvector('english', NEW.name), 'A')
         );
     END IF;
     IF TG_OP = 'UPDATE' THEN
         IF NEW.username <> OLD.username THEN
             NEW.tsvectors = (
-                setweight(to_tsvector('english', NEW.username), 'B')
+                setweight(to_tsvector('english', NEW.username), 'B') ||
+                setweight(to_tsvector('english', NEW.name), 'A')
             );
         END IF;
     END IF;
     RETURN NEW;
 END
-$$
-LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 CREATE TRIGGER user_fullsearch_update
 BEFORE INSERT OR UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION user_fullsearch_update();
+
 CREATE INDEX search_user ON users USING GIN (tsvectors);
 
 -- Index (IDX05)

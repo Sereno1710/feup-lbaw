@@ -1,27 +1,27 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="top-bar">
-        <div class="home-button">
-            <a href="{{ url('/home') }}">Home</a>
+<div class="top-bar">
+    <div class="home-button">
+        <a href="{{ url('/home') }}">Home</a>
+    </div>
+    <form action="/users/search" method="GET">
+        <input type="text" name="keyword" placeholder="Search users">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div class="main-content">
+    <div class="top-row">
+        <div class="slogan">
+            <h2>Welcome to SoundSello, where bidding hits all the right notes</h2>
         </div>
-        <div class="search-bar">
-            <input type="text" placeholder="Search users and auctions">
-            <button type="button">Search</button>
+        <div class="image">
+
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="top-row">
-            <div class="slogan">
-                <h2>Welcome to SoundSello, where bidding hits all the right notes</h2>
-            </div>
-            <div class="image">
-
-            </div>
-        </div>
-
-            <div class="featured-auctions-container">
+    <div class="featured-auctions-container">
         <div class="featured-auctions-title">Featured Auctions</div>
         <div class="featured-auctions-grid">
             <!-- Featured Auctions (ocuparão a linha completa) -->
@@ -50,4 +50,4 @@
             </div>
         </div>
     </div>
-@endsection
+    @endsection

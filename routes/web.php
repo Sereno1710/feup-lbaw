@@ -23,6 +23,16 @@ use App\Http\Controllers\HomeController;
 
 // Home
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/search', [HomeController::class, 'search'])->name('search');
+
+Route::any('/search', function () {
+    $q = Input::get('q');
+    $user = User::where('name', 'LIKE', '%' . $q . '%')->orWhere('username', 'LIKE', '%' . $q . '%')->get();
+    if (count($user) > 0)
+        return view('welcome')->withDetails($user)->withQuery($q);
+    else
+        return view('welcome')->withMessage('No Details found. Try to search again !');
+});
 
 // Cards
 Route::controller(CardController::class)->group(function () {

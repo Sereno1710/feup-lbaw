@@ -1,3 +1,8 @@
+-- Use a specific schema
+DROP SCHEMA IF EXISTS lbaw2322 CASCADE;
+CREATE SCHEMA IF NOT EXISTS lbaw2322;
+SET search_path TO lbaw2322;
+
 -- Drop old tables
 DROP TABLE IF EXISTS follows CASCADE;
 DROP TABLE IF EXISTS Comment CASCADE;

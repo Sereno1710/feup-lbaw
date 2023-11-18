@@ -15,7 +15,7 @@
                     <a href="{{ url('/submit-auction') }}" class="button">Submit Auction</a>
                     <div class="user-info">
                         <a href="{{ url('/profile') }}" class="button">{{ Auth::user()->name}}</a>
-                        <a href="{{ url('/profile') }}" class="button">{{ Auth::user()->balance}}</a>
+                        <a href="{{ url('/profile') }}" class="button">$ {{ Auth::user()->balance}}</a>
                         <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
                     </div>
                     <a href="{{ url('/logout') }}" class="button">Logout</a>

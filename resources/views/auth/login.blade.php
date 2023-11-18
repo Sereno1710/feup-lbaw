@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('styles')
+<link href="{{ asset('css/login.css') }}" rel="stylesheet">
+@endsection
+
 @section('content')
 <div class="auth-container">
     <form method="POST" action="{{ route('login') }}" class="auth-form">

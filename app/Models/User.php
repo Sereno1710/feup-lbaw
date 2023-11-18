@@ -16,14 +16,14 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     // Don't add create and update timestamps in database.
-    public $timestamps  = false;
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = ['username', 'email', 'password', 'balance', 'date_of_birth', 'street', 'city', 'zip_code', 'country', 'rating', 'image',];
+    protected $fillable = ['username', 'email', 'password', 'balance', 'date_of_birth', 'street', 'city', 'zip_code', 'country', 'rating', 'image', 'tsvectors',];
     /**
      * The attributes that should be hidden for serialization.
      *

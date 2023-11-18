@@ -21,6 +21,144 @@ tags:
   - name: 'M05: Administration'
 
 paths:
+  /login:
+
+    get:
+      operationId: R101
+      summary: 'R101: Login Form'
+      description: 'Provide login form. Access: VIS'
+      tags:
+        - 'M01: Authentication'
+
+      responses:
+        '200':
+          description: 'OK. Show log-in UI'
+
+    post:
+      operationId: R102
+      summary: 'R102: Login Action'
+      description: 'Processes the login form submission. Access: VIS'
+      tags:
+        - 'M01: Authentication'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urllencoded:
+            schema:
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                  - email
+                  - password
+
+      responses:
+        '302':
+          description: 'Redirect after processing the new user information.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'OK. You are in. Redirect to homepage.'
+                  value: '/home'
+                302Failure:
+                  description: 'You shall not pass. Redirect again to login form.'
+                  value: '/login'
+
+  /logout:
+
+    get:
+      operationId: R103
+      summary: 'R103 : Logout Action'
+      description: 'Logout the current logged user. Access: USR, SYS ,ADM'
+      tags:
+        - 'M01: Authentication'
+
+      responses:
+        '302':
+          description: 'Redirect after processing logout.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Successful logout. Redirect to public feed.'
+                  value: '/'
+
+
+  /register:
+
+    get:
+      operationId: R104
+      summary: 'R104 : Register Form'
+      description: 'Register a new user. Access: VIS'
+      tags:
+        - 'M01: Authentication'
+
+      responses:
+        '200':
+          description: 'Ok. Lets Sign-up.'
+
+    post:
+      operationId: R105
+      summary: 'R105 : Register Action'
+      description: 'Processes the new user registration form submission. Access: VIS'
+      tags:
+        - 'M01: Authentication'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                confirm_password:
+                  type: string
+                  format: password
+                date_of_birth:
+                  type: string
+                  format: date
+                address:
+                  type: string
+                  format: address
+              required:
+                - username
+                - email
+                - password
+                - confirm_password
+                - date_of_birth;
+      responses:
+        '302':
+          description: 'Redirect after processing the new user information.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                  302Success:
+                    description: 'Successful registration. Redirect to home page.'
+                    value: '/home'
+                  302Failure:
+                    description: 'Failed registration. Redirect again to register form.'
+                    value: '/register'
+
   /users/{id}/followed_auctions:
     get:
       operationId: R203
@@ -37,6 +175,23 @@ paths:
       responses:
         '200':
           description: 'OK. Show list of auctions followed by a user'
+
+  /users/{id}/auctions:
+    get:
+      operationId: R204
+      summary: 'R204: View users auctions'
+      description: 'Show auctions owned by a certain users. Access: CRE, SYS, ADM'
+      tags:
+        - 'M02: Users'
+      parameters:
+        - in: path
+          name: id
+          schema: 
+            type: integer
+            required: true
+      responses: 
+        '200':
+          description: 'OK. Show list of auctions owned by a user'
 
   /auction/create:
     post:
@@ -117,7 +272,6 @@ paths:
                         type: string
                       username:
                         type: string
-                ## ver categorias e estados
         '404':
           description: 'Not found. Auction does not exist.'
 
@@ -313,6 +467,19 @@ paths:
       responses:
         '200':
           description: 'Success. Returns a list of users information.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user_id:
+                      type: string
+                    username:
+                      type: string
+                    email:
+                      type: string
 
   /api/auctions:
     get:
@@ -320,7 +487,7 @@ paths:
       summary: 'R402: Search for auctions'
       description: 'Search for auctions based on specific criteria. Access: AUTH'
       tags:
-        - 'M03: Auctions'
+        - 'M04: Search'
       parameters:
         - in: query
           name: search
@@ -331,6 +498,23 @@ paths:
       responses:
         '200':
           description: 'Success. Returns a list of auctions information'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    auction_id:
+                      type: string
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    current_bid:
+                      type: number
+                    end_date:
+                      type: string
 
   /admin:
     get:
@@ -342,6 +526,11 @@ paths:
       responses:
         '200':
           description: 'OK. Show the admin page UI'
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<html>Admin Page Content</html>'
         '403':
           description: 'This action is unauthorized.'
 
@@ -349,11 +538,35 @@ paths:
     get:
       operationId: R502
       summary: 'R502: View all users'
-      description: 'View all users'
+      description: 'View all users. Access: ADM'
       tags:
-        - 'M05'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Show all users page UI'
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<html>All Users Page Content</html>'
         '403':
           description: 'This action is unauthorized.'
+
+  /admin/transfers:
+    get:
+      operationId: R502
+      summary: 'R502: View all transfers'
+      description: 'View all transfers. Access: ADM'
+      tags:
+        - 'M05: Administration'
+      responses:
+        '200':
+          description: 'OK. Show all transfers page UI'
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<html>All transfers Content</html>'
+        '403':
+          description: 'This action is unauthorized.'
+

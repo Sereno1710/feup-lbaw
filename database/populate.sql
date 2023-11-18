@@ -3,7 +3,7 @@ VALUES
   ('Anonymous', ' ', ' ', 0.00, '1970-01-01', ' ', ' ', ' ', ' ',  NULL),  
   ('gago', 'daniel@email.com', 'danielpass', 3500.00, '2003-11-15', 'Rua do Twistzz', 'Faro', '12345', 'Portugal', NULL),
   ('sereno', 'jose@email.com', 'josepass', 2000.00, '2003-03-23', 'Avenida dos Desdentados', 'Guimaraes', '123123', 'Portugal', NULL),
-  ('edu', 'eduardo@email.com', 'edupass', 1.05, '2003-07-21', 'Praça dos Maluquinhos', 'Santo Tirso', '4780-666', 'Portugal', NULL),
+  ('edu', 'eduardo@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 1.05, '2003-07-21', 'Praça dos Maluquinhos', 'Santo Tirso', '4780-666', 'Portugal', NULL),
   ('max', 'maximo@email.com', 'maxpass', 1000.00, '2003-01-13', 'Rua do Inspetor', 'Gondomar', '4420-123', 'Portugal', NULL),
   ('zemanel', 'zemanel@hotmail.com', 'password123', 5.00, '1992-02-10', 'Rua Santa Catarina', 'Porto', '34567', 'Portugal', NULL),
   ('darkknight', 'brucewayne@email.com', 'batman123', 1000000.00, '1980-05-10', 'Gotham Street', 'Gotham City', '12345', 'USA', NULL),

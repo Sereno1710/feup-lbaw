@@ -216,23 +216,6 @@ paths:
         '200':
           description: 'OK. Show list of auctions followed by a user'
 
-  /users/{id}/auctions:
-    get:
-      operationId: R204
-      summary: 'R204: View users auctions'
-      description: 'Show auctions owned by a certain users. Access: CRE, SYS, ADM'
-      tags:
-        - 'M02: Users'
-      parameters:
-        - in: path
-          name: id
-          schema: 
-            type: integer
-            required: true
-      responses: 
-        '200':
-          description: 'OK. Show list of auctions owned by a user'
-
   /auction/create:
     post:
       operationId: R301
@@ -320,7 +303,7 @@ paths:
       summary: 'R503: Change the state of an auction'
       description: 'Change the state of a specific auction. Access: CRE, SYS, ADM'
       tags:
-        - 'Auctions'
+        - 'M03: Auctions'
       parameters:
         - name: id
           in: path

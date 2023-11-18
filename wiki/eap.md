@@ -681,30 +681,28 @@ paths:
 
 > Identify the user stories that were implemented in the prototype.  
 
-| User Story reference | Name                   | Priority                   | Description                   |
-| -------------------- | ---------------------- | -------------------------- | ----------------------------- |
-| US01 | See Home Page | High | As a user, I want to be able to see the home page whenever I enter the website so that I can start using the website. |
-| US02 | View Active Auctions | High | As a user, I want to be able to view a list of currently active auctions so that I can bid on items that are currently being auctioned. |
-| US03 | View Auction Details | High | As a user, I want to be able to click on an auction from the list to view its detailed information, including item description, current highest bid, and auction end time, so that I can get more insight into the product. |
-| US04 | Exact match search | High | As a user, I want to be able to search with a specific text so that I can quickly find a specific item. | High |
-| US05 | Full text search | High | As a user, I want to be able to search words or phrases within extensive text so that I can find the item I want faster. |
-| US06 | View User Profiles | High | As a user, I want to be able to view other user profiles that are registered on the platform so that I can see their activity and items they have listed or bid on. |
-| US10 | Log in | High | As a user, I want to be able to log in to my account so that I can manage my settings and track my activity securely. |
-| US11 | Register Account | High | As a user, I want to be able to register for a new account so that I can participate in auctions and save favorite items. |
-| US13 | Log out | High | As an authenticated user, I want the ability to log out of my account so that I can end my session in a secure way preventing it from unauthorized access. |
-| US14       | Create Auction                          | High | As an authenticated user, I want to be able to create a new auction so that I can sell items to other users on the website.                                                                |
-| US15       | Bid on Auction                          | High | As an authenticated user, I want to be able to place bids on active auctions so that I can use it for making purchases and bidding on the website.                                         |
-| US16       | View Own Profile                        | High | As an authenticated user, I want a section where I can see my own profile so that I can see all my activity and information about my account.                                              |
-| US17       | Edit Profile                            | High | As an authenticated user, I want to be able to edit and update my user profile information so that I can keep my personal details and preferences updated.                                 |
-| US18       | Deposit Money on Account                | High |  As an authenticated user, I want to be able to deposit money into my account so that I can use that money to participate in active auctions.                                               |
-| US19       | Withdraw Money from Account             | High | As an authenticated user, I want to be able to withdraw money from my account into the bank.                                                                                               |
-| US29       | View Auction Bidding History | High | As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise. |
-| US35       | View Auction Bidding History | High | As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise. |
-| US36       | Disable Auction | High
-
- | As a seller, I want to be able to disable my auction if no one has submitted a bid so that I can keep my item if I change my mind. Whilst being able to make that same auction active again at another time. |
- | US38       | Approve Auction | High | As a system manager, I want to be able to approve pending auctions, so that they can be ready to be bid on. |
- | US44       | Manage User Accounts               | High | As an administrator, I want to have the ability to manage users, including the ability to edit existing user profiles, create new accounts, search for certain users, and add system managers, so that I can have total control over the users. |
+| User Story reference | Name                         | Priority | Description                                                                                                                                                                                                                                     |
+|----------------------|------------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| US01                 | See Home Page                | High     | As a user, I want to be able to see the home page whenever I enter the website so that I can start using the website.                                                                                                                           |
+| US02                 | View Active Auctions         | High     | As a user, I want to be able to view a list of currently active auctions so that I can bid on items that are currently being auctioned.                                                                                                         |
+| US03                 | View Auction Details         | High     | As a user, I want to be able to click on an auction from the list to view its detailed information, including item description, current highest bid, and auction end time, so that I can get more insight into the product.                     |
+| US04                 | Exact match search           | High     | As a user, I want to be able to search with a specific text so that I can quickly find a specific item.                                                                                                                                         |
+| US05                 | Full text search             | High     | As a user, I want to be able to search words or phrases within extensive text so that I can find the item I want faster.                                                                                                                        |
+| US06                 | View User Profiles           | High     | As a user, I want to be able to view other user profiles that are registered on the platform so that I can see their activity and items they have listed or bid on.                                                                             |
+| US10                 | Log in                       | High     | As a user, I want to be able to log in to my account so that I can manage my settings and track my activity securely.                                                                                                                           |
+| US11                 | Register Account             | High     | As a user, I want to be able to register for a new account so that I can participate in auctions and save favorite items.                                                                                                                       |
+| US13                 | Log out                      | High     | As an authenticated user, I want the ability to log out of my account so that I can end my session in a secure way preventing it from unauthorized access.                                                                                      |
+| US14                 | Create Auction               | High     | As an authenticated user, I want to be able to create a new auction so that I can sell items to other users on the website.                                                                                                                     |
+| US15                 | Bid on Auction               | High     | As an authenticated user, I want to be able to place bids on active auctions so that I can use it for making purchases and bidding on the website.                                                                                              |
+| US16                 | View Own Profile             | High     | As an authenticated user, I want a section where I can see my own profile so that I can see all my activity and information about my account.                                                                                                   |
+| US17                 | Edit Profile                 | High     | As an authenticated user, I want to be able to edit and update my user profile information so that I can keep my personal details and preferences updated.                                                                                      |
+| US18                 | Deposit Money on Account     | High     | As an authenticated user, I want to be able to deposit money into my account so that I can use that money to participate in active auctions.                                                                                                    |
+| US19                 | Withdraw Money from Account  | High     | As an authenticated user, I want to be able to withdraw money from my account into the bank.                                                                                                                                                    |
+| US29                 | View Auction Bidding History | High     | As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise.                                                                                                                                    |
+| US35                 | View Auction Bidding History | High     | As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise.                                                                                                                                    |
+| US36                 | Disable Auction              | High     | As a seller, I want to be able to disable my auction if no one has submitted a bid so that I can keep my item if I change my mind. Whilst being able to make that same auction active again at another time.                                    |
+| US38                 | Approve Auction              | High     | As a system manager, I want to be able to approve pending auctions, so that they can be ready to be bid on.                                                                                                                                     |
+| US44                 | Manage User Accounts         | High     | As an administrator, I want to have the ability to manage users, including the ability to edit existing user profiles, create new accounts, search for certain users, and add system managers, so that I can have total control over the users. |
  
 
 ...
@@ -716,7 +714,7 @@ paths:
 > Module M01: Module Name  
 
 | Web Resource Reference | URL                            |
-| ---------------------- | ------------------------------ |
+|------------------------|--------------------------------|
 | R01: Web resource name | URL to access the web resource |
 
 ...

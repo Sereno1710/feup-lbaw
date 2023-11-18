@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class UserController extends Controller
 {
-     public function changeUsername(Request $request)
+    public function changeUsername(Request $request)
     {
         $user = Auth::user();
         $user->username = $request->input('new_username');
@@ -15,7 +16,7 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Username updated successfully.');
     }
 
-     public function changePassword(Request $request)
+    public function changePassword(Request $request)
     {
         $user = Auth::user();
 
@@ -46,6 +47,16 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'Email updated successfully.');
+    }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        $users = User::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword])
+            ->get();
+
+        return view('pages.users.search', ['users' => $users]);
     }
 
 }

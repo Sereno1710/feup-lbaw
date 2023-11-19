@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('styles')
+<link href="{{ asset('css/register.css') }}" rel="stylesheet">
+@endsection
+
 @section('content')
 <form method="POST" action="{{ route('register') }}" class="m-auto p-8 max-w-xl flex flex-col text-stone-800 bg-white shadow-lg">
     {{ csrf_field() }}

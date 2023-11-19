@@ -161,23 +161,6 @@ footer {
     color: #ccc;
 }
 
-.auth-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50vh; 
-}
-
-.auth-form {
-    max-width: 300px; 
-    width: 100%;
-    text-align: center;
-    padding: 20px; 
-    border-radius: 10px; 
-    background-color: #fff; 
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
-}
-
 .auth-form label {
     display: block;
     margin-bottom: 10px; 
@@ -212,7 +195,7 @@ footer {
 .remember-me {
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* Alinha os itens à direita */
+    justify-content: flex-end; 
     margin-bottom: 10px;
 }
 

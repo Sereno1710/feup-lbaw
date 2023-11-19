@@ -2,7 +2,7 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
     <link href="{{ asset('css/layout.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/profile.css') }}" rel="stylesheet">
+    @yield('styles')
 </head>
 <body>
     <header>
@@ -14,7 +14,7 @@
                     <a href="{{ url('/deposit-money') }}" class="button">Deposit Money</a>
                     <a href="{{ url('/submit-auction') }}" class="button">Submit Auction</a>
                     <div class="user-info">
-                        <a href="{{ url('/profile') }}" class="button">{{ Auth::user()->name }}</a>
+                        <a href="{{ url('/profile') }}" class="button">{{ Auth::user()->name}}</a>
                         <a href="{{ url('/profile') }}" class="button">{{ Auth::user()->balance}}</a>
                         <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
                     </div>

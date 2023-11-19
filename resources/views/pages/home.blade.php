@@ -6,7 +6,13 @@
         <a href="{{ url('/home') }}">Home</a>
     </div>
     <form action="/users/search" method="GET">
+        @csrf
         <input type="text" name="keyword" placeholder="Search users">
+        <button type="submit">Search</button>
+    </form>
+    <form action="/auction/search" method="GET">
+        @csrf
+        <input type="text" name="keyword" placeholder="Search auctions">
         <button type="submit">Search</button>
     </form>
 </div>

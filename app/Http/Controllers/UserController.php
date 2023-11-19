@@ -53,7 +53,9 @@ class UserController extends Controller
     {
         $keyword = $request->input('keyword');
 
-        $users = User::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword])
+        $users = User::whereRaw("LOWER(username) LIKE LOWER(?)", ['%' . $keyword . '%'])
+            ->orWhereRaw("LOWER(name) LIKE LOWER(?)", ['%' . $keyword . '%'])
+            ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$keyword])
             ->get();
 
         return view('pages.users.search', ['users' => $users]);

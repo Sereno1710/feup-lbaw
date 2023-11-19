@@ -26,7 +26,9 @@ use App\Http\Controllers\ProfileController;
 
 // Home
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/users/search', [UserController::class, 'search']);
+
+// Users
+Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
 // Profile
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile');

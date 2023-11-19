@@ -30,8 +30,6 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Users
 Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
-Route::get('/users/index', [UserController::class, 'index'])->name('users.index');
-
 
 // Profile
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile');

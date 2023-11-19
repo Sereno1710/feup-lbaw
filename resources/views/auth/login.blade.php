@@ -1,39 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="auth-container">
-    <form method="POST" action="{{ route('login') }}" class="auth-form">
-        {{ csrf_field() }}
+<form method="POST" action="{{ route('login') }}" class="m-auto p-8 max-w-xl flex flex-col text-stone-800 bg-white shadow-lg">
+    {{ csrf_field() }}
 
-        <label for="email">Enter your E-mail:</label>
-        <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>
-        @if ($errors->has('email'))
-            <span class="error">
-                {{ $errors->first('email') }}
-            </span>
-        @endif
+    <label class="mt-2 mb-1" for="email">E-mail:</label>
+    <input class="p-2 mb-2 border border-stone-400 rounded" id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>
+    @if ($errors->has('email'))
+        <span class="error">
+            {{ $errors->first('email') }}
+        </span>
+    @endif
 
-        <label for="password">Enter your password:</label>
-        <input id="password" type="password" name="password" required>
-        @if ($errors->has('password'))
-            <span class="error">
-                {{ $errors->first('password') }}
-            </span>
-        @endif
+    <label class="mt-2 mb-1" for="password">Password:</label>
+    <input class="p-2 mb-2 border border-stone-400 rounded" id="password" type="password" name="password" required>
+    @if ($errors->has('password'))
+        <span class="error">
+            {{ $errors->first('password') }}
+        </span>
+    @endif
 
-        <label class="remember-me">
-            <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
-            <span>Remember Me</span>
-        </label>
+    <label class="my-2 flex">
+        <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
+        <span class="ml-2">Remember Me</span>
+    </label>
 
-        <button type="submit">
-            Login
-        </button>
-        @if (session('success'))
-            <p class="success">
-                {{ session('success') }}
-            </p>
-        @endif
-    </form>
-</div>
+    <button type="submit" class="p-2 text-white bg-stone-800 rounded">
+        Login
+    </button>
+    @if (session('success'))
+        <p class="success">
+            {{ session('success') }}
+        </p>
+    @endif
+</form>
 @endsection

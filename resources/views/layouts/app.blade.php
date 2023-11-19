@@ -1,50 +1,46 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    <link href="{{ asset('css/layout.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/profile.css') }}" rel="stylesheet">
+    @vite('resources/css/app.css')
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <h1><a href="{{ url('/home') }}">SoundSello</a></h1>
-            <div class="header-buttons">
-                <a href="{{ url('/auctions') }}" class="button">View Auctions</a>
+    <header class="fixed top-0 w-screen p-16 pt-4 pb-4 bg-white text-stone-800 shadow-lg">
+        <div class="items-center m-auto flex justify-between ">
+            <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
+            <div class="flex justify-between">
+                <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
-                    <a href="{{ url('/deposit-money') }}" class="button">Deposit Money</a>
-                    <a href="{{ url('/submit-auction') }}" class="button">Submit Auction</a>
+                    <a href="{{ url('/deposit-money') }}" class="ml-4">Deposit Money</a>
+                    <a href="{{ url('/submit-auction') }}" class="ml-4">Submit Auction</a>
                     <div class="user-info">
-                        <a href="{{ url('/profile') }}" class="button">{{ Auth::user()->name }}</a>
-                        <a href="{{ url('/profile') }}" class="button">{{ Auth::user()->balance}}</a>
+                        <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
+                        <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->balance}}</a>
                         <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
                     </div>
-                    <a href="{{ url('/logout') }}" class="button">Logout</a>
+                    <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
                 @else
-                    <a href="{{ url('/login') }}" class="button">Sign In</a>
-                    <a href="{{ url('/register') }}" class="button">Sign Up</a>
+                    <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
+                    <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
                 @endif
             </div>
         </div>
     </header>
     <main>
-        <section id="content">
+        <section id="content" class="m-32">
             @yield('content')
         </section>
     </main>
     <footer>
-        <div class="footer-content">
-            <div class="footer-left">
-                <p class="footer-brand">SoundSello</p>
-                <ul>
-                    <li><a href="{{ url('/about-us') }}">About Us</a></li>
-                    <li><a href="{{ url('/faq') }}">FAQ</a></li>
-                    <li><a href="{{ url('/contacts') }}">Contacts</a></li>
-                    <li><a href="{{ url('/terms-of-use') }}">Terms of Use</a></li>
-                    <li><a href="{{ url('/privacy-policy') }}">Privacy Policy</a></li>
+        <div class="fixed bottom-0 w-screen p-8 pt-4 pb-4 bg-stone-800">
+            <div class="flex flex-col justify-between">
+                <ul class="flex flex-row flex-auto text-stone-200 divide-x">
+                    <li class="pr-4"><a href="{{ url('/about-us') }}">About Us</a></li>
+                    <li class="px-4"><a href="{{ url('/faq') }}">FAQ</a></li>
+                    <li class="px-4"><a href="{{ url('/contacts') }}">Contacts</a></li>
+                    <li class="px-4"><a href="{{ url('/terms-of-use') }}">Terms of Use</a></li>
+                    <li class="pl-4"><a href="{{ url('/privacy-policy') }}">Privacy Policy</a></li>
                 </ul>
-            </div>
-            <div class="footer-right">
-                <p>&copy; 2023</p>
+                <p class="mt-1 text-sm text-stone-50">Copyright &copy; 2023 SoundSello</p>
             </div>
         </div>
     </footer>

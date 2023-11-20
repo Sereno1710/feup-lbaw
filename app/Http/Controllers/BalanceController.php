@@ -21,7 +21,20 @@ class BalanceController extends Controller
         ]);
     
 
-    
+
+        $balance = $user->balance;
+        $depositAmount = $request->input('deposit_amount');
+
+        $numericBalance = preg_replace('/[^0-9.]/', '', $balance);
+
+        $numericBalance = (float) $numericBalance;
+
+        $newBalance = $numericBalance - $depositAmount;
+
+        $user->update([
+            'balance' => $newBalance,
+        ]);
+
         return redirect('/home')->with('success', 'Deposit successful!');
     }
 

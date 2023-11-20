@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
+
 <head>
     @vite('resources/css/app.css')
 </head>
+
 <body>
     <header class="fixed top-0 w-screen p-16 pt-4 pb-4 bg-white text-stone-800 shadow-lg">
         <div class="items-center m-auto flex justify-between ">
@@ -14,17 +16,17 @@
                 </form>
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
-                    <a href="{{ url('/deposit-money') }}" class="ml-4">Deposit Money</a>
-                    <a href="{{ url('/submit-auction') }}" class="ml-4">Submit Auction</a>
-                    <div class="user-info">
-                        <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
-                        <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->balance}}</a>
-                        <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
-                    </div>
-                    <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
+                <a href="{{ url('/deposit-money') }}" class="ml-4">Deposit Money</a>
+                <a href="{{ url('/submit-auction') }}" class="ml-4">Submit Auction</a>
+                <div class="user-info">
+                    <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
+                    <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->balance}}</a>
+                    <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
+                </div>
+                <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
                 @else
-                    <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
-                    <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
+                <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
+                <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
                 @endif
             </div>
         </div>
@@ -49,4 +51,5 @@
         </div>
     </footer>
 </body>
+
 </html>

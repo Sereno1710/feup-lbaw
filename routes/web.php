@@ -34,6 +34,9 @@ Route::get('/users/search', [UserController::class, 'search'])->name('users.sear
 // Profile
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
 
+// Auction
+Route::get('/auction/search', [AuctionController::class, 'search'])->name('auction.search');
+
 // Cards
 Route::controller(CardController::class)->group(function () {
     Route::get('/cards', 'list')->name('cards');

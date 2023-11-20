@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('styles')
-<link href="{{ asset('css/profile.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/profile.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -25,7 +25,7 @@
             </div>
             <div class="user-details">
                 <p>Email: {{ Auth::user()->email }}</p>
-                <p>Nome:  {{ Auth::user()->name }} <button>Edit Profile</button></p>
+                <p>Nome:  {{ Auth::user()->name }} <a href="{{ route('profile.edit') }}">Edit Profile</a></p>
                 <p>Rating: {{ Auth::user()->rating }}</p>
             </div>
         </div>

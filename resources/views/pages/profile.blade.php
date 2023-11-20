@@ -13,7 +13,7 @@
             </div>
             <div class="mx-4 flex flex-col">
                 <p class="text-xl">{{ Auth::user()->email }}</p>
-                <p class="text-2xl">{{ Auth::user()->name }} <button class="mx-2 text-sm underline">[edit profile]</button></p>
+                <p class="text-2xl">{{ Auth::user()->name }} <a class="mx-2 text-sm underline" href="{{ route('profile.edit') }}">[edit profile]</a></p>
                 <p>{{ Auth::user()->rating }}</p>
             </div>
         </div>

@@ -29,7 +29,7 @@ class UserController extends Controller
             return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect.']);
         }
 
-        $user->password = bcrypt($request->input('new_password'));
+        $user->password = Hash::make($request->input('new_password'));
         $user->save();
 
         return redirect()->back()->with('success', 'Password updated successfully.');

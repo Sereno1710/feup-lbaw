@@ -33,16 +33,12 @@ Route::get('/users/search', [UserController::class, 'search'])->name('users.sear
 
 // Profile
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+Route::match(['post', 'put'], '/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
 // Auction
 Route::get('/auction/search', [AuctionController::class, 'search'])->name('auction.search');
-
-// Cards
-Route::controller(CardController::class)->group(function () {
-    Route::get('/cards', 'list')->name('cards');
-    Route::get('/cards/{id}', 'show');
-});
-
 
 // API
 Route::controller(CardController::class)->group(function () {

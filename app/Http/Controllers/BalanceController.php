@@ -29,7 +29,7 @@ class BalanceController extends Controller
 
         $numericBalance = (float) $numericBalance;
 
-        $newBalance = $numericBalance - $depositAmount;
+        $newBalance = $numericBalance + $depositAmount;
 
         $user->update([
             'balance' => $newBalance,

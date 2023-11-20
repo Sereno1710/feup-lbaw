@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 
 // Added to define Eloquent relationships.
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,21 +32,23 @@ class User extends Authenticatable
      */
     protected $hidden = ['password', 'remember_token',];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+    public function isAdmin() {
+        return count($this->hasOne('App\Models\Admin', 'id')->get());
+    }
+    
+    public function ownAuction() {
+      return $this->hasMany('App\Models\Auction', 'owner')->orderBy('initial_time', 'desc');
+    }
 
-    /**
-     * Get the cards for a user.
-     */
-    public function cards(): HasMany
-    {
-        return $this->hasMany(Card::class);
+    public function ownBids() {
+        return $this->hasMany('App\Models\Bid', 'user_id')->orderBy('id', 'desc');
+    }
+
+    public function followedAuctions() {
+        return $this->hasMany('\App\Models\Auctions','user_id')->where('user_id', $this->id)->orderBy('end_time', 'asc');
+    }
+
+    public function ownTransfers() {
+        return $this->hasMany('App\Models\moneys','id')->where('user_id', $this->id)->where('state','accepted')->orderBy('id', 'desc');
     }
 }

@@ -7,7 +7,11 @@
     <header class="fixed top-0 w-screen p-16 pt-4 pb-4 bg-white text-stone-800 shadow-lg">
         <div class="items-center m-auto flex justify-between ">
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
-            <div class="flex justify-between">
+            <div class="flex justify-between items-center">
+                <form class="p-1 bg-stone-200 rounded-lg" action="/users/search" method="GET">
+                    <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search users">
+                    <button type="submit">🔎</button>
+                </form>
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
                     <a href="{{ url('/deposit-money') }}" class="ml-4">Deposit Money</a>

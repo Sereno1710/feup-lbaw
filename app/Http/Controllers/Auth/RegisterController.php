@@ -33,10 +33,6 @@ class RegisterController extends Controller
             'email' => 'required|email|max:250|unique:users',
             'password' => 'required|confirmed',
             'date_of_birth' => 'required|date',
-            'street' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'zip_code' => 'required|string|max:10',
-            'country' => 'required|string|max:255',
         ]);
     
         User::create([
@@ -46,10 +42,10 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
             'balance' => 0,
             'date_of_birth' => $request->date_of_birth,
-            'street' => $request->street,
-            'city' => $request->city,
-            'zip_code' => $request->zip_code,
-            'country' => $request->country,
+            'street' => null,
+            'city' => null,
+            'zip_code' => null,
+            'country' => null,
             'rating' => null,
             'image' => null, 
         ]);

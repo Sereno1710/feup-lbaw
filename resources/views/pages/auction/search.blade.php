@@ -12,6 +12,7 @@
         <li>
             <h2>{{ $auction->name }}</h2>
             <p>{{ $auction->description }}</p>
+            <p>{{ $auction->category }}</p>
             <p>{{ $auction->price }}</p>
             <p>{{ $auction->end_time }}</p>
         </li>

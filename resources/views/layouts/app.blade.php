@@ -10,8 +10,8 @@
         <div class="items-center m-auto flex justify-between ">
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
             <div class="flex justify-between items-center">
-                <form class="p-1 bg-stone-200 rounded-lg" action="/users/search" method="GET">
-                    <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search users">
+                <form class="p-1 bg-stone-200 rounded-lg" action="/auction/search" method="GET">
+                    <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search auctions">
                     <button type="submit">🔎</button>
                 </form>
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>

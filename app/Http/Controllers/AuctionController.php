@@ -11,9 +11,9 @@ class AuctionController extends Controller
     {
         $keyword = $request->input('keyword');
 
-        $auctions = Auction::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword])
+        $auctions = Auction::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
             ->get();
 
-        return view('pages.auciton.search', ['auctions' => $auctions]);
+        return view('pages.auction.search', ['auctions' => $auctions]);
     }
 }

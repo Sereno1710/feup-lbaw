@@ -18,24 +18,15 @@ class User extends Authenticatable
 
     // Don't add create and update timestamps in database.
     public $timestamps = false;
+    protected $table='users';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = ['username', 'name', 'email', 'password', 'balance', 'date_of_birth', 'street', 'city', 'zip_code', 'country', 'rating', 'image', 'tsvectors',];
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = ['password', 'remember_token',];
 
     public function isAdmin() {
         return count($this->hasOne('App\Models\Admin', 'id')->get());
     }
-    
+
     public function ownAuction() {
       return $this->hasMany('App\Models\Auction', 'owner')->orderBy('initial_time', 'desc');
     }

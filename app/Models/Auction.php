@@ -12,6 +12,7 @@ class Auction extends Model
 {
     use HasFactory;
     // Don't add create and update timestamps in database.
+    protected $table = 'auction';
     public $timestamps  = false;
     protected $fillable = [
         'name','description','initial_price','price','initial_time','end_time','category','owner'
@@ -39,5 +40,9 @@ class Auction extends Model
 
     public function auctionWinner() {
         return $this->belongsTo('App\Models\AuctionWinner', 'user_id');
+    }
+
+    public function auctionRatings() {
+        return $this->hasMany('App\Models\AuctionRating', 'auction_id')->orderBy('id', 'desc');
     }
 }

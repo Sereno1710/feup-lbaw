@@ -11,7 +11,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
-
+use App\Http\Controllers\BalanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,10 +30,16 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/users/search', [UserController::class, 'search']);
 
 // Profile
-Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-Route::match(['post', 'put'], '/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+Route::get('/profile', [UserController::class, 'index'])->name('profile');
+Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
+Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
+Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
+
+// Balance
+Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
+Route::post('/balance/deposit', [BalanceController::class, 'deposit'])->name('balance.deposit');
+Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
+
 
 
 // API

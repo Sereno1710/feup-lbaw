@@ -55,13 +55,13 @@ VALUES
   ('magneto', 'Erik Lensherr' ,'eriklensherr@email.com', 'magnetism', 90000.00, '1963-06-05', 'Mutant Lane', 'Genosha', '22222', 'Genosha', NULL),
   ('hulk', 'Bruce Banner','brucebanner@email.com', 'smash', 85000.00, '1962-05-02', 'Gamma Road', 'New York', '98765', 'USA', NULL);
 
-INSERT INTO moneys (id,user_id, amount,type, state) 
+INSERT INTO moneys (user_id, amount,type, state) 
 VALUES 
-  (1,1,10.00,true,'pending'),
-  (2,2,200.00,false, 'denied'),
-  (3,3, 400.00,true, 'accepted'),
-  (4,4, 250.00,false, 'pending'),
-  (5,5, 100.00,true, 'accepted');
+  (1,10.00,true,'pending'),
+  (2,200.00,false, 'denied'),
+  (3, 400.00,true, 'accepted'),
+  (4, 250.00,false, 'pending'),
+  (5, 100.00,true, 'accepted');
 
 INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner)
 VALUES

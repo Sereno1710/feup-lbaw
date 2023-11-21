@@ -15,7 +15,7 @@
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
                     <a href="{{ url('/deposit-money') }}" class="ml-4">Deposit Money</a>
-                    <a href="{{ url('/submit-auction') }}" class="ml-4">Submit Auction</a>
+                    <a href="{{ url('/auction/create') }}" class="ml-4">Submit Auction</a>
                     <div class="user-info">
                         <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
                         <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->balance}}</a>

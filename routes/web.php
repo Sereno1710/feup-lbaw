@@ -31,14 +31,16 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/users/search', [UserController::class, 'search']);
 
 // Profile
-Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 Route::match(['post', 'put'], '/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
 //Auction
 Route::controller(AuctionController::class)->group(function () {
-    Route::get('/auction', 'index');
+    Route::get('/auction/{id}', 'showAuction');
+    Route::get('/auctions', 'showActiveAuctions');
+    Route::get('/auction/create', 'showAuctionForm');
 });
 
 // API

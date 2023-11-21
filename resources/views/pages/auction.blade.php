@@ -6,11 +6,11 @@
         <span class="mx-2"> > </span>
         <a href="{{ url('/MEGGAEROR') }}" class="text-blue-500 hover:underline">Auctions</a>
         <span class="mx-2"> > </span>
-        <span class="text-stone-500">Auction Name</span>
+        <span class="text-stone-500">{{ $auction->name }}</span>
     </div>
     <div class="bg-stone-500 m-2 p-4 flex flex-col items-center rounded-lg shadow-lg">
         <div class="w-full px-4 py-1 flex flex-row items-end justify-between border-b-2 border-stone-400">
-            <h2 class="text-3xl">Auction Name</h2>
+            <h2 class="text-3xl">{{ $auction->name }}</h2>
             <div>
                 <button>Report</button>
                 <button>Follow</button>
@@ -30,24 +30,17 @@
                 <tr>
                     <td class="border-r border-stone-400">
                         <div class="m-2">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at turpis et nibh mattis
-                                faucibus
-                                ac
-                                eget
-                                nunc. Maecenas dignissim molestie euismod. Suspendisse potenti. Etiam varius semper arcu,
-                                accumsan
-                                finibus neque ullamcorper eget. Curabitur dictum est non quam dapibus commodo. Quisque sed
-                                sollicitudin
-                                mi, ac molestie sapien.</p>
-                            <p> Auction Owner: Maluco</p>
+                            <p>{{ $auction->description }}</p>
+                            <br>
+                            <p>Auction Owner: {{$auction->owner->name }}</p>
                         </div>
                     </td>
                     <td>
                         <div class="m-2 flex flex-col">
-                            <?php for ($i = 0; $i < 3; $i++): ?>
-                            @include('partials.bid')
-                            <?php endfor; ?>
-                            <p> Auction started at X euros.</p>
+                            @foreach ($bids as $bid)
+                                @include('partials.bid', ['bid' => $bid])
+                            @endforeach
+                            <p>Auction started at {{ $auction->initial_price }} euros.</p>
                         </div>
                     </td>
                 </tr>
@@ -64,7 +57,8 @@
             </div>
             <div class="flex flex-col">
                 <p><span class="font-bold">Current price:</span> $42 000</p>
-                <input class="p-1 bg-stone-200 outline-none rounded-t-lg" type="number" min="1" step=".01" name="ammount" placeholder="Bid ammount">
+                <input class="p-1 bg-stone-200 outline-none rounded-t-lg" type="number" min="1" step=".01"
+                    name="ammount" placeholder="Bid ammount">
                 <button class="p-1 bg-stone-800 text-white rounded-b-lg" type="submit">Bid</button>
             </div>
         </div>

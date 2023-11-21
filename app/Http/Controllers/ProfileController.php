@@ -7,9 +7,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    public function index()
+    public function show()
     {
-        return view('pages/profile');
+        $user = Auth::user();
+        $followedAuctions = $user->followedAuctions;
+        $ownedAuctions = $user->ownAuction;
+
+        return view('pages.profile', compact('user', 'followedAuctions', 'ownedAuctions'));
     }
 
     public function edit()

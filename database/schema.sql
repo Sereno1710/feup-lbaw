@@ -152,7 +152,7 @@ CREATE TABLE Auction (
   end_time TIMESTAMP DEFAULT NULL,
   category category_type DEFAULT NULL,
   state auction_state DEFAULT 'pending',
-  owner INT REFERENCES users(id) ON UPDATE CASCADE
+  owner_id INT REFERENCES users(id) ON UPDATE CASCADE
 );
 
 --AuctionWinner table
@@ -443,7 +443,7 @@ CREATE FUNCTION prevent_seller_self_follow()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF NEW.user_id = (SELECT owner FROM Auction WHERE id = NEW.auction_id) THEN
+  IF NEW.user_id = (SELECT owner_id FROM Auction WHERE id = NEW.auction_id) THEN
     RAISE EXCEPTION 'A seller cannot follow their own auction.';
   END IF;
 
@@ -507,7 +507,7 @@ CREATE FUNCTION prevent_owner_bid()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF NEW.user_id = (SELECT owner FROM Auction WHERE id = NEW.auction_id) THEN
+  IF NEW.user_id = (SELECT owner_id FROM Auction WHERE id = NEW.auction_id) THEN
     RAISE EXCEPTION 'You cannot bid on your own auction as the owner.';
   END IF;
   RETURN NEW;
@@ -547,18 +547,18 @@ CREATE FUNCTION update_owner_rating()
 RETURNS TRIGGER AS 
 $$
 DECLARE 
-  owner_id INT;
+  this_owner_id INT;
 BEGIN
-  SELECT owner into owner_id FROM auction WHERE id = NEW.auction_id;
+  SELECT owner_id into this_owner_id FROM auction WHERE id = NEW.auction_id;
 
   UPDATE users
   SET rating = (
     SELECT COALESCE(ROUND(AVG(AuctionWinner.rating), 2), 0)
     FROM AuctionWinner
     JOIN Auction ON AuctionWinner.auction_id = Auction.id
-    WHERE Auction.owner = owner_id
+    WHERE Auction.owner_id = this_owner_id
   )
-  WHERE id = owner_id;
+  WHERE id = this_owner_id;
   
   RETURN NEW;
 END;
@@ -687,7 +687,7 @@ BEGIN
 
   IF t IS NOT NULL THEN
     INSERT INTO Notification (notification_type, date, receiver_id, auction_id)
-    VALUES (t, NOW(), NEW.owner, NEW.id);
+    VALUES (t, NOW(), NEW.owner_id, NEW.id);
     
     INSERT INTO Notification (notification_type, date, receiver_id, auction_id)
     SELECT t, NOW(), f.user_id, NEW.id

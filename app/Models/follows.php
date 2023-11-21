@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Bid extends Model
+class follows extends Model
 {
     public $timestamps = false;
     protected $table='bid';
-    protected $fillable = ['user_id', 'auction_id', 'amount', 'time', 'state'];
+    protected $fillable = ['user_id', 'auction_id'];
 
     public function user()
     {

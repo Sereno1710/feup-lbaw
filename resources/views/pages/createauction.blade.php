@@ -9,7 +9,7 @@
         <span class="text-stone-500">Submit Auction</span>
     </div>
 
-    <form class="m-auto p-8 max-w-xl flex flex-col text-stone-800 bg-white shadow-lg">
+    <form class="m-2 mx-auto p-8 max-w-xl flex flex-col text-stone-800 bg-white shadow-lg">
         @csrf
 
         <h2 class="mb-2 font-bold text-2xl">Submit Auction</h2>

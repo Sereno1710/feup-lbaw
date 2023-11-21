@@ -4,7 +4,7 @@
     <div>
         <a href="{{ url('/home') }}" class="text-blue-500 hover:underline">Home</a>
         <span class="mx-2"> > </span>
-        <a href="{{ url('/MEGGAEROR') }}" class="text-blue-500 hover:underline">Auctions</a>
+        <a href="{{ url('/auctions') }}" class="text-blue-500 hover:underline">Auctions</a>
         <span class="mx-2"> > </span>
         <span class="text-stone-500">{{ $auction->name }}</span>
     </div>

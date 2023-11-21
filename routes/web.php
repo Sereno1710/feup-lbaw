@@ -40,7 +40,7 @@ Route::match(['post', 'put'], '/profile/update', [ProfileController::class, 'upd
 Route::controller(AuctionController::class)->group(function () {
     Route::get('/auction/{id}', 'showAuction');
     Route::get('/auctions', 'showActiveAuctions');
-    Route::get('/auction/create', 'showAuctionForm');
+    Route::get('/submit', 'showAuctionForm');
 });
 
 // API

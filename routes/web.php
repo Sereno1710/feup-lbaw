@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminController;
 
 
 /*
@@ -35,6 +36,8 @@ Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.e
 Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 Route::match(['post', 'put'], '/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
+// Admin
+Route::get('/admin', [AdminController::class, 'index'])->name('admin');
 
 // API
 Route::controller(CardController::class)->group(function () {

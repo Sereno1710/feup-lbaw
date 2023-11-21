@@ -55,6 +55,7 @@ VALUES
   ('magneto', 'Erik Lensherr' ,'eriklensherr@email.com', 'magnetism', 90000.00, '1963-06-05', 'Mutant Lane', 'Genosha', '22222', 'Genosha', NULL),
   ('hulk', 'Bruce Banner','brucebanner@email.com', 'smash', 85000.00, '1962-05-02', 'Gamma Road', 'New York', '98765', 'USA', NULL);
 
+
 INSERT INTO moneys (id,user_id, amount,type, state) 
 VALUES 
   (1,1,10.00,true,'pending'),

@@ -65,4 +65,12 @@ class UserController extends Controller
         return view('pages.users.search', ['users' => $users]);
     }
 
+    public function showProfile($userId)
+    {
+        $user = User::findOrFail($userId);
+        if ($userId == Auth::id()){
+            return redirect('/profile');
+        }
+        return view('pages/profile', ['user' => $user]);
+    }
 }

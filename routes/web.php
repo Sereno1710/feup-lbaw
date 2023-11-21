@@ -34,6 +34,7 @@ Route::get('/profile', [UserController::class, 'index'])->name('profile');
 Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
 Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
+Route::get('/user/{userId}', [UserController::class, 'showProfile'])->name('profile.show');
 
 // Balance
 Route::get('/balance', [BalanceController::class, 'index'])->name('balance');

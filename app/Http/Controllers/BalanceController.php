@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\moneys;
 
 class BalanceController extends Controller
 {
@@ -15,12 +16,18 @@ class BalanceController extends Controller
 
     public function deposit(Request $request)
     {
+        $user = Auth::user();
+
         $request->validate([
             'deposit_amount' => 'required|numeric|min:0',
             'iban_deposit' => ['required', 'regex:/^[A-Z]{2}\d{23}$/'],
         ]);
     
-
+        moneys::create([
+            'user_id' => $user->id,
+            'amount' => $request->input('deposit_amount'),
+            'type' => false, // Deposit
+        ]);
 
         $balance = $user->balance;
         $depositAmount = $request->input('deposit_amount');
@@ -30,10 +37,6 @@ class BalanceController extends Controller
         $numericBalance = (float) $numericBalance;
 
         $newBalance = $numericBalance + $depositAmount;
-
-        $user->update([
-            'balance' => $newBalance,
-        ]);
 
         return redirect('/home')->with('success', 'Deposit successful!');
     }
@@ -60,8 +63,10 @@ class BalanceController extends Controller
             return back()->withErrors(['withdraw_amount' => 'Insufficient funds!'])->withInput();
         }
 
-        $user->update([
-            'balance' => $newBalance,
+        moneys::create([
+            'user_id' => $user->id,
+            'amount' => $request->input('withdraw_amount'),
+            'type' => true, // Withdraw
         ]);
 
         return redirect('/home')->with('success', 'Withdrawal successful!');

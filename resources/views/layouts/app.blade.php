@@ -16,14 +16,13 @@
                 </form>
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
-                <a href="{{ url('/deposit-money') }}" class="ml-4">Deposit Money</a>
-                <a href="{{ url('/submit-auction') }}" class="ml-4">Submit Auction</a>
-                <div class="user-info">
-                    <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
-                    <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->balance}}</a>
-                    <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
-                </div>
-                <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
+                    <a href="{{ url('/submit-auction') }}" class="ml-4">Submit Auction</a>
+                    <div class="user-info">
+                        <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
+                        <a href="{{ url('/balance') }}" class="ml-4">{{ Auth::user()->balance}}</a>
+                        <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
+                    </div>
+                    <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
                 @else
                 <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
                 <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>

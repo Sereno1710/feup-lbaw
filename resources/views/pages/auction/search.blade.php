@@ -1,23 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Auction Search Results</h1>
+<div class="container mx-auto my-8">
+    <h1 class="text-3xl font-bold mb-6">Auction Search Results</h1>
 
     @if($auctions->isEmpty())
-    <p>No auctions found.</p>
+    <p class="text-gray-600">No auctions found.</p>
     @else
-    <ul>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         @foreach($auctions as $auction)
-        <li>
-            <h2>{{ $auction->name }}</h2>
-            <p>{{ $auction->description }}</p>
-            <p>{{ $auction->category }}</p>
-            <p>{{ $auction->price }}</p>
-            <p>{{ $auction->end_time }}</p>
-        </li>
+        @include('partials.card', ['auction' => $auction])
         @endforeach
-    </ul>
+    </div>
     @endif
 </div>
+<script src="{{ asset('js/auction.js') }}"></script>
 @endsection

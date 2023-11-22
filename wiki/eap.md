@@ -670,7 +670,7 @@ paths:
 
 ## A8: Vertical prototype
 
-> Brief presentation of the artifact goals.
+In this vertical prototype, we incorporated all the specified features outlined in both the general and theme-specific website requirements documents. We successfully addressed all high-priority user stories, as detailed below. Through this process, we gained valuable experience in navigating and utilizing the provided architecture and its associated technologies. Our implementation covered the visualization of various pages, including home, personal profiles, admin interfaces, search functionalities, and pages for other users. Additionally, we managed all aspects of auction logistics, encompassing the creation of auctions, bidding processes, and related functions.
 
 ### 1. Implemented Features
 

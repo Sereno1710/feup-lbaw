@@ -17,7 +17,7 @@ tags:
   - name: 'M01: Authentication'
   - name: 'M02: Users'
   - name: 'M03: Auctions'
-  - name: 'M04: Transfers'
+  - name: 'M04: Balance'
   - name: 'M05: Search'
   - name: 'M06: Administration'
 
@@ -607,7 +607,7 @@ paths:
             description: 'Unauthorized. User not authenticated.'
           '403':
             description: 'Forbidden. User does not have permission to add comments.'
-
+  
   /balance:
     get:
       operationId: R401

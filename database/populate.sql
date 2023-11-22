@@ -303,11 +303,11 @@ VALUES
 
 INSERT INTO MetaInfoValue (meta_info_name, value)
 VALUES
-  ('Brand', 'Brand A'),
-  ('Brand', 'Brand B'),
-  ('Brand', 'Brand C'),
-  ('Brand', 'Brand D'),
-  ('Brand', 'Brand E'),
+  ('Brand', 'Yamaha'),
+  ('Brand', 'Gibson'),
+  ('Brand', 'Fender'),
+  ('Brand', 'Roland'),
+  ('Brand', 'Takamine'),
   ('Color', 'Black'),
   ('Color', 'Blue'),
   ('Color', 'Green'),
@@ -342,8 +342,8 @@ VALUES
 INSERT INTO AuctionMetaInfoValue (auction_id, meta_info_value_id)
 VALUES
   (1, 1), 
-  (1, 4),
+  (1, 10),
   (2, 2),
-  (2, 5),
+  (2, 13),
   (3, 3),
-  (3, 6);
+  (3, 10);

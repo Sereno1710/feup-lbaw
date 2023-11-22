@@ -38,6 +38,8 @@ Route::match(['post', 'put'], '/profile/update', [ProfileController::class, 'upd
 
 // Admin
 Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+Route::get('/admin/users', [AdminController::class, 'getUsers'])->name('admin.users');
+
 
 // API
 Route::controller(CardController::class)->group(function () {

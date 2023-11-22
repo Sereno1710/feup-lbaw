@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 // Added to define Eloquent relationships.
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -24,7 +25,7 @@ class User extends Authenticatable
     protected $hidden = ['password', 'remember_token',];
 
     public function isAdmin() {
-        return count($this->hasOne('App\Models\Admin', 'id')->get());
+        return count($this->hasOne('App\Models\Admin', 'user_id')->get());
     }
 
     public function ownAuction() {
@@ -41,5 +42,9 @@ class User extends Authenticatable
 
     public function ownTransfers() {
         return $this->hasMany('App\Models\moneys','id')->where('user_id', $this->id)->where('state','accepted')->orderBy('id', 'desc');
+    }
+
+    public static function activeUsers() {
+        return User::orderBy('id','asc')->get();
     }
 }

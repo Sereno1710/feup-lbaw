@@ -1,34 +1,22 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-<head>
-    @vite('resources/css/app.css')
-</head>
-<body class="flex h-screen">
-    <div class="side-menu bg-red-500 w-1/5 min-h-screen flex flex-col">
-        <div class="site-name  flex items-center justify-center">
-            <h1 class="text-white h-20" style="font-size: 24px;">SoundSello</h1>
-        </div>
-        <ul class="text-white">
-            <li class="py-2 px-4 flex items-center"><a href="{{ url('/home') }}">Home Page</a></li>
-            <li class="py-2 px-4 flex items-center"><a>Users</a></li>
-            <li class="py-2 px-4 flex items-center"><a>Auctions</a></li>
-            <li class="py-2 px-4 flex items-center"><a>Transfers</a></li>
-            <li class="py-2 px-4 flex items-center"><a>Reports</a></li>
-        </ul>
-    </div>
-    <div class="container absolute right-0 w-4/5 h-screen bg-gray-100">
-        <div class="header fixed top-0 right-0 w-4/5 h-1/10 bg-white flex items-center justify-center shadow-md z-10">
-            <div class="nav w-90 flex items-center">
-                <div class="search flex justify-center">
-                    <input type="text" placeholder="Search.." class="border-none bg-gray-300 px-4 w-3/4">
-                    <button type="submit" class="w-10 h-10 border-none flex items-center justify-center">
-                        <img src="search.png" alt="">
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+@extends('layouts.app')
 
-    
-</body>
-</html>
+@section('content')
+<br>
+<br>
+<br>
+<div class="mx-8 my-4 flex flex-row items-center p-4 rounded-lg bg-stone-300">
+    <div class="w-screen justify-between grid grid-cols-1 sm:grid-cols-4 md:grid-cols-2 gap-8">
+        <div class="bg-white text-stone-800 p-2 rounded-lg shadow-lg flex flex-row justify-between items-center">
+            <h4 class="font-bold text-xl">Users</h4>
+            <a class= "mx-4" href="{{ url('/admin/users') }}">View All</a>
+        </div>
+        <div class="bg-white text-stone-800 p-2 rounded-lg shadow-lg flex flex-row justify-between items-center">
+            <h4 class="font-bold text-xl">Transfers</h4>
+            <a class= "mx-4" href="{{ url('/admin/transfers') }}">View All</a>
+        </div>
+        <div class="bg-white text-stone-800 p-2 rounded-lg shadow-lg flex flex-row justify-between items-center">
+            <h4 class="font-bold text-xl">Auctions</h4>
+            <a class= "mx-4" href="{{ url('/admin/auctions') }}">View All</a>
+        </div>
+    </div>
+</div>

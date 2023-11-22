@@ -58,5 +58,4 @@ class UserController extends Controller
 
         return view('pages.users.search', ['users' => $users]);
     }
-
 }

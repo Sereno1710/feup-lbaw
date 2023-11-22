@@ -1,3 +1,6 @@
+
+
+
 INSERT INTO users (username, name , email, password, balance, date_of_birth, street, city, zip_code, country, rating)
 VALUES
   ('gago','Daniel Gago' ,'daniel@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 3500.00, '2003-11-15', 'Rua do Twistzz', 'Faro', '12345', 'Portugal', NULL),
@@ -55,6 +58,7 @@ VALUES
   ('magneto', 'Erik Lensherr' ,'eriklensherr@email.com', 'magnetism', 90000.00, '1963-06-05', 'Mutant Lane', 'Genosha', '22222', 'Genosha', NULL),
   ('hulk', 'Bruce Banner','brucebanner@email.com', 'smash', 85000.00, '1962-05-02', 'Gamma Road', 'New York', '98765', 'USA', NULL);
 
+INSERT INTO admin (user_id) VALUES (1);
 
 INSERT INTO moneys (id,user_id, amount,type, state) 
 VALUES 

@@ -39,7 +39,7 @@
                     <h2 class="mb-4 text-2xl font-bold">Followed Auctions</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
                         @for ($i = 0; $i < 12; $i++)
-                            @include('partials.card')
+
                         @endfor
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                 <h2 class="mb-4 text-2xl font-bold">Owned Auctions</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     @for ($i = 0; $i < 12; $i++)
-                        @include('partials.card')
+
                     @endfor
                 </div>
             </div>

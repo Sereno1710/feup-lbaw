@@ -16,11 +16,11 @@
                 <p>
             </div>
             <!--
-                                <div>
-                                    <button>Report</button>
-                                    <button>Follow</button>
-                                </div>
-                            -->
+                                    <div>
+                                        <button>Report</button>
+                                        <button>Follow</button>
+                                    </div>
+                                -->
         </div>
         <div class="mt-4 w-full flex flex-row items-start justify-evenly">
             <img class="m-4" src="https://picsum.photos/250" alt="auctionphoto">
@@ -56,9 +56,9 @@
             <div class="flex flex-col">
                 <h3>Details</h3>
                 <div class="grid grid-cols-3">
-                    <?php for ($i = 0; $i < 8; $i++): ?>
-                    @include('partials.tag')
-                    <?php endfor; ?>
+                    @foreach ($auction->tags as $tag)
+                    @include('partials.tag', ['tag' => $tag])
+                    @endforeach
                 </div>
             </div>
             <div class="flex flex-col">

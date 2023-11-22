@@ -338,3 +338,12 @@ VALUES
   ('Year', '2000s'),
   ('Year', '2010s'),
   ('Year', '2020s');
+
+INSERT INTO AuctionMetaInfoValue (auction_id, meta_info_value_id)
+VALUES
+  (1, 1), 
+  (1, 4),
+  (2, 2),
+  (2, 5),
+  (3, 3),
+  (3, 6);

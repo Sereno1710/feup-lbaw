@@ -23,6 +23,10 @@ class Auction extends Model
         return $this->hasMany(Bid::class, 'auction_id');
     }
 
+    public function tags() {
+        return $this->belongstoMany(MetaInfoValue::class, 'auctionmetainfovalue', 'auction_id', 'meta_info_value_id');
+    }
+
     public static function activeAuctions() {
         return Auction::where('state', 'active');
     }

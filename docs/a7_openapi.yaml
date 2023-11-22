@@ -18,8 +18,7 @@ tags:
   - name: 'M02: Users'
   - name: 'M03: Auctions'
   - name: 'M04: Balance'
-  - name: 'M05: Search'
-  - name: 'M06: Administration'
+  - name: 'M05: Administration'
 
 paths:
 
@@ -687,79 +686,13 @@ paths:
         '200':
           description: 'OK. Balance withdrawn successfully'
 
-  /api/user:
-    get:
-      operationId: R501
-      summary: 'R501: Search users'
-      description: 'Search users. Access: USR, SYS, ADM'
-      tags:
-        - 'M05: Search'
-      parameters:
-        - in: query
-          name: search
-          description: 'Search content'
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: 'Success. Returns a list of users information.'
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    user_id:
-                      type: string
-                    username:
-                      type: string
-                    email:
-                      type: string
-
-  /api/auctions:
-    get:
-      operationId: R502
-      summary: 'R502: Search for auctions'
-      description: 'Search for auctions based on specific criteria. Access: VIS, USR, SYS, ADM'
-      tags:
-        - 'M05: Search'
-      parameters:
-        - in: query
-          name: search
-          description: 'Search content'
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: 'Success. Returns a list of auctions information'
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    auction_id:
-                      type: string
-                    title:
-                      type: string
-                    description:
-                      type: string
-                    current_bid:
-                      type: number
-                    end_date:
-                      type: string
-
   /admin:
     get:
-      operationId: R601
-      summary: 'R601: View admin page'
+      operationId: R501
+      summary: 'R501: View admin page'
       description: 'Show admin page UI. Access: ADM'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Show the admin page UI'
@@ -773,11 +706,11 @@ paths:
 
   /admin/users:
     get:
-      operationId: R602
-      summary: 'R602: View all users'
+      operationId: R502
+      summary: 'R502: View all users'
       description: 'View all users. Access: ADM'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Show all users page UI'
@@ -791,11 +724,11 @@ paths:
 
   /admin/transfers:
     get:
-      operationId: R603
-      summary: 'R603: View all transfers'
+      operationId: R503
+      summary: 'R503: View all transfers'
       description: 'View all transfers. Access: ADM'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Show all transfers page UI'
@@ -809,33 +742,33 @@ paths:
 
   /admin/transfers/approve:
     post:
-      operationId: R604
-      summary: 'R604: Approve transfer'
+      operationId: R504
+      summary: 'R504: Approve transfer'
       description: 'Approve a transfer'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Transfer approved successfully'
 
   /admin/transfers/reject:
     post:
-      operationId: R605
-      summary: 'R605: Reject transfer'
+      operationId: R505
+      summary: 'R505: Reject transfer'
       description: 'Reject a transfer'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Transfer rejected successfully'
 
   /admin/auctions:
     get:
-      operationId: R606
-      summary: 'R606: View all transfers'
+      operationId: R506
+      summary: 'R506: View all transfers'
       description: 'View all transfers. Access: ADM'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Show all transfers page UI'
@@ -849,55 +782,55 @@ paths:
 
   /admin/auctions/approve:
     post:
-      operationId: R607
-      summary: 'R607: Approve auction'
+      operationId: R507
+      summary: 'R507: Approve auction'
       description: 'Approve an auction'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Auction approved successfully'
 
   /admin/auctions/reject:
     post:
-      operationId: R608
-      summary: 'R608: Reject auction'
+      operationId: R508
+      summary: 'R505: Reject auction'
       description: 'Reject an auction'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Auction rejected successfully'
 
   /admin/auctions/pause:
     post:
-      operationId: R609
-      summary: 'R609: Pause auction'
+      operationId: R509
+      summary: 'R509: Pause auction'
       description: 'Pause an auction'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Auction paused successfully'
 
   /admin/auctions/resume:
     post:
-      operationId: R610
-      summary: 'R610: Resume auction'
+      operationId: R510
+      summary: 'R510: Resume auction'
       description: 'Resume a paused auction'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Auction resumed successfully'
 
   /admin/auctions/disable:
     post:
-      operationId: R611
-      summary: 'R611: Disable auction'
+      operationId: R511
+      summary: 'R511: Disable auction'
       description: 'Disable an auction'
       tags:
-        - 'M06: Administration'
+        - 'M05: Administration'
       responses:
         '200':
           description: 'OK. Auction disabled successfully'

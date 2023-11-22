@@ -4,7 +4,7 @@ use Illuminate\Support\Str;
 $description=Str::limit($auction->description, 30);
 ?>
 
-<a href="{{ url('/auction/1') }}">
+<a href="{{ url('/auction/' . $auction->id)}}">
     <div class="bg-white text-stone-800 p-2 rounded-lg shadow-lg flex flex-col items-center">
         <h4 class="font-bold text-xl">{{ $auction->name }}</h4>
         <p class="text-gray-500">Category: {{ $auction->category }}</p>

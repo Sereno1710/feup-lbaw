@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegisterController;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\AdminController;
@@ -31,7 +32,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
 // Profile
-Route::get('/profile', [UserController::class, 'index'])->name('profile');
+Route::get('/profile', [UserController::class, 'show'])->name('profile');
 Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
 Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
@@ -49,9 +50,15 @@ Route::get('/contacts', [HomeController::class, 'contacts'])->name('contacts');
 Route::get('/terms-of-use', [HomeController::class, 'termsOfUse'])->name('termsOfUse');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacyPolicy');
 
-// Auction
-Route::get('/auction/search', [AuctionController::class, 'search'])->name('auction.search');
-
+//Auction
+Route::controller(AuctionController::class)->group(function () {
+    Route::get('/auctions', 'showActiveAuctions');
+    Route::get('/auction/submit', 'showAuctionForm');
+    Route::get('/auction/search','search')->name('auction.search');
+    Route::post('/auction/create', 'createAuction')->name('auction.create');
+    Route::get('/auction/{id}', 'showAuction');
+    Route::post('/auction/{id}/bid', 'auctionBid');
+});
 
 // Admin
 Route::get('/admin', [AdminController::class, 'index'])->name('admin');

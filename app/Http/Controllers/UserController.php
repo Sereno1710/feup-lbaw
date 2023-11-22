@@ -78,9 +78,11 @@ class UserController extends Controller
     public function showProfile($userId)
     {
         $user = User::findOrFail($userId);
+        $followedAuctions = $user->followedAuctions;
+        $ownedAuctions = $user->ownAuction;
         if ($userId == Auth::id()) {
             return redirect('/profile');
         }
-        return view('pages/profile', ['user' => $user]);
+        return view('pages/profile', ['user' => $user, 'followedAuctions' => $followedAuctions, 'ownedAuctions' => $ownedAuctions ]);
     }
 }

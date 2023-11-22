@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CardController;
@@ -12,7 +11,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BalanceController;
-
+use App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -52,6 +51,23 @@ Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('p
 
 // Auction
 Route::get('/auction/search', [AuctionController::class, 'search'])->name('auction.search');
+
+
+// Admin
+Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+Route::get('/admin/users', [AdminController::class, 'getUsers'])->name('admin.users');
+Route::post('/admin/users/demote', [AdminController::class, 'demote'])->name('admin.demote');
+Route::post('/admin/users/promote', [AdminController::class, 'promote'])->name('admin.promote');
+Route::post('/admin/users/disable', [AdminController::class, 'disable'])->name('admin.disable');
+Route::get('/admin/transfers', [AdminController::class, 'getTransfers'])->name('admin.transfers');
+Route::post('/admin/transfers/approve', [AdminController::class, 'approve'])->name('admin.approve');
+Route::post('/admin/transfers/reject', [AdminController::class, 'reject'])->name('admin.reject');
+Route::get('/admin/auctions', [AdminController::class, 'getAuctions'])->name('admin.auctions');
+Route::post('/admin/auctions/approve', [AdminController::class, 'approveAuction'])->name('admin.approveAuction');
+Route::post('/admin/auctions/reject', [AdminController::class, 'rejectAuction'])->name('admin.rejectAuction');
+Route::post('/admin/auctions/pause', [AdminController::class, 'pauseAuction'])->name('admin.pauseAuction');
+Route::post('/admin/auctions/resume', [AdminController::class, 'resumeAuction'])->name('admin.resumeAuction');
+Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'])->name('admin.disableAuction');
 
 // API
 Route::controller(CardController::class)->group(function () {

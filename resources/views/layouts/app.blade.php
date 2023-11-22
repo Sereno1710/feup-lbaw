@@ -14,6 +14,9 @@
                     <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search auctions">
                     <button type="submit">🔎</button>
                 </form>
+                @if (Auth::check() && Auth::user()->isAdmin())
+                <a href="{{ url('/admin') }}" class="ml-4">Admin</a>
+                @endif
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
                     <a href="{{ url('/submit-auction') }}" class="ml-4">Submit Auction</a>

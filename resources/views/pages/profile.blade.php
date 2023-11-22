@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.profile')
 
 @section('content')
     <div>
@@ -47,11 +47,8 @@
             <div class="mx-8 my-4 flex flex-col items-center justify-between p-4 rounded-lg bg-stone-300">
                 <h2 class="mb-4 text-2xl font-bold">Owned Auctions</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                    @for ($i = 0; $i < 12; $i++)
-
-                    @endfor
+                    @for ($i = 0; $i < 12; $i++) @endfor </div>
                 </div>
             </div>
         </div>
-    </div>
-@endsection
+        @endsection

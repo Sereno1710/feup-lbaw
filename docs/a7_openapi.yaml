@@ -137,9 +137,6 @@ paths:
                 date_of_birth:
                   type: string
                   format: date
-                address:
-                  type: string
-                  format: address
               required:
                 - username
                 - email
@@ -333,6 +330,55 @@ paths:
     post:
       operationId: R214
       summary: 'R214: Update profile'
+      description: 'Update user profile, Access: CRE'
+      tags:
+        - 'M02: Users'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                biography:
+                  type: string
+                street:
+                  type: string
+                city:
+                  type: string
+                zip_code:
+                  type: string
+                country:
+                  type: string
+                image:
+                  type: binary
+      responses:
+          '302':
+          description: 'Redirect after processing the new user information.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                  302Success:
+                    description: 'Successful profile update. Redirect to profile.'
+                    value: '/profile'
+                  302Failure:
+                    description: 'Failed registration. Redirect again to edit form.'
+                    value: '/profile/edit'
+    put:
+      operationId: R215
+      summary: 'R215: Update profile'
       description: 'Update user profile, Access: CRE'
       tags:
         - 'M02: Users'

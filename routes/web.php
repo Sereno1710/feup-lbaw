@@ -41,6 +41,12 @@ Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
 Route::post('/balance/deposit', [BalanceController::class, 'deposit'])->name('balance.deposit');
 Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
 
+// Footer
+Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('aboutUs');
+Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
+Route::get('/contacts', [HomeController::class, 'contacts'])->name('contacts');
+Route::get('/terms-of-use', [HomeController::class, 'termsOfUse'])->name('termsOfUse');
+Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacyPolicy');
 
 
 // API

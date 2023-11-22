@@ -8,7 +8,7 @@
 <div class="container mx-auto">
     <h1 class="text-4xl font-bold">Admins</h1>
     <br>
-    <table class="min-w-full border-separate">
+    <table class="min-w-full border-separate admin_section">
         <thead>
             <tr>
                 <th class="py-2 px-4 border border-slate-300">ID</th> 
@@ -22,7 +22,7 @@
         </thead>
         <tbody>
             @foreach ($admins as $admin)
-            <tr>
+            <tr id="admin_row_{{ $admin->id }}">
                 <td class="py-2 px-4 border border-slate-300">{{ $admin->id }}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $admin->username }}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $admin->name }}</td>
@@ -32,11 +32,10 @@
                         Normal
                 </td>
                 <td class="py-2 px-4 border border-slate-300 flex flex-row">
-                    <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.demote') }}" enctype="multipart/form-data">
+                    <form class="m-auto max-w-xl text-stone-800 demote-form"  enctype="multipart/form-data">
                         @csrf
-                        @method('POST')
                         <input type="hidden" name="user_id" value="{{ $admin->id }}">
-                        <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Demote</button> 
+                        <button class="mt-2 p-2 text-white bg-stone-800 rounded demote-btn" type="button">Demote</button> 
                     </form>
                 </td>
             </tr>
@@ -45,7 +44,7 @@
     </table>
     <h1 class="text-4xl font-bold">Users</h1>
     <br>
-    <table class="min-w-full border-separate">
+    <table class="min-w-full border-separate user_section">
         <thead>
             <tr>
                 <th class="py-2 px-4 border border-slate-300">ID</th> 
@@ -59,7 +58,7 @@
         </thead>
         <tbody>
             @foreach ($users as $user)
-            <tr>
+            <tr id="user_row_{{ $user->id }}">
                 <td class="py-2 px-4 border border-slate-300">{{ $user->id }}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $user->username }}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $user->name }}</td>
@@ -73,20 +72,18 @@
                     @endif
                 </td>
                 <td class="py-2 px-4 border border-slate-300 flex flex-row">
-                    @if (!$user->is_anonymizing)
-                        <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.disable') }}" enctype="multipart/form-data">
-                            @csrf
-                            @method('POST')
-                            <input type="hidden" name="user_id" value="{{ $user->id }}">
-                            <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Disable</button> 
-                        </form>
+                @if (!$user->is_anonymizing)
+                    <form class="m-auto max-w-xl text-stone-800 disable-form" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                        <button class="mt-2 p-2 text-white bg-stone-800 rounded disable-btn" type="button">Disable</button> 
+                    </form>
                     @endif
 
-                    <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.promote') }}" enctype="multipart/form-data">
+                    <form class="m-auto max-w-xl text-stone-800 promote-form" method="POST" enctype="multipart/form-data">
                         @csrf
-                        @method('POST')
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
-                        <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Promote</button> 
+                        <button class="mt-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button> 
                     </form>
                 </td>
             </tr>
@@ -94,6 +91,5 @@
         </tbody>
     </table>
 </div>
-
 
 

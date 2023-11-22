@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -59,18 +59,20 @@ class UserController extends Controller
     {
         $keyword = $request->input('keyword');
 
-        $users = User::whereRaw("LOWER(username) LIKE LOWER(?)", ['%' . $keyword . '%'])
-            ->orWhereRaw("LOWER(name) LIKE LOWER(?)", ['%' . $keyword . '%'])
-            ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$keyword])
-            ->get();
+        $usersQuery = User::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
+            ->orderByRaw("ts_rank(tsvectors, to_tsquery(?)) DESC", [$keyword]);
 
-        return view('pages.users.search', ['users' => $users]);
+        $users = $usersQuery->simplePaginate(9, ['*'], 'page', $request->input('page'));
+
+        return view('pages.users.search', ['users' => $users, 'keyword' => $keyword]);
     }
+
+
 
     public function showProfile($userId)
     {
         $user = User::findOrFail($userId);
-        if ($userId == Auth::id()){
+        if ($userId == Auth::id()) {
             return redirect('/profile');
         }
         return view('pages/profile', ['user' => $user]);

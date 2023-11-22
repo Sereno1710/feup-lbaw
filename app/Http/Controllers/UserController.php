@@ -59,11 +59,14 @@ class UserController extends Controller
     {
         $keyword = $request->input('keyword');
 
-        $usersQuery = User::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*']);
-        $users = $usersQuery->simplePaginate(3, ['*'], 'page', $request->input('page'));
+        $usersQuery = User::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
+            ->orderByRaw("ts_rank(tsvectors, to_tsquery(?)) DESC", [$keyword]);
+
+        $users = $usersQuery->simplePaginate(9, ['*'], 'page', $request->input('page'));
 
         return view('pages.users.search', ['users' => $users, 'keyword' => $keyword]);
     }
+
 
 
     public function showProfile($userId)

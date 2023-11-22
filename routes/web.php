@@ -42,6 +42,10 @@ Route::get('/admin/users', [AdminController::class, 'getUsers'])->name('admin.us
 Route::post('/admin/users/demote', [AdminController::class, 'demote'])->name('admin.demote');
 Route::post('/admin/users/promote', [AdminController::class, 'promote'])->name('admin.promote');
 Route::post('/admin/users/disable', [AdminController::class, 'disable'])->name('admin.disable');
+Route::get('/admin/transfers', [AdminController::class, 'getTransfers'])->name('admin.transfers');
+Route::post('/admin/transfers/approve', [AdminController::class, 'approve'])->name('admin.approve');
+Route::post('/admin/transfers/reject', [AdminController::class, 'reject'])->name('admin.reject');
+Route::get('/admin/auctions', [AdminController::class, 'getAuctions'])->name('admin.auctions');
 
 
 // API

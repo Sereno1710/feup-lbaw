@@ -46,7 +46,7 @@ class User extends Authenticatable
     }
 
     public static function activeUsers() {
-        return User::leftJoin('admin', 'users.id', '=', 'admin.user_id')->whereNull('admin.user_id')->orderBy('id','asc')->get();
+        return User::where('name','!=','Anonymous')->leftJoin('admin', 'users.id', '=', 'admin.user_id')->whereNull('admin.user_id')->orderBy('id','asc')->get();
     }
     
     public static function activeAdmins() {

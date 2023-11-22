@@ -7,6 +7,7 @@
 <br>
 <div class="container mx-auto">
     <h1 class="text-4xl font-bold">Admins</h1>
+    <br>
     <table class="min-w-full border-separate">
         <thead>
             <tr>
@@ -43,6 +44,7 @@
         </tbody>
     </table>
     <h1 class="text-4xl font-bold">Users</h1>
+    <br>
     <table class="min-w-full border-separate">
         <thead>
             <tr>
@@ -92,4 +94,6 @@
         </tbody>
     </table>
 </div>
+
+
 

@@ -40,8 +40,10 @@ class AdminController extends Controller
     {
         $this->authorize('index', Admin::class);
         
-        $transfers = moneys::pendingTransfers();
-        return view('pages/admintransfer', ['transfers' => $transfers]);
+        $deposits = moneys::deposits();
+        $withdrawals = moneys::withdrawals();
+        $others = moneys::notPending();
+        return view('pages.admin.transfers', ['deposits' => $deposits, 'withdrawals' => $withdrawals, 'others' => $others]);
     }
 
     public function demote(Request $request) {
@@ -66,5 +68,17 @@ class AdminController extends Controller
         $this->authorize('index', Admin::class);
         User::where(['id' => $request->user_id])->update(['is_anonymizing' => true]);
         return redirect('/admin/users')->with('success', 'User promoted successfully!');
+    }
+
+    public function approve(Request $request) {
+        $this->authorize('index', Admin::class);
+        moneys::where(['id' => $request->id])->update(['state' => 'accepted']);
+        return redirect('/admin/transfers')->with('success', 'Transfer approved successfully!');
+    }
+
+    public function reject(Request $request) {
+        $this->authorize('index', Admin::class);
+        moneys::where(['id' => $request->id])->update(['state' => 'denied']);
+        return redirect('/admin/transfers')->with('success', 'Transfer rejected successfully!');
     }
 }

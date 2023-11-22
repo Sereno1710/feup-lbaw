@@ -78,9 +78,7 @@
         </div>
         <div>
 
-            <p>
-                Time remaining: 1000
-            </p>
+                 <p>Time remaining:<span class="auction-remaining-time"></span></p>
         </div>
     </div>
 @endsection

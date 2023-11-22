@@ -10,7 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BalanceController;
 
 /*
@@ -38,12 +38,8 @@ Route::post('/profile/update', [UserController::class, 'update'])->name('profile
 Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::get('/user/{userId}', [UserController::class, 'showProfile'])->name('profile.show');
 
-// Balance
-Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
-Route::post('/balance/deposit', [BalanceController::class, 'deposit'])->name('balance.deposit');
-Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
-
-
+// Auction
+Route::get('/auction/search', [AuctionController::class, 'search'])->name('auction.search');
 
 // API
 Route::controller(CardController::class)->group(function () {

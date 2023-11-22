@@ -46,9 +46,13 @@ class Auction extends Model
     {
         return $this->hasMany('App\Models\Comment', 'auction_id')->orderBy('time', 'asc');
     }
-<<<<<<< 8798701745423437dd0a0d4aed14bd3007d91835
     public function auctionWinner() {
         return $this->belongsTo('App\Models\AuctionWinner', 'user_id');
+    }
+
+    public function activeAuctions()
+    {
+        return Auction::where('state' == 'active')->orderBy('end_time', 'asc');
     }
 
     public static function noActions() {
@@ -64,21 +68,5 @@ class Auction extends Model
             ->join('users', 'users.id', '=', 'auction.owner')
             ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
             ->get();
-=======
-
-    public function activeAuctions()
-    {
-        return Auction::select('*')->where('state' == 'active')->orderBy('end_time', 'asc');
-    }
-
-    public function auctionWinner()
-    {
-        return $this->belongsTo('App\Models\AuctionWinner', 'user_id');
-    }
-
-    public function auctionRatings()
-    {
-        return $this->hasMany('App\Models\AuctionRating', 'auction_id')->orderBy('id', 'desc');
->>>>>>> c62994e6b36b872ff57ba4195ce767893be84e47
     }
 }

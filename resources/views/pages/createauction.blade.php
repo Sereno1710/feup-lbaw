@@ -41,7 +41,7 @@
         @foreach ($metaInfos as $metaInfo)
             <div class="mb-2">
                 <p>{{ $metaInfo->name }}</p>
-                <select id="category_{{ $metaInfo->name }}" name="categories[{{ $metaInfo->name }}]">
+                <select class="w-full p-2 mb-2 border border-stone-400 rounded" id="category_{{ $metaInfo->name }}" name="categories[{{ $metaInfo->name }}]">
                     <option value="" selected>None</option>
                     @foreach ($metaInfo->values as $value)
                         <option value="{{ $value->id }}">{{ $value->value }}</option>

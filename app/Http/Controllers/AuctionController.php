@@ -49,7 +49,6 @@ class AuctionController extends Controller
         $auctionData['price'] = $validatedData['starting_price'];
         $auctionData['category'] = $validatedData['category'];
         $auctionData['owner_id'] = Auth::user()->id;
-        $auctionData['state'] = 'active';
 
         try {
             DB::beginTransaction();
@@ -82,11 +81,19 @@ class AuctionController extends Controller
         $validatedData = $request->validate([
             'amount' => 'required|numeric|min:1',
         ]);
-        \Log::error($auctionId);
     
         try {
             DB::beginTransaction();
-    
+            
+            DB::table('users')
+                ->where('id', function ($query) use ($auctionId) {
+                    $query->select('user_id')
+                        ->from(DB::raw("(SELECT user_id, amount FROM bid WHERE auction_id = :auction_id ORDER BY amount DESC LIMIT 1) AS LastBid"))
+                        ->addBinding(['auction_id' => $auctionId], 'select');
+                })
+                ->update(['balance' => DB::raw('balance + (SELECT amount FROM (SELECT user_id, amount FROM bid WHERE auction_id = :auction_id ORDER BY amount DESC LIMIT 1) AS LastBid)')]);
+
+
             $bid = new Bid([
                 'user_id' => Auth::user()->id,
                 'auction_id' => $auctionId,
@@ -98,16 +105,6 @@ class AuctionController extends Controller
             DB::table('users')
                 ->where('id', Auth::user()->id)
                 ->update(['balance' => DB::raw('balance - ' . $validatedData['amount'] . '::MONEY')]);
-    
-            DB::table('users')
-                ->where('id', function ($query) use ($auctionId) {
-                    $query->select('user_id')
-                        ->from(DB::raw("(SELECT user_id, amount FROM bid WHERE auction_id = :auction_id ORDER BY amount DESC LIMIT 2) AS Last2Bids"))
-                        ->orderBy('amount')
-                        ->limit(1)
-                        ->addBinding(['auction_id' => $auctionId], 'select');
-                })
-                ->update(['balance' => DB::raw('balance + (SELECT amount FROM (SELECT user_id, amount FROM bid WHERE auction_id = :auction_id ORDER BY amount DESC LIMIT 2) AS Last2Bids ORDER BY amount ASC LIMIT 1)')]);
     
             Auction::where('id', $auctionId)
                 ->update(['price' => DB::raw($validatedData['amount'] . '::MONEY')]);

@@ -17,8 +17,9 @@ tags:
   - name: 'M01: Authentication'
   - name: 'M02: Users'
   - name: 'M03: Auctions'
-  - name: 'M04: Search'
-  - name: 'M05: Administration'
+  - name: 'M04: Balance'
+  - name: 'M05: Search'
+  - name: 'M06: Administration'
 
 paths:
 
@@ -136,9 +137,6 @@ paths:
                 date_of_birth:
                   type: string
                   format: date
-                address:
-                  type: string
-                  format: address
               required:
                 - username
                 - email
@@ -159,11 +157,88 @@ paths:
                   302Failure:
                     description: 'Failed registration. Redirect again to register form.'
                     value: '/register'
+  /:
+    get:
+      operationId: R201
+      summary: 'R201: Home Page'
+      description: 'Get the home page, Access: CRE, ADM, SYS , VIS, CRE'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Returns the home page'
+
+  /home:
+    get:
+      operationId: R202
+      summary: 'R202: Home Page'
+      description: 'Get the home page, Access: CRE, ADM, SYS , VIS, CRE'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Returns the home page'
+
+  /about-us:
+    get:
+      operationId: R203
+      summary: 'R203: About Us'
+      description: 'Get the about us page, Access: CRE, ADM, SYS , VIS, CRE'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Returns the about us page'
+
+  /faq:
+    get:
+      operationId: R204
+      summary: 'R204: FAQ'
+      description: 'Get the FAQ page, Access: CRE, ADM, SYS , VIS, CRE'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Returns the FAQ page'
+
+  /contacts:
+    get:
+      operationId: R205
+      summary: 'R205: Contacts'
+      description: 'Get the contacts page, Access: CRE, ADM, SYS , VIS, CRE'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Returns the contacts page'
+
+  /terms-of-use:
+    get:
+      operationId: R206
+      summary: 'R206: Terms of Use'
+      description: 'Get the terms of use page, Access: CRE, ADM, SYS , VIS, CRE'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Returns the terms of use page'
+
+  /privacy-policy:
+    get:
+      operationId: R207
+      summary: 'R207: Privacy Policy'
+      description: 'Get the privacy policy page, Access: CRE, ADM, SYS , VIS, CRE'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Returns the privacy policy page'
+
   /user/{id}:
 
     get:
-      operationId: R201
-      summary: 'R201: View user profile'
+      operationId: R208
+      summary: 'R208: View user profile'
       description: 'Show the profile for an individual user, Access: CRE, ADM, SYS , VIS, CRE'
       tags:
         - 'M02: Users'
@@ -171,6 +246,7 @@ paths:
       parameters:
         - in: path
           name: id
+          description: 'User ID'
           schema:
             type: integer
           required: True
@@ -182,8 +258,8 @@ paths:
   /users/{id}/auctions:
 
       get: 
-        operationId: R202
-        summary: 'R202: View user auctions'
+        operationId: R209
+        summary: 'R209: View user auctions'
         description: 'Show auctions owned by a certain user, Access: CRE, SYS, ADM'
         tags:
           - 'M02: Users'
@@ -201,8 +277,8 @@ paths:
 
   /users/{id}/followed_auctions:
     get:
-      operationId: R203
-      summary: 'R203: View users follows auctions'
+      operationId: R210
+      summary: 'R210: View users follows auctions'
       description: 'Show auctions followed by a certain user. Access: CRE, SYS, ADM'
       tags:
         - 'M02: Users'
@@ -215,6 +291,100 @@ paths:
       responses:
         '200':
           description: 'OK. Show list of auctions followed by a user'
+
+  /users/search:
+    get:
+      operationId: R211
+      summary: 'R211: Search users'
+      description: 'Search for users'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Returns the search results'
+
+
+  /profile:
+    get:
+      operationId: R212
+      summary: 'R212: View profile'
+      description: 'View user profile, Access: CRE'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Returns the user profile'
+
+  /profile/edit:
+    get:
+      operationId: R213
+      summary: 'R213: Edit profile'
+      description: 'Edit user profile, Access: CRE'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Returns the edit profile page'
+
+  /profile/update:
+    post:
+      operationId: R214
+      summary: 'R214: Update profile'
+      description: 'Update user profile, Access: CRE'
+      tags:
+        - 'M02: Users'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                biography:
+                  type: string
+                street:
+                  type: string
+                city:
+                  type: string
+                zip_code:
+                  type: string
+                country:
+                  type: string
+                image:
+                  type: binary
+      responses:
+          '302':
+          description: 'Redirect after processing the new user information.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                  302Success:
+                    description: 'Successful profile update. Redirect to profile.'
+                    value: '/profile'
+                  302Failure:
+                    description: 'Failed registration. Redirect again to edit form.'
+                    value: '/profile/edit'
+    put:
+      operationId: R215
+      summary: 'R215: Update profile'
+      description: 'Update user profile, Access: CRE'
+      tags:
+        - 'M02: Users'
+      responses:
+        '200':
+          description: 'OK. Profile updated successfully'
 
   /auction/create:
     post:
@@ -298,10 +468,10 @@ paths:
         '404':
           description: 'Not found. Auction does not exist.'
 
-    put:
-      operationId: R503
-      summary: 'R503: Change the state of an auction'
-      description: 'Change the state of a specific auction. Access: CRE, SYS, ADM'
+    post:
+      operationId: R303
+      summary: 'R303: Change the state of an auction'
+      description: 'Change the state of a specific auction. Access: SYS, ADM'
       tags:
         - 'M03: Auctions'
       parameters:
@@ -341,10 +511,21 @@ paths:
         '404':
           description: 'Not found. Auction does not exist.'
 
+  /auction/submit:
+    get:
+      operationId: R304
+      summary: 'R304: Submit auction'
+      description: 'Show auction submission form'
+      tags:
+        - 'M03: Auctions'
+      responses:
+        '200':
+          description: 'OK. Returns the auction submission form'
+
   /auctions/{id}/follow:
     post:
-      operationId: R303
-      summary: 'R303: Follows Auction.'
+      operationId: R305
+      summary: 'R305: Follows Auction.'
       description: 'Follows auction. Access: USR, SYS, ADM'
       tags:
         - 'M03: Auctions'
@@ -367,8 +548,8 @@ paths:
 
   /auctions/{id}/unfollow:
     post:
-      operationId: R304
-      summary: 'R304: Unfollows auction.'
+      operationId: R306
+      summary: 'R306: Unfollows auction.'
       description: 'Unfollows auction. Access: USR, SYS, ADM'
       tags:
         - 'M03: Auctions'
@@ -391,8 +572,8 @@ paths:
 
   /auctions/{id}/bid:
     post:
-      operationId: R305
-      summary: 'R305: Place Bid'
+      operationId: R307
+      summary: 'R307: Place Bid'
       description: 'Place Bid. Access: USR, SYS, ADM'
       tags:
         - 'M03: Auctions'
@@ -427,8 +608,8 @@ paths:
 
   /auctions/{id}/comment:
     post:
-      operationId: R306
-      summary: 'R306: Add a comment to an auction'
+      operationId: R308
+      summary: 'R308: Add a comment to an auction'
       description: 'Add a comment to a specific auction. Access: USR, CRE, SYS, ADM'
       tags:
         - 'M03: Auctions'
@@ -472,14 +653,47 @@ paths:
             description: 'Unauthorized. User not authenticated.'
           '403':
             description: 'Forbidden. User does not have permission to add comments.'
+  
+  /balance:
+    get:
+      operationId: R401
+      summary: 'R401: View balance'
+      description: 'View user balance'
+      tags:
+        - 'M04: Balance'
+      responses:
+        '200':
+          description: 'OK. Returns the user balance'
+
+  /balance/deposit:
+    post:
+      operationId: R402
+      summary: 'R402: Deposit balance'
+      description: 'Deposit balance into user account'
+      tags:
+        - 'M04: Balance'
+      responses:
+        '200':
+          description: 'OK. Balance deposited successfully'
+
+  /balance/withdraw:
+    post:
+      operationId: R402
+      summary: 'R402: Withdraw balance'
+      description: 'Withdraw balance from user account'
+      tags:
+        - 'M04: Balance'
+      responses:
+        '200':
+          description: 'OK. Balance withdrawn successfully'
 
   /api/user:
     get:
-      operationId: R401
-      summary: 'R401: Search users'
-      description: 'Search users. Access: VIS, USR, SYS, ADM'
+      operationId: R501
+      summary: 'R501: Search users'
+      description: 'Search users. Access: USR, SYS, ADM'
       tags:
-        - 'M04: Search'
+        - 'M05: Search'
       parameters:
         - in: query
           name: search
@@ -506,11 +720,11 @@ paths:
 
   /api/auctions:
     get:
-      operationId: R402
-      summary: 'R402: Search for auctions'
-      description: 'Search for auctions based on specific criteria. Access: AUTH'
+      operationId: R502
+      summary: 'R502: Search for auctions'
+      description: 'Search for auctions based on specific criteria. Access: VIS, USR, SYS, ADM'
       tags:
-        - 'M04: Search'
+        - 'M05: Search'
       parameters:
         - in: query
           name: search
@@ -541,11 +755,11 @@ paths:
 
   /admin:
     get:
-      operationId: R501
-      summary: 'R501: View admin page'
+      operationId: R601
+      summary: 'R601: View admin page'
       description: 'Show admin page UI. Access: ADM'
       tags:
-        - 'M05: Administration'
+        - 'M06: Administration'
       responses:
         '200':
           description: 'OK. Show the admin page UI'
@@ -559,11 +773,11 @@ paths:
 
   /admin/users:
     get:
-      operationId: R502
-      summary: 'R502: View all users'
+      operationId: R602
+      summary: 'R602: View all users'
       description: 'View all users. Access: ADM'
       tags:
-        - 'M05: Administration'
+        - 'M06: Administration'
       responses:
         '200':
           description: 'OK. Show all users page UI'
@@ -577,11 +791,11 @@ paths:
 
   /admin/transfers:
     get:
-      operationId: R502
-      summary: 'R502: View all transfers'
+      operationId: R603
+      summary: 'R603: View all transfers'
       description: 'View all transfers. Access: ADM'
       tags:
-        - 'M05: Administration'
+        - 'M06: Administration'
       responses:
         '200':
           description: 'OK. Show all transfers page UI'
@@ -592,4 +806,105 @@ paths:
                 example: '<html>All transfers Content</html>'
         '403':
           description: 'This action is unauthorized.'
+
+  /admin/transfers/approve:
+    post:
+      operationId: R604
+      summary: 'R604: Approve transfer'
+      description: 'Approve a transfer'
+      tags:
+        - 'M06: Administration'
+      responses:
+        '200':
+          description: 'OK. Transfer approved successfully'
+
+  /admin/transfers/reject:
+    post:
+      operationId: R605
+      summary: 'R605: Reject transfer'
+      description: 'Reject a transfer'
+      tags:
+        - 'M06: Administration'
+      responses:
+        '200':
+          description: 'OK. Transfer rejected successfully'
+
+  /admin/auctions:
+    get:
+      operationId: R606
+      summary: 'R606: View all transfers'
+      description: 'View all transfers. Access: ADM'
+      tags:
+        - 'M06: Administration'
+      responses:
+        '200':
+          description: 'OK. Show all transfers page UI'
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<html>All transfers Content</html>'
+        '403':
+          description: 'This action is unauthorized.'
+
+  /admin/auctions/approve:
+    post:
+      operationId: R607
+      summary: 'R607: Approve auction'
+      description: 'Approve an auction'
+      tags:
+        - 'M06: Administration'
+      responses:
+        '200':
+          description: 'OK. Auction approved successfully'
+
+  /admin/auctions/reject:
+    post:
+      operationId: R608
+      summary: 'R608: Reject auction'
+      description: 'Reject an auction'
+      tags:
+        - 'M06: Administration'
+      responses:
+        '200':
+          description: 'OK. Auction rejected successfully'
+
+  /admin/auctions/pause:
+    post:
+      operationId: R609
+      summary: 'R609: Pause auction'
+      description: 'Pause an auction'
+      tags:
+        - 'M06: Administration'
+      responses:
+        '200':
+          description: 'OK. Auction paused successfully'
+
+  /admin/auctions/resume:
+    post:
+      operationId: R610
+      summary: 'R610: Resume auction'
+      description: 'Resume a paused auction'
+      tags:
+        - 'M06: Administration'
+      responses:
+        '200':
+          description: 'OK. Auction resumed successfully'
+
+  /admin/auctions/disable:
+    post:
+      operationId: R611
+      summary: 'R611: Disable auction'
+      description: 'Disable an auction'
+      tags:
+        - 'M06: Administration'
+      responses:
+        '200':
+          description: 'OK. Auction disabled successfully'
+
+
+
+
+
+
 

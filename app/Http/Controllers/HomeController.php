@@ -22,4 +22,29 @@ class HomeController extends Controller
     {
         return view('pages/search');
     }
+
+    public function aboutUs()
+    {
+        return view('pages/aboutus');
+    }
+
+    public function faq()
+    {
+        return view('pages/faq');
+    }
+
+    public function termsOfUse()
+    {
+        return view('pages/termsofuse');
+    }
+
+    public function contacts()
+    {
+        return view('pages/contacts');
+    }
+
+    public function privacyPolicy()
+    {
+        return view('pages/privacypolicy');
+    }
 }

@@ -30,4 +30,18 @@ class Auction extends Model
     public static function activeAuctions() {
         return Auction::where('state', 'active');
     }
+    public static function noActions() {
+        return Auction::where('state', 'pending')->orWhere('state', 'finished')->orWhere('state', 'approved')->orWhere('state', 'denied')->orWhere('state', 'disabled')
+            ->join('users', 'users.id', '=', 'auction.owner')
+            ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
+            ->get();
+
+    }
+
+    public static function active() {
+        return Auction::where('state', 'active')->orWhere('state', 'paused')->orWhere('state', 'pending')
+            ->join('users', 'users.id', '=', 'auction.owner')
+            ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
+            ->get();
+    }
 }

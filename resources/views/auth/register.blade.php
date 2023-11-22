@@ -1,13 +1,17 @@
 @extends('layouts.app')
 
-@section('styles')
-<link href="{{ asset('css/register.css') }}" rel="stylesheet">
-@endsection
-
 @section('content')
 <form method="POST" action="{{ route('register') }}" class="m-auto p-8 max-w-xl flex flex-col text-stone-800 bg-white shadow-lg">
     {{ csrf_field() }}
 
+    <label class="mt-2 mb-1" for="username">Username</label>
+    <input class="p-2 mb-2 border border-stone-400 rounded" id="username" type="text" name="username" value="{{ old('username') }}" required autofocus>
+    @if ($errors->has('username'))
+        <span class="error">
+            {{ $errors->first('username') }}
+        </span>
+    @endif
+    
     <label class="mt-2 mb-1" for="name">Name</label>
     <input class="p-2 mb-2 border border-stone-400 rounded" id="name" type="text" name="name" value="{{ old('name') }}" required autofocus>
     @if ($errors->has('name'))

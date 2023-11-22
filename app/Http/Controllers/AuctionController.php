@@ -135,5 +135,15 @@ class AuctionController extends Controller
             return redirect()->back()->with('error', 'Error submitting bid.');
         }
     }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        $auctions = Auction::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
+            ->get();
+
+        return view('pages.auction.search', ['auctions' => $auctions]);
+    }
     
 }

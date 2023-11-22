@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS AuctionPhoto CASCADE;
 DROP TABLE IF EXISTS AuctionWinner CASCADE;
 DROP TABLE IF EXISTS Auction CASCADE;
 DROP TABLE IF EXISTS moneys CASCADE;
-DROP TABLE IF EXISTS Admin CASCADE;
+DROP TABLE IF EXISTS admin CASCADE;
 DROP TABLE IF EXISTS SystemManager CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS MetaInfoValue CASCADE;
@@ -112,6 +112,7 @@ CREATE TABLE users (
   password VARCHAR(255) NOT NULL,
   balance MONEY NOT NULL DEFAULT 0,
   date_of_birth DATE NOT NULL,
+  biography VARCHAR(255) DEFAULT NULL,
   street VARCHAR(255) DEFAULT NULL,
   city VARCHAR(255) DEFAULT NULL,
   zip_code VARCHAR(10) DEFAULT NULL,
@@ -127,7 +128,7 @@ CREATE TABLE SystemManager (
 );
 
 -- Admin table
-CREATE TABLE Admin (
+CREATE TABLE admin (
   user_id INT REFERENCES users(id) ON UPDATE CASCADE,
   PRIMARY KEY (user_id)
 );
@@ -286,7 +287,7 @@ ADD COLUMN tsvectors TSVECTOR;
 
 CREATE FUNCTION auction_search_update() RETURNS TRIGGER AS $$
 BEGIN
-     IF TG_OP = 'INSERT' THEN
+    IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
             setweight(to_tsvector('english', NEW.name), 'B') ||
             setweight(to_tsvector('english', NEW.category::text), 'A')
@@ -309,6 +310,7 @@ FOR EACH ROW
 EXECUTE FUNCTION auction_search_update();
 
 CREATE INDEX search_auction ON Auction USING GIN (tsvectors);
+
 
 
 /*
@@ -392,15 +394,14 @@ BEGIN
   WHERE id = NEW.user_id;
 
 
-  
-  IF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
+  IF current_State <> 'active' THEN
+    RAISE EXCEPTION 'You may only bid in active auctions.';
+  ELSIF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
     RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
   ELSIF highest_bidder = NEW.user_id THEN
     RAISE EXCEPTION 'You cannot bid if you currently own the highest bid.';
   ELSIF user_balance < NEW.amount THEN
     RAISE EXCEPTION 'You do not have enough balance in your account.';
-  ELSIF current_State <> 'active' THEN
-    RAISE EXCEPTION 'You may only bid in active auctions.';
   END IF;
   RETURN NEW;
 END;

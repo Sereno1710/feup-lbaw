@@ -1,21 +1,19 @@
-@extends('layouts.app')
+@extends('layouts.profile')
 
 @section('content')
-<div class="container">
-    <h1>User Search Results</h1>
+<div class="container mx-auto my-8">
+    <h1 class="text-3xl font-bold mb-6">User Search Results</h1>
 
     @if($users->isEmpty())
-    <p>No users found.</p>
+    <p class="text-gray-600">No users found.</p>
     @else
-    <ul>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
         @foreach($users as $user)
-        <li>
-            <h2>{{ $user->name }}</h2>
-            <p>{{ $user->username }}</p>
-            <p>{{ $user->email }}</p>
-        </li>
+        @include('partials.user_card', ['user' => $user])
         @endforeach
-    </ul>
+    </div>
     @endif
 </div>
+{{ $users->appends(['keyword' => $keyword])->links() }}
+<script src="{{ asset('js/auction.js') }}"></script>
 @endsection

@@ -31,7 +31,7 @@
                 <td class="py-2 px-4 border border-slate-300">
                         Normal
                 </td>
-                <td class="py-2 px-4 border border-slate-300">
+                <td class="py-2 px-4 border border-slate-300 flex flex-row">
                     <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.demote') }}" enctype="multipart/form-data">
                         @csrf
                         @method('POST')
@@ -72,7 +72,7 @@
                         Normal
                     @endif
                 </td>
-                <td class="py-2 px-4 border border-slate-300">
+                <td class="py-2 px-4 border border-slate-300 flex flex-row">
                     @if (!$user->is_anonymizing)
                         <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.disable') }}" enctype="multipart/form-data">
                             @csrf

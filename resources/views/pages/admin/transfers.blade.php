@@ -12,7 +12,7 @@
         <thead>
             <tr>
                 <th class="py-2 px-4 border border-slate-300">ID</th> 
-                <th class="py-2 px-4 border border-slate-300">User_ID</th>
+                <th class="py-2 px-4 border border-slate-300">Username</th>
                 <th class="py-2 px-4 border border-slate-300">Amount</th>
                 <th class="py-2 px-4 border border-slate-300">Actions</th>
             </tr>
@@ -23,14 +23,14 @@
                 <td class="py-2 px-4 border border-slate-300">{{ $deposit->id }}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $deposit->username}}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $deposit->amount }}</td>
-                <td class="py-2 px-4 border border-slate-300">
-                    <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.approve') }}" enctype="multipart/form-data">
+                <td class="py-2 px-4 border border-slate-300 flex flex-row">
+                    <form class="m-auto text-stone-800" method="POST" action="{{ route('admin.approve') }}" enctype="multipart/form-data">
                         @csrf
                         @method('POST')
                         <input type="hidden" name="id" value="{{ $deposit->id }}">
                         <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Approve</button> 
                     </form>
-                    <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.reject') }}" enctype="multipart/form-data">
+                    <form class="m-auto text-stone-800" method="POST" action="{{ route('admin.reject') }}" enctype="multipart/form-data">
                         @csrf
                         @method('POST')
                         <input type="hidden" name="id" value="{{ $deposit->id }}">
@@ -59,7 +59,7 @@
                 <td class="py-2 px-4 border border-slate-300">{{ $withdrawal->id }}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $withdrawal->username }}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $withdrawal->amount }}</td>
-                <td class="py-2 px-4 border border-slate-300">
+                <td class="py-2 px-4 border border-slate-300 flex flex-row">
                     <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.approve') }}" enctype="multipart/form-data">
                         @csrf
                         @method('POST')

@@ -31,9 +31,9 @@ class AdminController extends Controller
     public function getAuctions()
     {
         $this->authorize('index', Admin::class);
-
-        $auctions = Auction::all();
-        return view('pages/adminauction', ['auctions' => $auctions]);
+        $auctions1 = Auction::noActions();
+        $auctions2 = Auction::active();
+        return view('pages.admin.auctions', ['auctions1' => $auctions1, 'auctions2' => $auctions2]);
     }
 
     public function getTransfers()
@@ -80,5 +80,35 @@ class AdminController extends Controller
         $this->authorize('index', Admin::class);
         moneys::where(['id' => $request->id])->update(['state' => 'denied']);
         return redirect('/admin/transfers')->with('success', 'Transfer rejected successfully!');
+    }
+
+    public function approveAuction(Request $request) {
+        $this->authorize('index', Admin::class);
+        Auction::where(['id' => $request->id])->update(['state' => 'approved']);
+        return redirect('/admin/auctions')->with('success', 'Auction approved successfully!');
+    }
+
+    public function rejectAuction(Request $request) {
+        $this->authorize('index', Admin::class);
+        Auction::where(['id' => $request->id])->update(['state' => 'denied']);
+        return redirect('/admin/auctions')->with('success', 'Auction rejected successfully!');
+    }
+
+    public function pauseAuction(Request $request) {
+        $this->authorize('index', Admin::class);
+        Auction::where(['id' => $request->id])->update(['state' => 'paused']);
+        return redirect('/admin/auctions')->with('success', 'Auction paused successfully!');
+    }
+
+    public function resumeAuction(Request $request) {
+        $this->authorize('index', Admin::class);
+        Auction::where(['id' => $request->id])->update(['state' => 'active']);
+        return redirect('/admin/auctions')->with('success', 'Auction resumed successfully!');
+    }
+
+    public function disableAuction(Request $request) {
+        $this->authorize('index', Admin::class);
+        Auction::where(['id' => $request->id])->update(['state' => 'disabled']);
+        return redirect('/admin/auctions')->with('success', 'Auction disabled successfully!');
     }
 }

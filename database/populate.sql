@@ -119,7 +119,7 @@ VALUES
   ('Piano Solo Performance', 'A live solo piano performance by a professional pianist.', 250.00, 250.00 ,'2023-11-17 16:00:00', '2023-12-01 16:00:00', 'strings', 'denied', 7),
   ('Flute Solo', 'A live solo flute performance by a professional flutist.', 200.00, 200.00 ,'2023-11-18 17:00:00', '2023-12-02 17:00:00', 'woodwinds', 'denied', 9),
   ('Trumpet Masterclass', 'A masterclass session with a renowned trumpet player.', 300.00, 300.00,'2023-11-19 18:00:00', '2023-12-03 18:00:00', 'brass', 'denied', 6),
-  ('Accordion Workshop', 'A workshop on accordion playing for beginners.', 150.00, 150.00 ,'2023-11-20 19:00:00', '2023-12-04 19:00:00', 'woodwinds', 'denied', 23);
+  ('Accordion Workshop', 'A workshop on accordion playing for beginners.', 150.00, 150.00 ,'2023-11-20 19:00:00', '2023-12-04 19:00:00', 'woodwinds', 'pending', 23);
 
 INSERT INTO AuctionWinner (user_id, auction_id, rating)
 VALUES

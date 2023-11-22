@@ -46,7 +46,11 @@ Route::get('/admin/transfers', [AdminController::class, 'getTransfers'])->name('
 Route::post('/admin/transfers/approve', [AdminController::class, 'approve'])->name('admin.approve');
 Route::post('/admin/transfers/reject', [AdminController::class, 'reject'])->name('admin.reject');
 Route::get('/admin/auctions', [AdminController::class, 'getAuctions'])->name('admin.auctions');
-
+Route::post('/admin/auctions/approve', [AdminController::class, 'approveAuction'])->name('admin.approveAuction');
+Route::post('/admin/auctions/reject', [AdminController::class, 'rejectAuction'])->name('admin.rejectAuction');
+Route::post('/admin/auctions/pause', [AdminController::class, 'pauseAuction'])->name('admin.pauseAuction');
+Route::post('/admin/auctions/resume', [AdminController::class, 'resumeAuction'])->name('admin.resumeAuction');
+Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'])->name('admin.disableAuction');
 
 // API
 Route::controller(CardController::class)->group(function () {

@@ -32,7 +32,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
 // Profile
-Route::get('/profile', [UserController::class, 'index'])->name('profile');
+Route::get('/profile', [UserController::class, 'show'])->name('profile');
 Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
 Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');

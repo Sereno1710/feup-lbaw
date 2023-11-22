@@ -20,36 +20,43 @@ class User extends Authenticatable
 
     // Don't add create and update timestamps in database.
     public $timestamps = false;
-    protected $table='users';
+    protected $table = 'users';
 
-    protected $fillable = ['username', 'name', 'email', 'password', 'balance', 'date_of_birth', 'street', 'city', 'zip_code', 'country', 'rating', 'image', 'tsvectors',];
+    protected $fillable = ['username', 'name', 'email', 'password', 'balance', 'date_of_birth', 'biography', 'street', 'city', 'zip_code', 'country', 'rating', 'image', 'tsvectors',];
     protected $hidden = ['password', 'remember_token',];
 
-    public function isAdmin() {
+    public function isAdmin()
+    {
         return count(Admin::where('user_id', $this->id)->get()) > 0;
     }
 
-    public function ownAuction() {
-      return $this->hasMany('App\Models\Auction', 'owner')->orderBy('initial_time', 'desc');
+    public function ownAuction()
+    {
+        return $this->hasMany('App\Models\Auction', 'owner')->orderBy('initial_time', 'desc');
     }
 
-    public function ownBids() {
+    public function ownBids()
+    {
         return $this->hasMany('App\Models\Bid', 'user_id')->orderBy('id', 'desc');
     }
 
-    public function followedAuctions() {
-        return $this->hasMany('\App\Models\Auctions','user_id')->where('user_id', $this->id)->orderBy('end_time', 'asc');
+    public function followedAuctions()
+    {
+        return $this->hasMany('\App\Models\Auctions', 'user_id')->where('user_id', $this->id)->orderBy('end_time', 'asc');
     }
 
-    public function ownTransfers() {
-        return $this->hasMany('App\Models\moneys','id')->where('user_id', $this->id)->where('state','accepted')->orderBy('id', 'desc');
+    public function ownTransfers()
+    {
+        return $this->hasMany('App\Models\moneys', 'id')->where('user_id', $this->id)->where('state', 'accepted')->orderBy('id', 'desc');
     }
 
-    public static function activeUsers() {
-        return User::where('name','!=','Anonymous')->leftJoin('admin', 'users.id', '=', 'admin.user_id')->whereNull('admin.user_id')->orderBy('id','asc')->get();
+    public static function activeUsers()
+    {
+        return User::where('name', '!=', 'Anonymous')->leftJoin('admin', 'users.id', '=', 'admin.user_id')->whereNull('admin.user_id')->orderBy('id', 'asc')->get();
     }
-    
-    public static function activeAdmins() {
-        return User::join('admin', 'users.id', '=', 'admin.user_id')->orderBy('id','asc')->get();
+
+    public static function activeAdmins()
+    {
+        return User::join('admin', 'users.id', '=', 'admin.user_id')->orderBy('id', 'asc')->get();
     }
 }

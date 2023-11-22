@@ -4,49 +4,55 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth; 
 
 class UserController extends Controller
 {
-    public function changeUsername(Request $request)
+    public function index()
     {
-        $user = Auth::user();
-        $user->username = $request->input('new_username');
-        $user->save();
-
-        return redirect()->back()->with('success', 'Username updated successfully.');
+        return view('pages/profile');
     }
 
-    public function changePassword(Request $request)
+    public function edit()
+    {
+        $user = Auth::user();
+
+        return view('pages/editprofile', compact('user'));
+    }
+
+    public function update(Request $request)
     {
         $user = Auth::user();
 
         $request->validate([
-            'current_password' => 'required|string',
-            'new_password' => 'required|string|min:8|confirmed',
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6',
+            'street' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'zip_code' => 'nullable|string|max:10',
+            'country' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        if (!Hash::check($request->input('current_password'), $user->password)) {
-            return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        $user->update([
+            'username' => $request->input('username'),
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => $request->filled('password') ? Hash::make($request->input('password')) : $user->password,
+            'street' => $request->input('street'),
+            'city' => $request->input('city'),
+            'zip_code' => $request->input('zip_code'),
+            'country' => $request->input('country'),
+        ]);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('profile_images', 'public');
+            $user->update(['image' => $imagePath]);
         }
 
-        $user->password = bcrypt($request->input('new_password'));
-        $user->save();
-
-        return redirect()->back()->with('success', 'Password updated successfully.');
-    }
-
-    public function changeEmail(Request $request)
-    {
-        $user = Auth::user();
-
-        $request->validate([
-            'new_email' => 'required|email|unique:users,email',
-        ]);
-
-        $user->email = $request->input('new_email');
-        $user->save();
-
-        return redirect()->back()->with('success', 'Email updated successfully.');
+        return redirect('/profile')->with('success', 'Profile updated successfully!');
     }
 
     public function search(Request $request)
@@ -61,4 +67,12 @@ class UserController extends Controller
         return view('pages.users.search', ['users' => $users]);
     }
 
+    public function showProfile($userId)
+    {
+        $user = User::findOrFail($userId);
+        if ($userId == Auth::id()){
+            return redirect('/profile');
+        }
+        return view('pages/profile', ['user' => $user]);
+    }
 }

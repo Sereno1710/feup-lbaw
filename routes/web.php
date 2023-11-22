@@ -11,7 +11,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
-
+use App\Http\Controllers\BalanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,19 +25,24 @@ use App\Http\Controllers\ProfileController;
 */
 
 // Home
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Users
 Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
 // Profile
-Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+Route::get('/profile', [UserController::class, 'index'])->name('profile');
+Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
+Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
+Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
+Route::get('/user/{userId}', [UserController::class, 'showProfile'])->name('profile.show');
 
-// Cards
-Route::controller(CardController::class)->group(function () {
-    Route::get('/cards', 'list')->name('cards');
-    Route::get('/cards/{id}', 'show');
-});
+// Balance
+Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
+Route::post('/balance/deposit', [BalanceController::class, 'deposit'])->name('balance.deposit');
+Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
+
 
 
 // API

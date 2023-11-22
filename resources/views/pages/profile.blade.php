@@ -1,58 +1,57 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="profile-container">
-        <div class="top-bar">
-            <div class="breadcrumbs">
-                <a href="{{ url('/home') }}">Home</a> > Profile
-            </div>
-            <div class="profile-buttons">
-                <a href="{{ url('/view-bidding-history') }}" class="button">View Bidding History</a>
-                <a href="{{ url('/view-selling-history') }}" class="button">View Selling History</a>
-            </div>
-            <div class="search-bar">
-                <input type="text" placeholder="Search users and auctions">
-            <button type="button">Search</button>
-        </div>
-        </div>
-
-        <div class="profile-info">
+    <div>
+        <a href="{{ url('/home') }}" class="text-blue-500 hover:underline">Home</a>
+        <span class="mx-2"> > </span>
+        @if (Auth::check() && !isset($user))
+        <span class="text-stone-500">Profile</span>
+        @else
+        <span class="text-stone-500">{{ $user->name }}</span>
+        @endif
+    </div>
+    <div class="flex flex-col items-center">
+        <div class="flex flex-row items-center">
             <div class="user-avatar">
+                <img class="rounded-full" src="https://picsum.photos/200" alt="Profile Picture">
             </div>
-            <div class="user-details">
-                <p>Email: {{ Auth::user()->email }}</p>
-                <p>Nome:  {{ Auth::user()->name }} <button>Edit Profile</button></p>
-                <p>Rating: {{ Auth::user()->rating }}</p>
+            <div class="mx-4 flex flex-col">
+                @if (Auth::check() && !isset($user))
+                    <p class="text-xl">{{ Auth::user()->email }}</p>
+                    <p class="text-2xl">{{ Auth::user()->name }} <a class="mx-2 text-sm underline" href="{{ route('profile.edit') }}">[edit profile]</a></p>
+                    @if (Auth::user()->rating == NULL)
+                    @else
+                        <p>Rating: {{ Auth::user()->rating }}</p>
+                    @endif
+                @else
+                    <p class="text-xl">{{ $user->email }}</p>
+                    <p class="text-2xl">{{ $user->name }}</p>
+                    @if ($user->rating == NULL)    
+                    @else
+                        <p> Rating: {{ $user->rating }}</p>
+                    @endif
+                @endif
             </div>
         </div>
-        <div class="auctions-sections">
-            <div class="auctions-section">
-                <h2>Followed Auctions</h2>
-                <div class="featured-auctions-container">
-                     @for ($i = 1; $i <= 4; $i++)
-                        <div class="auction-card">
-                            <img src="auction{{ $i }}.jpg" alt="Auction {{ $i }}">
-                            <h4>Auction {{ $i }}</h4>
-                            <p>Description of Auction {{ $i }}</p>
-                            <a href="#">Bid Now</a>
-                        </div>
+        <div class="m-0 mx-auto flex flex-row items-center">
+            @if (Auth::check() && !isset($user))
+                <div class="mx-8 my-4 flex flex-col items-center justify-between p-4 rounded-lg bg-stone-300">
+                    <h2 class="mb-4 text-2xl font-bold">Followed Auctions</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        @for ($i = 0; $i < 12; $i++)
+                            @include('partials.card')
+                        @endfor
+                    </div>
+                </div>
+            @endif
+            <div class="mx-8 my-4 flex flex-col items-center justify-between p-4 rounded-lg bg-stone-300">
+                <h2 class="mb-4 text-2xl font-bold">Owned Auctions</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    @for ($i = 0; $i < 12; $i++)
+                        @include('partials.card')
                     @endfor
                 </div>
             </div>
-
-            <div class="auctions-section">
-                <h2>Owned Auctions</h2>
-                <div class="featured-auctions-container">
-                    @for ($i = 5; $i <= 8; $i++)
-                        <div class="auction-card">
-                            <img src="auction{{ $i }}.jpg" alt="Auction {{ $i }}">
-                            <h4>Auction {{ $i }}</h4>
-                            <p>Description of Auction {{ $i }}</p>
-                            <a href="#">Manage Auction</a>
-                        </div>
-                    @endfor
-                </div>
-            </div>
         </div>
-    </div>        
+    </div>
 @endsection

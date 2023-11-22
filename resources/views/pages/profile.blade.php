@@ -23,6 +23,7 @@
                     @else
                         <p>Rating: {{ Auth::user()->rating }}</p>
                     @endif
+                    <p class="text-xl">{{ Auth::user()->biography }}</p>
                 @else
                     <p class="text-xl">&#64;{{ $user->username }}</p>
                     <p class="text-2xl">{{ $user->name }}</p>
@@ -30,6 +31,7 @@
                     @else
                         <p> Rating: {{ $user->rating }}</p>
                     @endif
+                    <p class="text-xl">{{ $user->biography }}</p>
                 @endif
             </div>
         </div>

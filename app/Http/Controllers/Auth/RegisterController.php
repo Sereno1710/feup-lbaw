@@ -42,6 +42,7 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
             'balance' => 0,
             'date_of_birth' => $request->date_of_birth,
+            'biography' => null,
             'street' => null,
             'city' => null,
             'zip_code' => null,

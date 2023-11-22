@@ -30,6 +30,10 @@
         <label class="mt-2 mb-1" for="password">New Password:</label>
         <input class="p-2 mb-2 border border-stone-400 rounded" type="password" id="password" name="password">
 
+        <label class="mt-2 mb-1" for="biography">Biography:</label>
+        <input class="p-2 mb-2 border border-stone-400 rounded" type="text" id="biography" name="biography"
+            value="{{ $user->biography }}" required>
+
         <label class="mt-2 mb-1" for="street">Street:</label>
         <input class="p-2 mb-2 border border-stone-400 rounded" type="text" id="street" name="street"
             value="{{ $user->street }}">

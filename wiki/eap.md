@@ -17,6 +17,7 @@
 | M03: Auctions | Web resources associated with auctions like creating, bidding, commenting, following/unfollowing.  |
 | M04: Search | Web resources associated to the search feature. Searching for users and auctions |
 | M05: Administration | Web resources associated web control like managing users and auctions.  |
+| M06: Balance | Web resources associated with managing user balance on the platform. |
 
 
 ### 2. Permissions
@@ -679,8 +680,6 @@ paths:
 
 #### 1.1. Implemented User Stories
 
-> Identify the user stories that were implemented in the prototype.  
-
 | User Story reference | Name                         | Priority | Description                                                                                                                                                                                                                                     |
 |----------------------|------------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | US01                 | See Home Page                | High     | As a user, I want to be able to see the home page whenever I enter the website so that I can start using the website.                                                                                                                           |
@@ -714,40 +713,74 @@ paths:
 | Web Resource Reference | URL                            |
 |------------------------|--------------------------------|
 | R101: Login Form        | GET /login |
-| R102: Login Action      | Post /login |
+| R102: Login Action      | POST /login |
 | R103: Logout Action     | GET /logout |
 | R104: Register Form        | GET /register |
 | R105: Register Action        | POST /register |
+
 
 #### Module M02: Users
 
 | Web Resource Reference | URL                            |
 |------------------------|--------------------------------|
-| R201: Search Users      | GET /users/search |
-| R202: View Own Profile  | GET /profile |
-| R203: Edit User Profile   | GET /profile/edit |
-| R204: Update User Profile | PUT /profile/update|
-| R205: View User Profiles  | GET /user/{userId} |
-| R206: View Home Page  | GET / |
-| R207: View Home Page  | GET /home |
+| R201: View Home Page  | GET / |
+| R202: View Home Page  | GET /home |
+| R204: View Own Profile  | GET /profile |
+| R205: Edit User Profile   | GET /profile/edit |
+| R206: Update User Profile | PUT /profile/update|
+| R207: View User Profiles  | GET /user/{userId} |
+| R208: View About Us Page  | GET /about-us |
+| R209: View FAQ Page      | GET /faq |
+| R210: View Contacts Page     | GET /contacts |
+| R211: View Terms of Use Page   | GET /terms-of-use |
+| R212: View Privacy Policy Page  | GET /privacy-policy |
 
-#### Module M03: Balance
 
-| Web Resource Reference | URL                            |
-|------------------------|--------------------------------|
-| R301: View Balance Page | GET /balance/deposit |
-| R302: Make a Deposit Request | POST /balance/deposit |
-| R303: Make a Withdraw Request  | POST /balance/withdraw|
-
-#### Module M04: Administration
+#### Module M03: Auction
 
 | Web Resource Reference | URL                            |
 |------------------------|--------------------------------|
-| R401: Login Form        | GET /login |
-| R402: Login Action      | Post /login |
-| R403: Logout Action     | GET /logout |
-| R404: Register Form        | GET /register |
-| R405: Register Action        | POST /register |
+| R301:       |  |
+| R302:  |  |
+
+
+#### Module M04: Search
+
+| Web Resource Reference | URL                            |
+|------------------------|--------------------------------|
+| R401: Search Users      | GET /users/search |
+| R402: Search Auctions | GET /auction/search |
+
+
+#### Module M05: Administration
+
+| Web Resource Reference | URL                            |
+|------------------------|--------------------------------|
+| R501: View Admin Page  | GET /admin |
+| R502: View All Users | GET /admin/users |
+| R503: Demote User Account | POST /admin/users/demote |
+| R504: Promote User Account | POST /admin/users/promote |
+| R505: Disable User Account  | POST /admin/users/disable |
+| R506: View Pending Transfers | GET /admin/transfers |
+| R507: Approve Transfer  | POST /admin/transfers/approve |
+| R508: Reject Transfer  | POST /admin/transfers/reject |
+| R509: View All Auctions | GET /admin/auctions |
+| R510: Approve Auction | POST /admin/auctions/approve |
+| R511: Reject Auction | POST /admin/auctions/reject |
+| R512: Pause Auction  | POST /admin/auctions/pause |
+| R513: Resume Auction | POST /admin/auctions/resume |
+| R514: Disable Auction | POST /admin/auctions/disable |
+
+
+#### Module M06: Balance
+
+| Web Resource Reference | URL                            |
+|------------------------|--------------------------------|
+| R601: View Balance Page | GET /balance/deposit |
+| R602: Make a Deposit Request | POST /balance/deposit |
+| R603: Make a Withdraw Request | POST /balance/withdraw|
+
+
 
 ### 2. Prototype
 

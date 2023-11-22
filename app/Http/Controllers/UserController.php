@@ -29,6 +29,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:6',
+            'biography' => 'nullable|string|max:1000'
             'street' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
             'zip_code' => 'nullable|string|max:10',
@@ -41,6 +42,7 @@ class UserController extends Controller
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => $request->filled('password') ? Hash::make($request->input('password')) : $user->password,
+            'biography' => $request->input('email'),
             'street' => $request->input('street'),
             'city' => $request->input('city'),
             'zip_code' => $request->input('zip_code'),

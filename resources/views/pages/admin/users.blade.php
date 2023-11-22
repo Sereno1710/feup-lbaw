@@ -5,7 +5,8 @@
 <br>
 <br>
 <br>
-<div id="admin_section" class="container mx-auto">
+<div  class="container mx-auto">
+    <div id="admin_section">
     <h1 class="text-4xl font-bold">Admins</h1>
     <br>
     <table class="min-w-full border-separate">
@@ -43,10 +44,10 @@
         </tbody>
     </table>
 </div>
-<div id="user_section" class="container mx-auto">
+<div id="user_section">
     <h1 class="text-4xl font-bold">Users</h1>
     <br>
-    <table class="min-w-full border-separate user_section">
+    <table class="min-w-full border-separate">
         <thead>
             <tr>
                 <th class="py-2 px-4 border border-slate-300">ID</th> 
@@ -92,6 +93,7 @@
             @endforeach
         </tbody>
     </table>
+</div>
 </div>
 
 

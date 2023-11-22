@@ -1,14 +1,12 @@
 # EAP: Architecture Specification and Prototype
 
-> Project vision.
-
 ## A7: Web Resources Specification
 
-> Brief presentation of the artifact's goals.
+This artifact provides an overview of the forthcoming web API, emphasizing the required resources along with their characteristics and associated JSON responses. The API encompasses functionalities for creating, reading, updating, and, if applicable, deleting operations for each resource.
 
 ### 1. Overview
 
-> Identify and overview the modules that will be part of the application. 
+This section describes the modules that will be part of the application. 
 
 | Modules | Description |
 |---------|-------------|
@@ -22,7 +20,7 @@
 
 ### 2. Permissions
 
-> Define the permissions used by each module, necessary to access its data and features.  
+This section has the permissions used in our modules, necessary to access its data and features.  
 
 | Identifier | Name | Description |
 |------------|------|-------------|
@@ -34,9 +32,7 @@
 
 ### 3. OpenAPI Specification
 
-> OpenAPI specification in YAML format to describe the vertical prototype's web resources.
-
-> Link to the `a7_openapi.yaml` file in the group's repository.
+This section includes the [SoundSello OpenAPI Specification](https://git.fe.up.pt/lbaw/lbaw2324/lbaw2322/-/blob/main/docs/a7_openapi.yaml).
 
 
 ```yaml

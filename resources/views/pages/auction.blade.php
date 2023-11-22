@@ -12,14 +12,15 @@
         <div class="w-full px-4 py-1 flex flex-row items-end justify-between border-b-2 border-stone-400">
             <div class="flex flex-row items-end">
                 <h2 class="text-3xl">{{ $auction->name }}</h2>
-                <p class="text-sm mx-5"> STATUS: {{ $auction->state }}<p>
+                <p class="text-sm mx-5"> STATUS: {{ $auction->state }}
+                <p>
             </div>
             <!--
-                            <div>
-                                <button>Report</button>
-                                <button>Follow</button>
-                            </div>
-                        -->
+                                <div>
+                                    <button>Report</button>
+                                    <button>Follow</button>
+                                </div>
+                            -->
         </div>
         <div class="mt-4 w-full flex flex-row items-start justify-evenly">
             <img class="m-4" src="https://picsum.photos/250" alt="auctionphoto">
@@ -67,15 +68,17 @@
                     <input class="p-1 bg-stone-200 outline-none rounded-t-lg" type="number" min="1" step=".01"
                         name="amount" placeholder="Bid amount">
                     <button class="p-1 bg-stone-800 text-white rounded-b-lg" type="submit">Bid</button>
+                    @if (session('error'))
+                        <div class="text-sm text-red-800">
+                            {{ session('error') }}
+                        </div>
+                    @endif
                 </form>
             </div>
         </div>
         <div>
 
             <p>
-                @isset($variable)
-                    {{ $variable }}
-                @endisset
                 Time remaining: 1000
             </p>
         </div>

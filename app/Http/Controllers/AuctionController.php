@@ -99,13 +99,16 @@ class AuctionController extends Controller
                 "Your bid must be higher than the current highest bid.",
                 "You cannot bid if you currently own the highest bid.",
                 "You do not have enough balance in your account.",
-                "You may only bid in active auctions."
+                "You may only bid in active auctions.",
+                "You cannot bid on your own auction as the owner.",
             ];
 
             $errorMessage = $e->getMessage();
 
-            if (in_array($errorMessage, $errorMessages)) {
-                return redirect()->back()->with('error', $errorMessage);
+            foreach ($errorMessages as $expectedErrorMessage) {
+                if (strpos($errorMessage, $expectedErrorMessage) !== false) {
+                    return redirect()->back()->with('error', $expectedErrorMessage);
+                }
             }
 
             return redirect()->back()->with('error', 'Error submitting bid.');

@@ -37,7 +37,24 @@
         <input class="p-2 mb-2 border border-stone-400 rounded" type="number" min="1" step=".01"
             id="starting_price" name="starting_price" required>
 
+        <label class="mt-2 mb-1" for="categories">Select Categories:</label>
+        @foreach ($metaInfos as $metaInfo)
+            <div class="mb-2">
+                <p>{{ $metaInfo->name }}</p>
+                <select id="category_{{ $metaInfo->name }}" name="categories[{{ $metaInfo->name }}]">
+                    <option value="" selected>None</option>
+                    @foreach ($metaInfo->values as $value)
+                        <option value="{{ $value->id }}">{{ $value->value }}</option>
+                    @endforeach
+                </select>
+            </div>
+        @endforeach
 
         <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Submit Auction</button>
+        @if (session('error'))
+            <div class="text-sm text-red-800">
+                {{ session('error') }}
+            </div>
+        @endif
     </form>
 @endsection

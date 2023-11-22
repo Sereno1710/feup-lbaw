@@ -9,6 +9,10 @@ class AuctionMetaInfoValue extends Model
     protected $table = 'auctionmetainfovalue';
     protected $primaryKey = null;
     public $incrementing = false;
+    public $timestamps = false;
+    protected $fillable = [
+        'auction_id', 'meta_info_value_id'
+    ];
 
     public function auction()
     {

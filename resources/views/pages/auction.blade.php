@@ -16,14 +16,14 @@
                 <p>
             </div>
             <!--
-                                    <div>
-                                        <button>Report</button>
-                                        <button>Follow</button>
-                                    </div>
-                                -->
+                                        <div>
+                                            <button>Report</button>
+                                            <button>Follow</button>
+                                        </div>
+                                    -->
         </div>
         <div class="mt-4 w-full flex flex-row items-start justify-evenly">
-            <img class="m-4" src="https://picsum.photos/250" alt="auctionphoto">
+            <img class="m-4 max-h-64 rounded-lg" src="https://picsum.photos/250" alt="auctionphoto">
             <table class="table-fixed w-full text-left ">
                 <tr class="border-b border-stone-400">
                     <th class="border-r border-stone-400">
@@ -53,11 +53,11 @@
             </table>
         </div>
         <div class="w-full flex flex-row items-start justify-between">
-            <div class="flex flex-col">
-                <h3>Details</h3>
+            <div class="flex flex-col mx-4 my-1">
+                <h3 class="font-bold">Details</h3>
                 <div class="grid grid-cols-3">
                     @foreach ($auction->tags as $tag)
-                    @include('partials.tag', ['tag' => $tag])
+                        @include('partials.tag', ['tag' => $tag])
                     @endforeach
                 </div>
             </div>

@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\Bid;
 use App\Models\Auction;
-use App\Models\MetaInfoValue;
+use App\Models\MetaInfo;
+use App\Models\AuctionMetaInfoValue;
 
 class AuctionController extends Controller
 {
@@ -29,8 +30,8 @@ class AuctionController extends Controller
 
     public function showAuctionForm()
     {
-        $metaInfoValues = MetaInfoValue::all();
-        return view('pages/createauction', ['metaInfoValues' => $metaInfoValues]);
+        $metaInfos = MetaInfo::all();
+        return view('pages/createauction', ['metaInfos' => $metaInfos]);
     }
 
     public function createAuction(Request $request)
@@ -50,10 +51,30 @@ class AuctionController extends Controller
         $auctionData['owner_id'] = Auth::user()->id;
         $auctionData['state'] = 'active';
 
-        $auction = new Auction($auctionData);
-        $auction->save();
+        try {
+            DB::beginTransaction();
+    
+            $auction = new Auction($auctionData);
+            $auction->save();
 
-        return view('pages/createauction');
+            $metaInfos = $request->input('categories', []);
+
+            foreach ($metaInfos as $metaInfoName => $selectedValueId) {
+                if (!empty($selectedValueId)) {
+                    $auctionMetaInfoValue = new AuctionMetaInfoValue([
+                        'auction_id' => $auction->id,
+                        'meta_info_value_id' => $selectedValueId,
+                    ]);
+                    $auctionMetaInfoValue->save();
+                }
+            }
+    
+            DB::commit();
+    
+            return redirect()->back()->with('success', 'Bid submitted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error ocurred. Try again later.');
+        }
     }
 
     public function auctionBid(Request $request, $auctionId)

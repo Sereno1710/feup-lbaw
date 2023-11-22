@@ -53,7 +53,7 @@ class AuctionController extends Controller
 
         try {
             DB::beginTransaction();
-    
+
             $auction = new Auction($auctionData);
             $auction->save();
 
@@ -68,9 +68,9 @@ class AuctionController extends Controller
                     $auctionMetaInfoValue->save();
                 }
             }
-    
+
             DB::commit();
-    
+
             return redirect()->back()->with('success', 'Bid submitted successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error ocurred. Try again later.');
@@ -83,10 +83,10 @@ class AuctionController extends Controller
             'amount' => 'required|numeric|min:1',
         ]);
         \Log::error($auctionId);
-    
+
         try {
             DB::beginTransaction();
-    
+
             $bid = new Bid([
                 'user_id' => Auth::user()->id,
                 'auction_id' => $auctionId,
@@ -98,7 +98,7 @@ class AuctionController extends Controller
             DB::table('users')
                 ->where('id', Auth::user()->id)
                 ->update(['balance' => DB::raw('balance - ' . $validatedData['amount'] . '::MONEY')]);
-    
+
             DB::table('users')
                 ->where('id', function ($query) use ($auctionId) {
                     $query->select('user_id')
@@ -108,12 +108,12 @@ class AuctionController extends Controller
                         ->addBinding(['auction_id' => $auctionId], 'select');
                 })
                 ->update(['balance' => DB::raw('balance + (SELECT amount FROM (SELECT user_id, amount FROM bid WHERE auction_id = :auction_id ORDER BY amount DESC LIMIT 2) AS Last2Bids ORDER BY amount ASC LIMIT 1)')]);
-    
+
             Auction::where('id', $auctionId)
                 ->update(['price' => DB::raw($validatedData['amount'] . '::MONEY')]);
-    
+
             DB::commit();
-    
+
             return redirect()->back()->with('success', 'Bid submitted successfully.');
         } catch (\Exception $e) {
             $errorMessages = [
@@ -140,10 +140,12 @@ class AuctionController extends Controller
     {
         $keyword = $request->input('keyword');
 
-        $auctions = Auction::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
-            ->get();
+        $auctionsQuery = Auction::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
+            ->orderByRaw("ts_rank(tsvectors, to_tsquery(?)) DESC", [$keyword]);
 
-        return view('pages.auction.search', ['auctions' => $auctions]);
+        $auctions = $auctionsQuery->simplePaginate(4, ['*'], 'page', $request->input('page'));
+
+        return view('pages.auction.search', ['auctions' => $auctions, 'keyword' => $keyword]);
     }
-    
+
 }

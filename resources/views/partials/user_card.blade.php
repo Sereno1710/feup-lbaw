@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Support\Str;
 
-$bio=Str::limit($user->bio, 30);
+$bio=Str::limit($user->biography, 30);
 ?>
 
 <a href="{{ url('/user/' . $user->id) }}">

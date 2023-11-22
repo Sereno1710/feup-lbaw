@@ -9,10 +9,11 @@
     @else
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         @foreach($auctions as $auction)
-        @include('partials.card', ['auction' => $auction])
+        @include('partials.auction_card', ['auction' => $auction])
         @endforeach
     </div>
     @endif
 </div>
+{{ $auctions->appends(['keyword' => $keyword])->links() }}
 <script src="{{ asset('js/auction.js') }}"></script>
 @endsection

@@ -15,5 +15,4 @@
     @endif
 </div>
 {{ $users->appends(['keyword' => $keyword])->links() }}
-<script src="{{ asset('js/auction.js') }}"></script>
 @endsection

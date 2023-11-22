@@ -707,21 +707,47 @@ paths:
 
 ...
 
-#### 1.2. Implemented Web Resources
+### 1.2. Implemented Web Resources
 
-> Identify the web resources that were implemented in the prototype.  
-
-> Module M01: Module Name  
+#### Module M01: Authentication
 
 | Web Resource Reference | URL                            |
 |------------------------|--------------------------------|
-| R01: Web resource name | URL to access the web resource |
+| R101: Login Form        | GET /login |
+| R102: Login Action      | Post /login |
+| R103: Logout Action     | GET /logout |
+| R104: Register Form        | GET /register |
+| R105: Register Action        | POST /register |
 
-...
+#### Module M02: Users
 
-> Module M02: Module Name  
+| Web Resource Reference | URL                            |
+|------------------------|--------------------------------|
+| R201: Search Users      | GET /users/search |
+| R202: View Own Profile  | GET /profile |
+| R203: Edit User Profile   | GET /profile/edit |
+| R204: Update User Profile | PUT /profile/update|
+| R205: View User Profiles  | GET /user/{userId} |
+| R206: View Home Page  | GET / |
+| R207: View Home Page  | GET /home |
 
-...
+#### Module M03: Balance
+
+| Web Resource Reference | URL                            |
+|------------------------|--------------------------------|
+| R301: View Balance Page | GET /balance/deposit |
+| R302: Make a Deposit Request | POST /balance/deposit |
+| R303: Make a Withdraw Request  | POST /balance/withdraw|
+
+#### Module M04: Administration
+
+| Web Resource Reference | URL                            |
+|------------------------|--------------------------------|
+| R401: Login Form        | GET /login |
+| R402: Login Action      | Post /login |
+| R403: Logout Action     | GET /logout |
+| R404: Register Form        | GET /register |
+| R405: Register Action        | POST /register |
 
 ### 2. Prototype
 

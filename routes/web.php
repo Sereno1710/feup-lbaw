@@ -39,6 +39,9 @@ Route::match(['post', 'put'], '/profile/update', [ProfileController::class, 'upd
 // Admin
 Route::get('/admin', [AdminController::class, 'index'])->name('admin');
 Route::get('/admin/users', [AdminController::class, 'getUsers'])->name('admin.users');
+Route::post('/admin/users/demote', [AdminController::class, 'demote'])->name('admin.demote');
+Route::post('/admin/users/promote', [AdminController::class, 'promote'])->name('admin.promote');
+Route::post('/admin/users/disable', [AdminController::class, 'disable'])->name('admin.disable');
 
 
 // API

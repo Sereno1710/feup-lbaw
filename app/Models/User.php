@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 // Added to define Eloquent relationships.
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use App\Models\Admin;
 
 class User extends Authenticatable
 {
@@ -25,7 +26,7 @@ class User extends Authenticatable
     protected $hidden = ['password', 'remember_token',];
 
     public function isAdmin() {
-        return count($this->hasOne('App\Models\Admin', 'user_id')->get());
+        return count(Admin::where('user_id', $this->id)->get()) > 0;
     }
 
     public function ownAuction() {
@@ -45,6 +46,10 @@ class User extends Authenticatable
     }
 
     public static function activeUsers() {
-        return User::orderBy('id','asc')->get();
+        return User::leftJoin('admin', 'users.id', '=', 'admin.user_id')->whereNull('admin.user_id')->orderBy('id','asc')->get();
+    }
+    
+    public static function activeAdmins() {
+        return User::join('admin', 'users.id', '=', 'admin.user_id')->orderBy('id','asc')->get();
     }
 }

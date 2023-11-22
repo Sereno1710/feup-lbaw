@@ -26,7 +26,7 @@ class BalanceController extends Controller
         moneys::create([
             'user_id' => $user->id,
             'amount' => $request->input('deposit_amount'),
-            'type' => false, // Deposit
+            'type' => true, // Deposit
         ]);
 
         $balance = $user->balance;
@@ -66,7 +66,7 @@ class BalanceController extends Controller
         moneys::create([
             'user_id' => $user->id,
             'amount' => $request->input('withdraw_amount'),
-            'type' => true, // Withdraw
+            'type' => false, // Withdraw
         ]);
 
         return redirect('/home')->with('success', 'Withdrawal successful!');

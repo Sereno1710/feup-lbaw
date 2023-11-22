@@ -17,14 +17,14 @@
             </div>
             <div class="mx-4 flex flex-col">
                 @if (Auth::check() && !isset($user))
-                    <p class="text-xl">{{ Auth::user()->email }}</p>
+                    <p class="text-xl">&#64;{{ Auth::user()->username }}</p>
                     <p class="text-2xl">{{ Auth::user()->name }} <a class="mx-2 text-sm underline" href="{{ route('profile.edit') }}">[edit profile]</a></p>
                     @if (Auth::user()->rating == NULL)
                     @else
                         <p>Rating: {{ Auth::user()->rating }}</p>
                     @endif
                 @else
-                    <p class="text-xl">{{ $user->email }}</p>
+                    <p class="text-xl">&#64;{{ $user->username }}</p>
                     <p class="text-2xl">{{ $user->name }}</p>
                     @if ($user->rating == NULL)    
                     @else

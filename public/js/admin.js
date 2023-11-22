@@ -14,7 +14,7 @@ function addEventListeners() {
       UsersSection.addEventListener('click', function(event) {
         if (event.target.classList.contains('promote-btn')) {
           let userId = event.target.getAttribute('data-user-id');
-          activateUser(userId);
+          promoteUser(userId);
         }
         if (event.target.classList.contains('disable-btn')) {
             let userId = event.target.getAttribute('data-user-id');
@@ -22,20 +22,6 @@ function addEventListeners() {
           }
       });
     }
-  
-    let activateEventButton = document.getElementById('activate-event-btn');
-      if (activateEventButton) {
-        activateEventButton.addEventListener('click', function() {
-              toggleEventStatus('{{ $event->event_id }}', 'activate');
-          });
-      }
-  
-      let deactivateEventButton = document.getElementById('deactivate-event-btn');
-      if (deactivateEventButton) {
-        deactivateEventButton.addEventListener('click', function() {
-              toggleEventStatus('{{ $event->event_id }}', 'deactivate');
-          });
-      }
   }
     
     function encodeForAjax(data) {
@@ -58,6 +44,7 @@ function addEventListeners() {
 
   
     function moveAdminToUsersTable(userId) {
+
         let adminRow = document.getElementById('admin_row_' + userId);
     
         if (adminRow) {

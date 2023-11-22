@@ -35,7 +35,7 @@
                 <td class="py-2 px-4 border border-slate-300 flex flex-row">
                     <form class="m-auto max-w-xl text-stone-800 demote-form"  enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="user_id" value="{{ $admin->id }}">
+                        <input id="data-user-id" type="hidden" name="user_id" value="{{ $admin->id }}">
                         <button class="mt-2 p-2 text-white bg-stone-800 rounded demote-btn" type="button">Demote</button> 
                     </form>
                 </td>

@@ -286,7 +286,7 @@ ADD COLUMN tsvectors TSVECTOR;
 
 CREATE FUNCTION auction_search_update() RETURNS TRIGGER AS $$
 BEGIN
-     IF TG_OP = 'INSERT' THEN
+    IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
             setweight(to_tsvector('english', NEW.name), 'B') ||
             setweight(to_tsvector('english', NEW.category::text), 'A')
@@ -309,6 +309,7 @@ FOR EACH ROW
 EXECUTE FUNCTION auction_search_update();
 
 CREATE INDEX search_auction ON Auction USING GIN (tsvectors);
+
 
 
 /*

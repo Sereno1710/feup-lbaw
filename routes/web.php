@@ -10,7 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BalanceController;
 
 /*
@@ -27,7 +27,9 @@ use App\Http\Controllers\BalanceController;
 // Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/users/search', [UserController::class, 'search']);
+
+// Users
+Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
 // Profile
 Route::get('/profile', [UserController::class, 'index'])->name('profile');
@@ -48,6 +50,8 @@ Route::get('/contacts', [HomeController::class, 'contacts'])->name('contacts');
 Route::get('/terms-of-use', [HomeController::class, 'termsOfUse'])->name('termsOfUse');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacyPolicy');
 
+// Auction
+Route::get('/auction/search', [AuctionController::class, 'search'])->name('auction.search');
 
 // API
 Route::controller(CardController::class)->group(function () {

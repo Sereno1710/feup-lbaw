@@ -818,7 +818,7 @@ paths:
       summary: 'R608: Reject auction'
       description: 'Reject an auction'
       tags:
-        - 'M07: Administration'
+        - 'M06: Administration'
       responses:
         '200':
           description: 'OK. Auction rejected successfully'

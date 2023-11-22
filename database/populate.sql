@@ -1,6 +1,3 @@
-
-
-
 INSERT INTO users (username, name , email, password, balance, date_of_birth, street, city, zip_code, country, rating)
 VALUES
   ('gago','Daniel Gago' ,'daniel@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 3500.00, '2003-11-15', 'Rua do Twistzz', 'Faro', '12345', 'Portugal', NULL),
@@ -58,15 +55,13 @@ VALUES
   ('magneto', 'Erik Lensherr' ,'eriklensherr@email.com', 'magnetism', 90000.00, '1963-06-05', 'Mutant Lane', 'Genosha', '22222', 'Genosha', NULL),
   ('hulk', 'Bruce Banner','brucebanner@email.com', 'smash', 85000.00, '1962-05-02', 'Gamma Road', 'New York', '98765', 'USA', NULL);
 
-INSERT INTO admin (user_id) VALUES (1);
-
-INSERT INTO moneys (id,user_id, amount,type, state) 
+INSERT INTO moneys (user_id, amount,type, state) 
 VALUES 
-  (1,1,10.00,true,'pending'),
-  (2,2,200.00,false, 'denied'),
-  (3,3, 400.00,true, 'accepted'),
-  (4,4, 250.00,false, 'pending'),
-  (5,5, 100.00,true, 'accepted');
+  (1,10.00,true,'pending'),
+  (2,200.00,false, 'denied'),
+  (3, 400.00,true, 'accepted'),
+  (4, 250.00,false, 'pending'),
+  (5, 100.00,true, 'accepted');
 
 INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner)
 VALUES
@@ -119,7 +114,7 @@ VALUES
   ('Piano Solo Performance', 'A live solo piano performance by a professional pianist.', 250.00, 250.00 ,'2023-11-17 16:00:00', '2023-12-01 16:00:00', 'strings', 'denied', 7),
   ('Flute Solo', 'A live solo flute performance by a professional flutist.', 200.00, 200.00 ,'2023-11-18 17:00:00', '2023-12-02 17:00:00', 'woodwinds', 'denied', 9),
   ('Trumpet Masterclass', 'A masterclass session with a renowned trumpet player.', 300.00, 300.00,'2023-11-19 18:00:00', '2023-12-03 18:00:00', 'brass', 'denied', 6),
-  ('Accordion Workshop', 'A workshop on accordion playing for beginners.', 150.00, 150.00 ,'2023-11-20 19:00:00', '2023-12-04 19:00:00', 'woodwinds', 'pending', 23);
+  ('Accordion Workshop', 'A workshop on accordion playing for beginners.', 150.00, 150.00 ,'2023-11-20 19:00:00', '2023-12-04 19:00:00', 'woodwinds', 'denied', 23);
 
 INSERT INTO AuctionWinner (user_id, auction_id, rating)
 VALUES

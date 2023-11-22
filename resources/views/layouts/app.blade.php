@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
+
 <head>
     @vite('resources/css/app.css')
 </head>
+
 <body>
     <header class="fixed top-0 w-screen p-16 pt-4 pb-4 bg-white text-stone-800 shadow-lg">
         <div class="items-center m-auto flex justify-between ">
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
             <div class="flex justify-between items-center">
-                <form class="p-1 bg-stone-200 rounded-lg" action="/users/search" method="GET">
-                    <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search users">
+                <form class="p-1 bg-stone-200 rounded-lg" action="/auction/search" method="GET">
+                    <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search auctions">
                     <button type="submit">🔎</button>
                 </form>
                 @if (Auth::check() && Auth::user()->isAdmin())
@@ -17,17 +19,16 @@
                 @endif
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
-                    <a href="{{ url('/deposit-money') }}" class="ml-4">Deposit Money</a>
                     <a href="{{ url('/submit-auction') }}" class="ml-4">Submit Auction</a>
                     <div class="user-info">
                         <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
-                        <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->balance}}</a>
+                        <a href="{{ url('/balance') }}" class="ml-4">{{ Auth::user()->balance}}</a>
                         <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
                     </div>
                     <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
                 @else
-                    <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
-                    <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
+                <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
+                <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
                 @endif
             </div>
         </div>
@@ -52,4 +53,5 @@
         </div>
     </footer>
 </body>
+
 </html>

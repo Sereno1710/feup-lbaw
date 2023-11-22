@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegisterController;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\AdminController;
@@ -49,9 +50,15 @@ Route::get('/contacts', [HomeController::class, 'contacts'])->name('contacts');
 Route::get('/terms-of-use', [HomeController::class, 'termsOfUse'])->name('termsOfUse');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacyPolicy');
 
-// Auction
-Route::get('/auction/search', [AuctionController::class, 'search'])->name('auction.search');
-
+//Auction
+Route::controller(AuctionController::class)->group(function () {
+    Route::get('/auctions', 'showActiveAuctions');
+    Route::get('/auction/submit', 'showAuctionForm');
+    Route::get('/auction/search','search')->name('auction.search');
+    Route::post('/auction/create', 'createAuction')->name('auction.create');
+    Route::get('/auction/{id}', 'showAuction');
+    Route::post('/auction/{id}/bid', 'auctionBid');
+});
 
 // Admin
 Route::get('/admin', [AdminController::class, 'index'])->name('admin');

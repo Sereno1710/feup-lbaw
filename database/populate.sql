@@ -63,10 +63,10 @@ VALUES
   (4, 250.00,false, 'pending'),
   (5, 100.00,true, 'accepted');
 
-INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner)
+INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner_id)
 VALUES
   ('Rare Acoustic Guitar', 'A vintage acoustic guitar with a unique sound.', 80.00, 90.00,'2023-09-01 10:00:00', '2024-10-26 01:30:00', 'strings', 'active', 3),
-  ('Handcrafted Flute', 'A beautifully handcrafted flute with exquisite details.', 70.00, 380.00, '2023-09-05 14:00:00', '2024-11-20 14:00:00', 'woodwinds', 'active', 4),
+  ('Handcrafted Flute', 'A beautifully handcrafted flute with exquisite details.', 70.00, 380.00, '2023-09-05 14:00:00', '2024-11-20 14:00:00', 'woodwinds', 'active', 1),
   ('Vintage Bass Guitar', 'An old-school bass guitar with a unique vibe.', 30.00, 290.00 , '2023-09-03 12:00:00', '2024-11-18 12:00:00', 'brass', 'active', 5),
   ('Handmade Drum Set', 'A custom-made drum set for professional drummers.', 25.00, 250.00 , '2023-09-10 15:00:00', '2024-11-25 15:00:00', 'percussion', 'active', 6),
   ('Grand Piano', 'A beautifully maintained grand piano with a rich, deep tone.', 60.00, 230.00 ,'2023-09-07 11:00:00', '2024-11-22 11:00:00', 'strings', 'active', 7),
@@ -177,6 +177,7 @@ VALUES
 
 INSERT INTO follows (user_id, auction_id)
 VALUES
+  (1, 7),
   (2, 1),
   (5, 1),
   (2, 2),

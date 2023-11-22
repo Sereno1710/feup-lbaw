@@ -2,7 +2,9 @@
 <html lang="{{ app()->getLocale() }}">
 
 <head>
+    <title>SoundSello</title>
     @vite('resources/css/app.css')
+    <script src="{{ asset('js/app.js') }}" defer></script>
 </head>
 
 <body>
@@ -19,7 +21,7 @@
                 @endif
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
-                    <a href="{{ url('/submit-auction') }}" class="ml-4">Submit Auction</a>
+                    <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
                     <div class="user-info">
                         <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
                         <a href="{{ url('/balance') }}" class="ml-4">{{ Auth::user()->balance}}</a>

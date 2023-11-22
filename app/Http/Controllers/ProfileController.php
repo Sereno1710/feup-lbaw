@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth; 
 
-class UserController extends Controller
+class ProfileController extends Controller
 {
     public function show()
     {
@@ -33,7 +32,6 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:6',
-            'biography' => 'nullable|string|max:1000',
             'street' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
             'zip_code' => 'nullable|string|max:10',
@@ -46,7 +44,6 @@ class UserController extends Controller
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => $request->filled('password') ? Hash::make($request->input('password')) : $user->password,
-            'biography' => $request->input('email'),
             'street' => $request->input('street'),
             'city' => $request->input('city'),
             'zip_code' => $request->input('zip_code'),
@@ -59,28 +56,5 @@ class UserController extends Controller
         }
 
         return redirect('/profile')->with('success', 'Profile updated successfully!');
-    }
-
-    public function search(Request $request)
-    {
-        $keyword = $request->input('keyword');
-
-        $usersQuery = User::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
-            ->orderByRaw("ts_rank(tsvectors, to_tsquery(?)) DESC", [$keyword]);
-
-        $users = $usersQuery->simplePaginate(9, ['*'], 'page', $request->input('page'));
-
-        return view('pages.users.search', ['users' => $users, 'keyword' => $keyword]);
-    }
-
-
-
-    public function showProfile($userId)
-    {
-        $user = User::findOrFail($userId);
-        if ($userId == Auth::id()) {
-            return redirect('/profile');
-        }
-        return view('pages/profile', ['user' => $user]);
     }
 }

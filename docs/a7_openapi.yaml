@@ -468,7 +468,7 @@ paths:
         '404':
           description: 'Not found. Auction does not exist.'
 
-    put:
+    post:
       operationId: R303
       summary: 'R303: Change the state of an auction'
       description: 'Change the state of a specific auction. Access: SYS, ADM'

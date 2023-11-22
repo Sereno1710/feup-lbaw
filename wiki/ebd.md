@@ -423,47 +423,37 @@ EXECUTE FUNCTION prevent_auction_cancellation();
 | **Description** | A user can only bid if their bid is higher than the current highest bid. A user cannot bid if their bid is the current highest. (business rules BR03, BR06, BR11, BR12, BR15) |
 
 ```sql
-CREATE FUNCTION enforce_bidding_rules()
-RETURNS TRIGGER AS 
-$$
-DECLARE
-  current_highest_bid MONEY;
-  highest_bidder INTEGER;
-  i_price MONEY;
-  user_balance MONEY;
-  current_state auction_state;
-BEGIN
-  SELECT user_id, amount INTO highest_bidder, current_highest_bid
-  FROM Bid
-  WHERE auction_id = NEW.auction_id
-  ORDER BY amount DESC
-  LIMIT 1;
-  SELECT initial_price, state INTO i_price, current_state
-  FROM Auction
-  WHERE id = NEW.auction_id;
-  SELECT balance INTO user_balance
-  FROM users
-  WHERE id = NEW.user_id;
+BEGIN TRANSACTION;
+
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO Bid(user_id, auction_id, amount, time)
+  VALUES ($user_id, $auction_id, $amount, $time);
+
+UPDATE users SET balance = balance - $amount WHERE id = $user_id;
+
+UPDATE users SET balance= balance + (SELECT amount
+FROM (  SELECT user_id, amount 
+        FROM Bid
+        WHERE auction_id = $auction_id
+        ORDER BY amount DESC
+        LIMIT 2)
+AS Last2Bids
+ORDER BY amount ASC
+LIMIT 1) WHERE id = (SELECT user_id
+FROM (  SELECT user_id, amount 
+        FROM Bid
+        WHERE auction_id = $auction_id
+        ORDER BY amount DESC
+        LIMIT 2)
+AS Last2Bids
+ORDER BY amount ASC
+LIMIT 1);
+
+UPDATE Auction SET price = $amount WHERE id = $user_id;
 
 
-  
-  IF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
-    RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
-  ELSIF highest_bidder = NEW.user_id THEN
-    RAISE EXCEPTION 'You cannot bid if you currently own the highest bid.';
-  ELSIF user_balance < NEW.amount THEN
-    RAISE EXCEPTION 'You do not have enough balance in your account.';
-  ELSIF current_State <> 'active' THEN
-    RAISE EXCEPTION 'You may only bid in active auctions.';
-  END IF;
-  RETURN NEW;
-END;
-$$ 
-LANGUAGE plpgsql;
-CREATE TRIGGER enforce_bidding_rules_trigger
-BEFORE INSERT ON Bid
-FOR EACH ROW
-EXECUTE FUNCTION enforce_bidding_rules();
+END TRANSACTION;
 ```
 
 | **Trigger** | TRIGGER04 |

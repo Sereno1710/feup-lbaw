@@ -12,11 +12,11 @@
         <div class="w-full px-4 py-1 flex flex-row items-end justify-between border-b-2 border-stone-400">
             <h2 class="text-3xl">{{ $auction->name }}</h2>
             <!--
-                <div>
-                    <button>Report</button>
-                    <button>Follow</button>
-                </div>
-            -->
+                        <div>
+                            <button>Report</button>
+                            <button>Follow</button>
+                        </div>
+                    -->
         </div>
         <div class="mt-4 w-full flex flex-row items-start justify-evenly">
             <img class="m-4" src="https://picsum.photos/250" alt="auctionphoto">
@@ -58,14 +58,23 @@
                 </div>
             </div>
             <div class="flex flex-col">
-                <p><span class="font-bold">Current price:</span> $42 000</p>
-                <input class="p-1 bg-stone-200 outline-none rounded-t-lg" type="number" min="1" step=".01"
-                    name="ammount" placeholder="Bid ammount">
-                <button class="p-1 bg-stone-800 text-white rounded-b-lg" type="submit">Bid</button>
+                <p><span class="font-bold">Current price:</span>{{ $auction->price }}</p>
+                <form class="flex flex-col" method="POST" action="{{ url('/auction/' . $auction->id . '/bid') }}">
+                    @csrf
+                    <input class="p-1 bg-stone-200 outline-none rounded-t-lg" type="number" min="1" step=".01"
+                        name="amount" placeholder="Bid amount">
+                    <button class="p-1 bg-stone-800 text-white rounded-b-lg" type="submit">Bid</button>
+                </form>
             </div>
         </div>
         <div>
-            <p>Time remaining: 1000</p>
+
+            <p>
+                @isset($variable)
+                    {{ $variable }}
+                @endisset
+                Time remaining: 1000
+            </p>
         </div>
     </div>
 @endsection

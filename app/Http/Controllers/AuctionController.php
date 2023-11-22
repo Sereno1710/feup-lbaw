@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
+
+use App\Models\Bid;
 use App\Models\Auction;
 use App\Models\MetaInfoValue;
 
@@ -36,13 +39,14 @@ class AuctionController extends Controller
             'auction_name' => 'required|string',
             'description' => 'required|string',
             'starting_price' => 'required|numeric|min:1',
+            'category' => 'required|in:strings,woodwinds,brass,percussion',
         ]);
 
         $auctionData['name'] = $validatedData['auction_name'];
         $auctionData['description'] = $validatedData['description'];
         $auctionData['initial_price'] = $validatedData['starting_price'];
         $auctionData['price'] = $validatedData['starting_price'];
-        $auctionData['category'] = 'strings';
+        $auctionData['category'] = $validatedData['category'];
         $auctionData['owner_id'] = Auth::user()->id;
         $auctionData['state'] = 'active';
 
@@ -50,6 +54,62 @@ class AuctionController extends Controller
         $auction->save();
 
         return view('pages/createauction');
+    }
+
+    public function auctionBid(Request $request, $auctionId)
+    {
+        $validatedData = $request->validate([
+            'amount' => 'required|numeric|min:1',
+        ]);
+        \Log::error($auctionId);
+    
+        try {
+            DB::beginTransaction();
+    
+            $bid = new Bid([
+                'user_id' => Auth::user()->id,
+                'auction_id' => $auctionId,
+                'amount' => $validatedData['amount'],
+                'time' => now(),
+            ]);
+            $bid->save();
+
+            DB::table('users')
+                ->where('id', Auth::user()->id)
+                ->update(['balance' => DB::raw('balance - ' . $validatedData['amount'] . '::MONEY')]);
+    
+            DB::table('users')
+                ->where('id', function ($query) use ($auctionId) {
+                    $query->select('user_id')
+                        ->from(DB::raw("(SELECT user_id, amount FROM bid WHERE auction_id = :auction_id ORDER BY amount DESC LIMIT 2) AS Last2Bids"))
+                        ->orderBy('amount')
+                        ->limit(1)
+                        ->addBinding(['auction_id' => $auctionId], 'select');
+                })
+                ->update(['balance' => DB::raw('balance + (SELECT amount FROM (SELECT user_id, amount FROM bid WHERE auction_id = :auction_id ORDER BY amount DESC LIMIT 2) AS Last2Bids ORDER BY amount ASC LIMIT 1)')]);
+    
+            Auction::where('id', $auctionId)
+                ->update(['price' => DB::raw($validatedData['amount'] . '::MONEY')]);
+    
+            DB::commit();
+    
+            return redirect()->back()->with('success', 'Bid submitted successfully.');
+        } catch (\Exception $e) {
+            $errorMessages = [
+                "Your bid must be higher than the current highest bid.",
+                "You cannot bid if you currently own the highest bid.",
+                "You do not have enough balance in your account.",
+                "You may only bid in active auctions."
+            ];
+
+            $errorMessage = $e->getMessage();
+
+            if (in_array($errorMessage, $errorMessages)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
+            return redirect()->back()->with('error', 'Error submitting bid.');
+        }
     }
     
 }

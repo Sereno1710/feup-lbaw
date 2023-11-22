@@ -26,7 +26,7 @@ This section has the permissions used in our modules, necessary to access its da
 |------------|------|-------------|
 | VIS | Visitor | An unauthenticated user |
 | USR | User | An authenticated user |
-| CRE | Creator | Creator of an auction |
+| OWN | Owner | Owner of an auction |
 | SYS | System Manager | Manages the platform |
 | ADM | Admin | Administrates the platform |
 

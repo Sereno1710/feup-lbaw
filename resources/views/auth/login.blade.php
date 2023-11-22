@@ -33,5 +33,6 @@
             {{ session('success') }}
         </p>
     @endif
+    <section class="m-2"> Don't have an account? Sign up <a class="underline" href="{{ route('register') }}">here</a>. </section> 
 </form>
 @endsection

@@ -736,15 +736,18 @@ paths:
 
 | Web Resource Reference | URL                            |
 |------------------------|--------------------------------|
-| R301:       |  |
-| R302:  |  |
+| R301: View Active Auctions | GET /auctions |
+| R302: View Create Auction Page | GET /auction/submit |
+| R303: Submit an Auction | POST /auction/create |
+| R304: View an Auction | GET /auction/{id} |
+| R305: Bid on Auction | POST /auction/{id}/bid |
 
 
 #### Module M04: Search
 
 | Web Resource Reference | URL                            |
 |------------------------|--------------------------------|
-| R401: Search Users      | GET /users/search |
+| R401: Search Users    | GET /users/search |
 | R402: Search Auctions | GET /auction/search |
 
 
@@ -776,15 +779,30 @@ paths:
 | R602: Make a Deposit Request | POST /balance/deposit |
 | R603: Make a Withdraw Request | POST /balance/withdraw|
 
+## 2. Changes to Database
+
+- New table: 'moneys';
+- New insert values for the new table;
+- New triggers: 'deposit' and 'withdrawal';
+- Fixed error in relational schema;
+- New states: 'report_state' and 'transfer_state';
+- New attributes in table users: name, is_anonymizing and biography;
+- New state in reports: 'report_state';
+- Fix trigger: 'anonymaze_user_data';
 
 
-### 2. Prototype
+## 3. Prototype
 
-> URL of the prototype plus user credentials necessary to test all features.  
-> Link to the prototype source code in the group's git repository.  
+For this prototype we focused on implementing the main features of an online instruments auctions website. This includes a basic but functional design, making it easy to test every single feature.
 
+The prototype is available at https://lbaw2322.lbaw.fe.up.pt
 
----
+Credentials:
+
+- Admin user: eduardo@email.com | 1234
+- Regular user: daniel@email.com | 1234
+
+The code is available at https://git.fe.up.pt/lbaw/lbaw2324/lbaw2322
 
 
 ## Revision history

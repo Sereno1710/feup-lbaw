@@ -38,6 +38,18 @@ Route::post('/profile/update', [UserController::class, 'update'])->name('profile
 Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::get('/user/{userId}', [UserController::class, 'showProfile'])->name('profile.show');
 
+// Balance
+Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
+Route::post('/balance/deposit', [BalanceController::class, 'deposit'])->name('balance.deposit');
+Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
+
+// Footer
+Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('aboutUs');
+Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
+Route::get('/contacts', [HomeController::class, 'contacts'])->name('contacts');
+Route::get('/terms-of-use', [HomeController::class, 'termsOfUse'])->name('termsOfUse');
+Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacyPolicy');
+
 // Auction
 Route::get('/auction/search', [AuctionController::class, 'search'])->name('auction.search');
 

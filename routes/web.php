@@ -38,9 +38,10 @@ Route::match(['post', 'put'], '/profile/update', [ProfileController::class, 'upd
 
 //Auction
 Route::controller(AuctionController::class)->group(function () {
-    Route::get('/auction/{id}', 'showAuction');
     Route::get('/auctions', 'showActiveAuctions');
-    Route::get('/submit', 'showAuctionForm');
+    Route::get('/auction/n/{id}', 'showAuction');
+    Route::get('/auction/submit', 'showAuctionForm');
+    Route::post('/auction/create', 'createAuction');
 });
 
 // API

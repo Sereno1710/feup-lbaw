@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
+    <title>SoundSello</title>
     @vite('resources/css/app.css')
+    <script src="{{ asset('js/app.js') }}" defer></script>
 </head>
 <body>
     <header class="fixed top-0 w-screen p-16 pt-4 pb-4 bg-white text-stone-800 shadow-lg">
@@ -15,7 +17,7 @@
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
                     <a href="{{ url('/deposit-money') }}" class="ml-4">Deposit Money</a>
-                    <a href="{{ url('/submit') }}" class="ml-4">Submit Auction</a>
+                    <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
                     <div class="user-info">
                         <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
                         <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->balance}}</a>

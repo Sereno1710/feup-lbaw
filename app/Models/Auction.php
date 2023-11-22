@@ -10,7 +10,7 @@ class Auction extends Model
     protected $table = 'auction';
     public $timestamps  = false;
     protected $fillable = [
-        'name','description','initial_price','price','initial_time','end_time','category','owner_id'
+        'name','description','initial_price','price','initial_time','end_time','category','owner_id', 'state'
     ];
 
     public function owner()
@@ -20,7 +20,7 @@ class Auction extends Model
 
     public function bids()
     {
-        return $this->hasMany(Bid::class);
+        return $this->hasMany(Bid::class, 'auction_id');
     }
 
     public static function activeAuctions() {

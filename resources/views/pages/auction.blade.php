@@ -11,10 +11,12 @@
     <div class="bg-stone-500 m-2 p-4 flex flex-col items-center rounded-lg shadow-lg">
         <div class="w-full px-4 py-1 flex flex-row items-end justify-between border-b-2 border-stone-400">
             <h2 class="text-3xl">{{ $auction->name }}</h2>
-            <div>
-                <button>Report</button>
-                <button>Follow</button>
-            </div>
+            <!--
+                <div>
+                    <button>Report</button>
+                    <button>Follow</button>
+                </div>
+            -->
         </div>
         <div class="mt-4 w-full flex flex-row items-start justify-evenly">
             <img class="m-4" src="https://picsum.photos/250" alt="auctionphoto">
@@ -32,7 +34,7 @@
                         <div class="m-2">
                             <p>{{ $auction->description }}</p>
                             <br>
-                            <p>Auction Owner: {{$auction->owner->name }}</p>
+                            <p>Auction Owner: {{ $auction->owner->name }}</p>
                         </div>
                     </td>
                     <td>

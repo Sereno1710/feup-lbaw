@@ -35,6 +35,34 @@ class AuctionController extends Controller
         return view('pages/createauction', ['metaInfos' => $metaInfos]);
     }
 
+    public function startAuction(Request $request, $auctionId)
+    {
+        $request->validate([
+            'days' => 'required|numeric|min:1',
+        ]);
+
+        $auction = Auction::find($auctionId);
+
+        if (!$auction) {
+            return redirect()->back();
+        }
+
+        if ($auction->state === 'approved') {
+            $days = $request->input('days');
+            $endTime = now()->addDays($days);
+
+            $auction->update([
+                'state' => 'active',
+                'initial_time' => now(),
+                'end_time' => $endTime,
+            ]);
+
+            
+        }
+        
+        return redirect()->back();
+    }
+
     public function createAuction(Request $request)
     {
         Auth::check();

@@ -57,6 +57,7 @@ Route::controller(AuctionController::class)->group(function () {
     Route::post('/auction/create', 'createAuction')->name('auction.create');
     Route::get('/auction/{id}', 'showAuction');
     Route::post('/auction/{id}/bid', 'auctionBid');
+    Route::post('/auction/{id}/start', 'startAuction');
 });
 
 // Admin

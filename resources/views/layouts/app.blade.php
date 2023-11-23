@@ -5,6 +5,7 @@
     <title>SoundSello</title>
     @vite('resources/css/app.css')
     <script src="{{ asset('js/admin.js') }}" defer></script>
+    <script src="{{ asset('js/auction_time.js') }}" defer></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 

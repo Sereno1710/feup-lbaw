@@ -36,9 +36,11 @@ class RegisterController extends Controller
         ]);
         
         $birth= strtotime($request->date_of_birth);
-        $min = strtotime('+18 years', $then);
+        $min = strtotime('+18 years', $birth);
         if(time() < $min){
-            return redirect()->back()->with('error', 'Must be 18 years old to register');
+            return back()->withErrors([
+                'date_of_birth' => 'Must be over 18 to register.',
+            ])->onlyInput('date_of_birth');
         }
 
 

@@ -34,7 +34,13 @@ class RegisterController extends Controller
             'password' => 'required|confirmed',
             'date_of_birth' => 'required|date',
         ]);
-    
+        
+        $birth= $request->date_of_birth;
+
+        if(!$this->autherize('over18', $birth)){
+            return redirect()->back()->with('error', 'Must be over 18 to register!');
+        }
+
         User::create([
             'username' => $request->username,
             'name' => $request->name,
@@ -50,7 +56,8 @@ class RegisterController extends Controller
             'rating' => null,
             'image' => null, 
         ]);
-    
+
+
         $credentials = $request->only('email', 'password');
         Auth::attempt($credentials);
         $request->session()->regenerate();

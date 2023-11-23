@@ -30,12 +30,14 @@ class AuctionController extends Controller
 
     public function showAuctionForm()
     {
+        Auth::check();
         $metaInfos = MetaInfo::all();
         return view('pages/createauction', ['metaInfos' => $metaInfos]);
     }
 
     public function createAuction(Request $request)
     {
+        Auth::check();
         $validatedData = $request->validate([
             'auction_name' => 'required|string',
             'description' => 'required|string',
@@ -78,6 +80,7 @@ class AuctionController extends Controller
 
     public function auctionBid(Request $request, $auctionId)
     {
+        Auth::check();
         $validatedData = $request->validate([
             'amount' => 'required|numeric|min:1',
         ]);

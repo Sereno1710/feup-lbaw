@@ -34,23 +34,32 @@ class RegisterController extends Controller
             'password' => 'required|confirmed',
             'date_of_birth' => 'required|date',
         ]);
-    
-        User::create([
-            'username' => $request->username,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'balance' => 0,
-            'date_of_birth' => $request->date_of_birth,
-            'biography' => null,
-            'street' => null,
-            'city' => null,
-            'zip_code' => null,
-            'country' => null,
-            'rating' => null,
-            'image' => null, 
-        ]);
-    
+        
+
+        try{
+            User::create([
+                'username' => $request->username,
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'balance' => 0,
+                'date_of_birth' => $request->date_of_birth,
+                'biography' => null,
+                'street' => null,
+                'city' => null,
+                'zip_code' => null,
+                'country' => null,
+                'rating' => null,
+                'image' => null, 
+            ]);
+        } catch (\Exception $e) {
+            return back()->withError($e->getMessage());
+        }
+
+
+
+
+
         $credentials = $request->only('email', 'password');
         Auth::attempt($credentials);
         $request->session()->regenerate();

@@ -13,4 +13,6 @@ class UserPolicy
     {
         return $user->id === auth()->user()->id;
     }
+
+
 }

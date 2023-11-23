@@ -13,9 +13,8 @@ This section describes the modules that will be part of the application.
 | M01: Authentication | Web resources for user authentication. These encompass key functionalities such as user login/logout, registration. |
 | M02: Users          | Web resources associated with searching user information like what auctions he created or followes.                 |
 | M03: Auctions       | Web resources associated with auctions like creating, bidding, commenting, following/unfollowing.                   |
-| M04: Search         | Web resources associated to the search feature. Searching for users and auctions                                    |
-| M05: Administration | Web resources associated web control like managing users and auctions.                                              |
-| M06: Balance        | Web resources associated with managing user balance on the platform.                                                |
+| M04: Administration | Web resources associated web control like managing users and auctions.                                              |
+| M05: Balance        | Web resources associated with managing user balance on the platform.                                                |
 
 ### 2. Permissions
 

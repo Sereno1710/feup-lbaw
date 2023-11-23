@@ -37,33 +37,27 @@ class RegisterController extends Controller
         
 
         try{
-            $date = new \DateTime($request->date_of_birth);
-            $now = new \DateTime();
-            $interval = $now->diff($date);
-            $age = $interval->y;
-            if($age < 18){
-                throw new \Exception('Must be Over 18 to Register.');
-            }
+            User::create([
+                'username' => $request->username,
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'balance' => 0,
+                'date_of_birth' => $request->date_of_birth,
+                'biography' => null,
+                'street' => null,
+                'city' => null,
+                'zip_code' => null,
+                'country' => null,
+                'rating' => null,
+                'image' => null, 
+            ]);
         } catch (\Exception $e) {
-            return back()->withError('Error! Must be Over 18 to Register.');
+            return back()->withError($e->getMessage());
         }
 
 
-        User::create([
-            'username' => $request->username,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'balance' => 0,
-            'date_of_birth' => $request->date_of_birth,
-            'biography' => null,
-            'street' => null,
-            'city' => null,
-            'zip_code' => null,
-            'country' => null,
-            'rating' => null,
-            'image' => null, 
-        ]);
+
 
 
         $credentials = $request->only('email', 'password');

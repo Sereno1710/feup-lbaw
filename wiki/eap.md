@@ -688,7 +688,33 @@ paths:
             description: 'Unauthorized. User not authenticated.'
           '403':
             description: 'Forbidden. User does not have permission to add comments.'
-  
+
+  /auction/{id}/start:
+      post:
+        operationId: R309
+        summary: 'R309: Start an auction'
+        description: 'Start an auction with the specified ID'
+        tags:
+          - 'M03: Auctions'
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: 'Unique identifier of the auction.'
+            schema:
+              type: string
+        responses:
+          '201':
+          description: 'Auction created successfully.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example: '/auctions/{id}'
+          '404':
+            description: 'Auction not found.'
+
+
   /balance:
     get:
       operationId: R401
@@ -871,7 +897,6 @@ paths:
         '200':
           description: 'OK. Auction disabled successfully'
 
-
 ```
 
 ---
@@ -945,7 +970,8 @@ In this vertical prototype, we incorporated all the specified features outlined 
 | R302: View Create Auction Page | GET /auction/submit    |
 | R303: Submit an Auction        | POST /auction/create   |
 | R304: View an Auction          | GET /auction/{id}      |
-| R305: Bid on Auction           | POST /auction/{id}/bid |
+| R307: Bid on Auction           | POST /auction/{id}/bid |
+| R309: Start Auction            | POST /auction/{id}/start|
 
 #### Module M04: Administration
 

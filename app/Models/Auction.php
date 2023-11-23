@@ -32,7 +32,7 @@ class Auction extends Model
     }
     public static function noActions() {
         return Auction::where('state', 'pending')->orWhere('state', 'finished')->orWhere('state', 'approved')->orWhere('state', 'denied')->orWhere('state', 'disabled')
-            ->join('users', 'users.id', '=', 'auction.owner')
+            ->join('users', 'users.id', '=', 'auction.owner_id')
             ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
             ->get();
 
@@ -40,7 +40,7 @@ class Auction extends Model
 
     public static function active() {
         return Auction::where('state', 'active')->orWhere('state', 'paused')->orWhere('state', 'pending')
-            ->join('users', 'users.id', '=', 'auction.owner')
+            ->join('users', 'users.id', '=', 'auction.owner_id')
             ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
             ->get();
     }

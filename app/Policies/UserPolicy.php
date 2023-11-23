@@ -14,12 +14,5 @@ class UserPolicy
         return $user->id === auth()->user()->id;
     }
 
-    public function over18(String $then){
-        $then= strtotime($then);
-        $min = strtotime('+18 years', $then);
-        if(time() < $min)  {
-            return false;
-        }
-        return true;
-    }
+
 }

@@ -329,16 +329,14 @@ BEGIN
     IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
             setweight(to_tsvector('english', NEW.name), 'B') ||
-            setweight(to_tsvector('english', NEW.category::text), 'A') ||
-            setweight(to_tsvector('english', NEW.description), 'C')
+            setweight(to_tsvector('english', NEW.category::text), 'A')
         );
     END IF;
     IF TG_OP = 'UPDATE' THEN
         IF NEW.name <> OLD.name OR NEW.category <> OLD.category THEN
             NEW.tsvectors = (
                 setweight(to_tsvector('english', NEW.name), 'B') ||
-                setweight(to_tsvector('english', NEW.category::text), 'A') ||
-                setweight(to_tsvector('english', NEW.description), 'C')
+                setweight(to_tsvector('english', NEW.category::text), 'A')
             );
         END IF;
     END IF;
@@ -405,7 +403,7 @@ BEGIN
   IF old.state = 'active' AND NEW.state = 'disabled' THEN
     SELECT COUNT(*) INTO num_bids FROM Bid WHERE auction_id = OLD.id;
     IF num_bids > 0 THEN
-      RAISE EXCEPTION 'Cannot disabled the auction. There are % bids.', num_bids;
+      RAISE EXCEPTION 'Cannot cancel the auction. There are % bids.', num_bids;
     END IF;
   END IF;
   RETURN NEW;
@@ -423,37 +421,46 @@ EXECUTE FUNCTION prevent_auction_cancellation();
 | **Description** | A user can only bid if their bid is higher than the current highest bid. A user cannot bid if their bid is the current highest. (business rules BR03, BR06, BR11, BR12, BR15) |
 
 ```sql
-BEGIN TRANSACTION;
-
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
-INSERT INTO Bid(user_id, auction_id, amount, time)
-  VALUES ($user_id, $auction_id, $amount, $time);
-
-UPDATE users SET balance = balance - $amount WHERE id = $user_id;
-
-UPDATE users SET balance= balance + (SELECT amount
-FROM (  SELECT user_id, amount 
-        FROM Bid
-        WHERE auction_id = $auction_id
-        ORDER BY amount DESC
-        LIMIT 2)
-AS Last2Bids
-ORDER BY amount ASC
-LIMIT 1) WHERE id = (SELECT user_id
-FROM (  SELECT user_id, amount 
-        FROM Bid
-        WHERE auction_id = $auction_id
-        ORDER BY amount DESC
-        LIMIT 2)
-AS Last2Bids
-ORDER BY amount ASC
-LIMIT 1);
-
-UPDATE Auction SET price = $amount WHERE id = $user_id;
+CREATE FUNCTION enforce_bidding_rules()
+RETURNS TRIGGER AS 
+$$
+DECLARE
+  current_highest_bid MONEY;
+  highest_bidder INTEGER;
+  i_price MONEY;
+  user_balance MONEY;
+  current_state auction_state;
+BEGIN
+  SELECT user_id, amount INTO highest_bidder, current_highest_bid
+  FROM Bid
+  WHERE auction_id = NEW.auction_id
+  ORDER BY amount DESC
+  LIMIT 1;
+  SELECT initial_price, state INTO i_price, current_state
+  FROM Auction
+  WHERE id = NEW.auction_id;
+  SELECT balance INTO user_balance
+  FROM users
+  WHERE id = NEW.user_id;
 
 
-END TRANSACTION;
+  IF current_State <> 'active' THEN
+    RAISE EXCEPTION 'You may only bid in active auctions.';
+  ELSIF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
+    RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
+  ELSIF highest_bidder = NEW.user_id THEN
+    RAISE EXCEPTION 'You cannot bid if you currently own the highest bid.';
+  ELSIF user_balance < NEW.amount THEN
+    RAISE EXCEPTION 'You do not have enough balance in your account.';
+  END IF;
+  RETURN NEW;
+END;
+$$ 
+LANGUAGE plpgsql;
+CREATE TRIGGER enforce_bidding_rules_trigger
+BEFORE INSERT ON Bid
+FOR EACH ROW
+EXECUTE FUNCTION enforce_bidding_rules();
 ```
 
 | **Trigger** | TRIGGER04 |
@@ -498,7 +505,7 @@ CREATE FUNCTION prevent_seller_self_follow()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF NEW.user_id = (SELECT owner FROM Auction WHERE id = NEW.auction_id) THEN
+  IF NEW.user_id = (SELECT owner_id FROM Auction WHERE id = NEW.auction_id) THEN
     RAISE EXCEPTION 'A seller cannot follow their own auction.';
   END IF;
 
@@ -578,7 +585,7 @@ CREATE FUNCTION prevent_owner_bid()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF NEW.user_id = (SELECT owner FROM Auction WHERE id = NEW.auction_id) THEN
+  IF NEW.user_id = (SELECT owner_id FROM Auction WHERE id = NEW.auction_id) THEN
     RAISE EXCEPTION 'You cannot bid on your own auction as the owner.';
   END IF;
   RETURN NEW;
@@ -623,22 +630,22 @@ EXECUTE FUNCTION auto_follow();
 | **Description** | When a new review is made, the auction owner's rating should change accordingly (it's the average of all ratings they have ever received) |
 
 ```sql
-CREATE OR REPLACE FUNCTION update_owner_rating()
+CREATE FUNCTION update_owner_rating()
 RETURNS TRIGGER AS 
 $$
 DECLARE 
-  owner_id INT;
+  this_owner_id INT;
 BEGIN
-  SELECT owner into owner_id FROM auction WHERE id = NEW.auction_id;
+  SELECT owner_id into this_owner_id FROM auction WHERE id = NEW.auction_id;
 
   UPDATE users
   SET rating = (
     SELECT COALESCE(ROUND(AVG(AuctionWinner.rating), 2), 0)
     FROM AuctionWinner
     JOIN Auction ON AuctionWinner.auction_id = Auction.id
-    WHERE Auction.owner = owner_id
+    WHERE Auction.owner_id = this_owner_id
   )
-  WHERE id = owner_id;
+  WHERE id = this_owner_id;
   
   RETURN NEW;
 END;
@@ -658,10 +665,10 @@ CREATE FUNCTION prevent_auction_winner_active()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF (SELECT state FROM Auction WHERE id = NEW.auction_id) <> 'finished' THEN
-    RAISE EXCEPTION 'The auction hasnt finished.';
-  END IF;
-  RETURN NEW;
+    IF (SELECT state FROM Auction WHERE id = NEW.auction_id) <> 'finished' THEN
+        RAISE EXCEPTION 'The auction hasnt finished.';
+    END IF;
+    RETURN NEW;
 END;
 $$ 
 LANGUAGE plpgsql;
@@ -796,7 +803,7 @@ BEGIN
 
   IF t IS NOT NULL THEN
     INSERT INTO Notification (notification_type, date, receiver_id, auction_id)
-    VALUES (t, NOW(), NEW.owner, NEW.id);
+    VALUES (t, NOW(), NEW.owner_id, NEW.id);
     
     INSERT INTO Notification (notification_type, date, receiver_id, auction_id)
     SELECT t, NOW(), f.user_id, NEW.id
@@ -818,7 +825,6 @@ EXECUTE FUNCTION send_auction_notification();
 | **Description** |  After admin updates transfer request (changing its state to accepted), it adds or removes transfer amount if possible.|
 
 ```sql
-
 CREATE FUNCTION transfer_approved()
 RETURNS TRIGGER AS
 $$
@@ -843,7 +849,6 @@ CREATE TRIGGER transfer_approved
 AFTER UPDATE ON moneys
 FOR EACH ROW
 EXECUTE FUNCTION transfer_approved();
-
 ```
 
 ### 4. Transactions
@@ -934,6 +939,11 @@ END TRANSACTION;
 ### A.1. Database schema
 
 ```sql
+-- Use a specific schema
+DROP SCHEMA IF EXISTS lbaw2322 CASCADE;
+CREATE SCHEMA IF NOT EXISTS lbaw2322;
+SET search_path TO lbaw2322;
+
 -- Drop old tables
 DROP TABLE IF EXISTS follows CASCADE;
 DROP TABLE IF EXISTS Comment CASCADE;
@@ -944,7 +954,7 @@ DROP TABLE IF EXISTS AuctionPhoto CASCADE;
 DROP TABLE IF EXISTS AuctionWinner CASCADE;
 DROP TABLE IF EXISTS Auction CASCADE;
 DROP TABLE IF EXISTS moneys CASCADE;
-DROP TABLE IF EXISTS Admin CASCADE;
+DROP TABLE IF EXISTS admin CASCADE;
 DROP TABLE IF EXISTS SystemManager CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS MetaInfoValue CASCADE;
@@ -1043,6 +1053,7 @@ CREATE TABLE users (
   password VARCHAR(255) NOT NULL,
   balance MONEY NOT NULL DEFAULT 0,
   date_of_birth DATE NOT NULL,
+  biography VARCHAR(255) DEFAULT NULL,
   street VARCHAR(255) DEFAULT NULL,
   city VARCHAR(255) DEFAULT NULL,
   zip_code VARCHAR(10) DEFAULT NULL,
@@ -1058,7 +1069,7 @@ CREATE TABLE SystemManager (
 );
 
 -- Admin table
-CREATE TABLE Admin (
+CREATE TABLE admin (
   user_id INT REFERENCES users(id) ON UPDATE CASCADE,
   PRIMARY KEY (user_id)
 );
@@ -1083,7 +1094,7 @@ CREATE TABLE Auction (
   end_time TIMESTAMP DEFAULT NULL,
   category category_type DEFAULT NULL,
   state auction_state DEFAULT 'pending',
-  owner INT REFERENCES users(id) ON UPDATE CASCADE
+  owner_id INT REFERENCES users(id) ON UPDATE CASCADE
 );
 
 --AuctionWinner table
@@ -1166,7 +1177,6 @@ CREATE TABLE Notification (
   comment_id INT REFERENCES Comment(id) ON UPDATE CASCADE
 );
 
-
 /*
 
 INDEXES
@@ -1185,29 +1195,31 @@ CREATE INDEX auction_state ON Auction USING HASH (state);
 -- Index (IDX04)
 ALTER TABLE users
 ADD COLUMN tsvectors TSVECTOR;
-CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS 
-$$
+
+CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
-            setweight(to_tsvector('english', NEW.username), 'B')
+            setweight(to_tsvector('english', NEW.username), 'B') ||
+            setweight(to_tsvector('english', NEW.name), 'A')
         );
     END IF;
     IF TG_OP = 'UPDATE' THEN
         IF NEW.username <> OLD.username THEN
             NEW.tsvectors = (
-                setweight(to_tsvector('english', NEW.username), 'B')
+                setweight(to_tsvector('english', NEW.username), 'B') ||
+                setweight(to_tsvector('english', NEW.name), 'A')
             );
         END IF;
     END IF;
     RETURN NEW;
 END
-$$
-LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 CREATE TRIGGER user_fullsearch_update
 BEFORE INSERT OR UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION user_fullsearch_update();
+
 CREATE INDEX search_user ON users USING GIN (tsvectors);
 
 -- Index (IDX05)
@@ -1216,7 +1228,7 @@ ADD COLUMN tsvectors TSVECTOR;
 
 CREATE FUNCTION auction_search_update() RETURNS TRIGGER AS $$
 BEGIN
-     IF TG_OP = 'INSERT' THEN
+    IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
             setweight(to_tsvector('english', NEW.name), 'B') ||
             setweight(to_tsvector('english', NEW.category::text), 'A')
@@ -1239,6 +1251,7 @@ FOR EACH ROW
 EXECUTE FUNCTION auction_search_update();
 
 CREATE INDEX search_auction ON Auction USING GIN (tsvectors);
+
 
 
 /*
@@ -1266,18 +1279,14 @@ BEGIN
     NEW.rating := NULL;
     NEW.image := NULL;
   END IF;
-
   RETURN NEW;
 END;
 $$ 
 LANGUAGE plpgsql;
-
 CREATE TRIGGER anonymize_user_data_trigger
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION anonymize_user_data();
-
-
 
 
 -- Trigger (T02)
@@ -1326,15 +1335,14 @@ BEGIN
   WHERE id = NEW.user_id;
 
 
-  
-  IF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
+  IF current_State <> 'active' THEN
+    RAISE EXCEPTION 'You may only bid in active auctions.';
+  ELSIF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
     RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
   ELSIF highest_bidder = NEW.user_id THEN
     RAISE EXCEPTION 'You cannot bid if you currently own the highest bid.';
   ELSIF user_balance < NEW.amount THEN
     RAISE EXCEPTION 'You do not have enough balance in your account.';
-  ELSIF current_State <> 'active' THEN
-    RAISE EXCEPTION 'You may only bid in active auctions.';
   END IF;
   RETURN NEW;
 END;
@@ -1377,7 +1385,7 @@ CREATE FUNCTION prevent_seller_self_follow()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF NEW.user_id = (SELECT owner FROM Auction WHERE id = NEW.auction_id) THEN
+  IF NEW.user_id = (SELECT owner_id FROM Auction WHERE id = NEW.auction_id) THEN
     RAISE EXCEPTION 'A seller cannot follow their own auction.';
   END IF;
 
@@ -1441,7 +1449,7 @@ CREATE FUNCTION prevent_owner_bid()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF NEW.user_id = (SELECT owner FROM Auction WHERE id = NEW.auction_id) THEN
+  IF NEW.user_id = (SELECT owner_id FROM Auction WHERE id = NEW.auction_id) THEN
     RAISE EXCEPTION 'You cannot bid on your own auction as the owner.';
   END IF;
   RETURN NEW;
@@ -1481,18 +1489,18 @@ CREATE FUNCTION update_owner_rating()
 RETURNS TRIGGER AS 
 $$
 DECLARE 
-  owner_id INT;
+  this_owner_id INT;
 BEGIN
-  SELECT owner into owner_id FROM auction WHERE id = NEW.auction_id;
+  SELECT owner_id into this_owner_id FROM auction WHERE id = NEW.auction_id;
 
   UPDATE users
   SET rating = (
     SELECT COALESCE(ROUND(AVG(AuctionWinner.rating), 2), 0)
     FROM AuctionWinner
     JOIN Auction ON AuctionWinner.auction_id = Auction.id
-    WHERE Auction.owner = owner_id
+    WHERE Auction.owner_id = this_owner_id
   )
-  WHERE id = owner_id;
+  WHERE id = this_owner_id;
   
   RETURN NEW;
 END;
@@ -1621,7 +1629,7 @@ BEGIN
 
   IF t IS NOT NULL THEN
     INSERT INTO Notification (notification_type, date, receiver_id, auction_id)
-    VALUES (t, NOW(), NEW.owner, NEW.id);
+    VALUES (t, NOW(), NEW.owner_id, NEW.id);
     
     INSERT INTO Notification (notification_type, date, receiver_id, auction_id)
     SELECT t, NOW(), f.user_id, NEW.id
@@ -1667,93 +1675,94 @@ EXECUTE FUNCTION transfer_approved();
 
 
 
+
 ```
 
 ### A.2. Database population
 
 ```sql
-INSERT INTO users (username, name , email, password, balance, date_of_birth, street, city, zip_code, country, rating)
+INSERT INTO users (username, name , email, password, balance, date_of_birth, biography, street, city, zip_code, country, rating)
 VALUES
-  ('gago','Daniel Gago' ,'daniel@email.com', 'danielpass', 3500.00, '2003-11-15', 'Rua do Twistzz', 'Faro', '12345', 'Portugal', NULL),
-  ('sereno','José Santos', 'jose@email.com', 'josepass', 2000.00, '2003-03-23', 'Avenida dos Desdentados', 'Guimaraes', '123123', 'Portugal', NULL),
-  ('edu','Eduardo Oliveira' ,'eduardo@email.com', 'edupass', 1000.00, '2003-07-21', 'Praça dos Maluquinhos', 'Santo Tirso', '4780-666', 'Portugal', NULL),
-  ('max',' Máximo Pereira','maximo@email.com', 'maxpass', 1000.00, '2003-01-13', 'Rua do Inspetor', 'Gondomar', '4420-123', 'Portugal', NULL),
-  ('zemanel','José Manuel' ,'zemanel@hotmail.com', 'password123', 5.00, '1992-02-10', 'Rua Santa Catarina', 'Porto', '34567', 'Portugal', NULL),
-  ('darkknight','Bruce Wayne' ,'brucewayne@email.com', 'batman123', 1000000.00, '1980-05-10', 'Gotham Street', 'Gotham City', '12345', 'USA', NULL),
-  ('webslinger','Peter Parker' ,'peterparker@email.com', 'spidey', 50000.00, '1995-02-14', 'Web Avenue', 'New York', '54321', 'USA', NULL),
-  ('greenqueen','Pamela Isley', 'pamelaisley@email.com', 'poisonivy', 75000.00, '1987-09-20', 'Vine Lane', 'Gotham City', '67890', 'USA', NULL),
-  ('speedster','Barry Allen' ,'barryallen@email.com', 'flash2023', 90000.00, '1986-03-30', 'Speedster Street', 'Central City', '98765', 'USA', NULL),
-  ('emeraldarcher','Oliver Queen', 'oliverqueen@email.com', 'arrow', 80000.00, '1981-11-11', 'Arrow Road', 'Star City', '23456', 'USA', NULL),
-  ('manofsteel','Clark Kent' ,'clarkkent@email.com', 'kryptonite', 95000.00, '1978-07-01', 'Super Lane', 'Metropolis', '76543', 'USA', NULL),
-  ('wonderwoman','Diana Prince' ,'dianaprince@email.com', 'amazonian', 85000.00, '1985-04-15', 'Paradise Island', 'Themyscira', '78901', 'Amazon', NULL),
-  ('thor','Thor Odinson' ,'thor@email.com', 'mjolnir', 70000.00, '1980-12-25', 'Asgard Road', 'Asgard', '11223', 'Asgard', NULL),
-  ('spymaster', 'Natasha Romanoff','natasharomanoff@email.com', 'blackwidow', 60000.00, '1984-08-03', 'Red Room Street', 'Moscow', '00123', 'Russia', NULL),
-  ('starkgenius', 'Tony Stark','tonystark@email.com', 'ironman', 1200000.00, '1970-06-21', 'Stark Tower', 'New York', '54321', 'USA', NULL),
-  ('godofthunder', 'Loki Odinson','loki@email.com', 'trickster', 90000.00, '1972-03-05', 'Asgard Palace', 'Asgard', '11223', 'Asgard', NULL),
-  ('hawkeye', 'Clint Barton','clintbarton@email.com', 'hawkeye1', 75000.00, '1976-09-08', 'Archery Way', 'Brooklyn', '45678', 'USA', NULL),
-  ('scarletwitch', 'Wanda Maximoff' ,'wandamaximoff@email.com', 'chaosmagic', 70000.00, '1989-12-16', 'Hex Street', 'Transia', '98765', 'Transia', NULL),
-  ('aquaman', 'Arthur Curry' ,'arthurcurry@email.com', 'kingofthesea', 85000.00, '1982-07-30', 'Atlantis Avenue', 'Atlantis', '54321', 'Atlantis', NULL),
-  ('beastmode','Hank Mccoy' ,'hankmccoy@email.com', 'bluefur', 60000.00, '1988-02-04', 'X-Mansion Road', 'Westchester', '33333', 'USA', NULL),
-  ('stormrider','Ororo Munroe' ,'ororomunroe@email.com', 'weathergoddess', 95000.00, '1987-06-10', 'Wakanda Avenue', 'Wakanda', '11223', 'Wakanda', NULL),
-  ('greenlantern','Hal Jordan' ,'haljordan@email.com', 'ringpower', 80000.00, '1983-04-20', 'Oa Street', 'Oa', '22222', 'Oa', NULL),
-  ('wolverine','James Howlett','logan@email.com', 'adamantium', 70000.00, '1842-03-22', 'Logan Street', 'Alberta', '77777', 'Canada', NULL),
-  ('wallywest','Wally West' ,'wallywest@email.com', 'kidflash', 90000.00, '1992-08-15', 'Speedster Lane', 'Keystone City', '11111', 'USA', NULL),
-  ('wadeywilson','Wade Wilson' ,'wadewilson@email.com', 'deadpool', 80000.00, '1974-02-20', 'Regeneration Road', 'New York', '54321', 'USA', NULL),
-  ('blackpanther','Tchalla' ,'tchalla@email.com', 'vibranium', 85000.00, '1980-11-29', 'Wakanda Street', 'Wakanda', '11223', 'Wakanda', NULL),
-  ('magentawitch','Wanda Sheperd' ,'wandashepherd@email.com', 'wandavision', 75000.00, '1993-05-07', 'Salem Road', 'Westview', '54321', 'USA', NULL),
-  ('ladyhawk','Katelyn' ,'katebishop@email.com', 'hawkeye2', 70000.00, '1999-12-03', 'Archer Avenue', 'New York', '45678', 'USA', NULL),
-  ('captainspandex','Steve' ,'steve@email.com', 'capamerica', 95000.00, '1920-07-04', 'Freedom Street', 'Washington, D.C.', '12345', 'USA', NULL),
-  ('aquaticmariner','Namor' ,'namor@email.com', 'imperiusrex', 90000.00, '1940-01-10', 'Atlantean Lane', 'Atlantis', '22222', 'Atlantis', NULL),
-  ('starlord','Peter Quill' ,'peterquill@email.com', 'guardians1', 80000.00, '1982-12-18', 'Milano Avenue', 'Xandar', '98765', 'Xandar', NULL),
-  ('blackbolt','Black Agar' ,'blackagar@email.com', 'silentscream', 75000.00, '1975-06-02', 'Inhuman Road', 'Attilan', '54321', 'Attilan', NULL),
-  ('colossus','Piotr rasputin' ,'piotrrasputin@email.com', 'steelman', 90000.00, '1978-03-14', 'X-Mansion Lane', 'Westchester', '33333', 'USA', NULL),
-  ('gamora', 'Gamora','gamora@email.com', 'deadlyassassin', 85000.00, '1984-09-03', 'Zen-Whoberi Street', 'Zen-Whoberi', '11223', 'Zen-Whoberi', NULL),
-  ('antman','Scott Lang' ,'scottlang@email.com', 'shrinkandgrow', 70000.00, '1980-01-22', 'Pym Particles Lane', 'New York', '45678', 'USA', NULL),
-  ('zatanna','Zatanna Zatara' ,'zatannazatara@email.com', 'magicwords', 80000.00, '1986-10-31', 'Mystic Road', 'Shadowcrest', '54321', 'USA', NULL),
-  ('stormqueen','Aurora Munroe' ,'auroramunroe@email.com', 'elementalpowers', 90000.00, '1985-07-19', 'Wakanda Lane', 'Wakanda', '98765', 'Wakanda', NULL),
-  ('redskull','Johann Schmidt' ,'johannschmidt@email.com', 'hydra123', 75000.00, '1941-11-02', 'Nazi Avenue', 'Berlin', '00123', 'Germany', NULL),
-  ('mysterio','Quentin Beck' ,'quentinbeck@email.com', 'illusions', 70000.00, '1969-04-15', 'Fishbowl Street', 'New York', '54321', 'USA', NULL),
-  ('cyclops','Scott Summer' ,'scottsummers@email.com', 'opticblast', 85000.00, '1973-08-26', 'X-Mansion Avenue', 'Westchester', '33333', 'USA', NULL),
-  ('rogue','Anna Marie' ,'annamarie@email.com', 'drainpowers', 90000.00, '1987-06-04', 'Mississippi Road', 'Caldecott', '54321', 'USA', NULL),
-  ('iceprincess','Bobby Drake' ,'bobbydrake@email.com', 'iceman', 70000.00, '1982-03-30', 'Frost Lane', 'North Salem', '11223', 'USA', NULL),
-  ('blacksuit','Eddie Mayne' ,'eddieredmayne@email.com', 'venomized', 80000.00, '1988-12-14', 'Symbiote Street', 'New York', '45678', 'USA', NULL),
-  ('scarecrow', 'John Crane','jonathancrane@email.com', 'feargas', 75000.00, '1970-10-20', 'Fear Lane', 'Gotham City', '00123', 'USA', NULL),
-  ('invisiblewoman','Susan Storm' ,'susanstorm@email.com', 'invisibility', 90000.00, '1983-07-22', 'Fantastic Road', 'New York', '54321', 'USA', NULL),
-  ('nightcrawler','Kurt Wagner' ,'kurtwagner@email.com', 'teleportation', 85000.00, '1984-05-05', 'Bamf Avenue', 'Bavaria', '22222', 'Germany', NULL),
-  ('lizardking','Connor','drconnors@email.com', 'reptilian', 80000.00, '1977-09-11', 'Reptile Lane', 'New York', '98765', 'USA', NULL),
-  ('rocketraccoon','Rocket' ,'rocket@email.com', 'blaster', 75000.00, '1990-12-05', 'Guardian Avenue', 'Halfworld', '54321', 'Halfworld', NULL),
-  ('sandman', 'Flint','flintmarko@email.com', 'sandpowers', 90000.00, '1965-03-18', 'Desert Lane', 'New York', '11223', 'USA', NULL),
-  ('starfire', 'Korian' ,'koriandrs@email.com', 'starbolts', 85000.00, '1988-07-29', 'Tamaran Road', 'Tamaran', '12345', 'Tamaran', NULL),
-  ('juggernaut','Cain' ,'cainmarko@email.com', 'unstoppable', 80000.00, '1971-02-03', 'Juggernaut Street', 'Cain Marko', '33333', 'Marko', NULL),
-  ('raven', 'Rachel','rachelroth@email.com', 'darkmagic', 70000.00, '1980-10-26', 'Azarath Lane', 'Azarath', '54321', 'Azarath', NULL),
-  ('magneto', 'Erik Lensherr' ,'eriklensherr@email.com', 'magnetism', 90000.00, '1963-06-05', 'Mutant Lane', 'Genosha', '22222', 'Genosha', NULL),
-  ('hulk', 'Bruce Banner','brucebanner@email.com', 'smash', 85000.00, '1962-05-02', 'Gamma Road', 'New York', '98765', 'USA', NULL);
-
-INSERT INTO moneys (id,user_id, amount,type, state) 
+ ('gago','Daniel Gago' ,'daniel@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 3500.00, '2003-11-15', '', 'Rua do Twistzz', 'Faro', '12345', 'Portugal', NULL),
+ ('sereno','José Santos', 'jose@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 2000.00, '2003-03-23', '', 'Avenida dos Desdentados', 'Guimaraes', '123123', 'Portugal', NULL),
+ ('edu','Eduardo Oliveira' ,'eduardo@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 1000.00, '2003-07-21', 'I love watching football, tv shows, and birds :)', 'Praça dos Maluquinhos', 'Santo Tirso', '4780-666', 'Portugal', NULL),
+ ('max',' Máximo Pereira','maximo@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 1000.00, '2003-01-13', '', 'Rua do Inspetor', 'Gondomar', '4420-123', 'Portugal', NULL),
+ ('zemanel','José Manuel' ,'zemanel@hotmail.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 5.00, '1992-02-10', '', 'Rua Santa Catarina', 'Porto', '34567', 'Portugal', NULL),
+ ('darkknight','Bruce Wayne' ,'brucewayne@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 1000000.00, '1980-05-10', '', 'Gotham Street', 'Gotham City', '12345', 'USA', NULL),
+ ('webslinger','Peter Parker' ,'peterparker@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 50000.00, '1995-02-14', '', 'Web Avenue', 'New York', '54321', 'USA', NULL),
+ ('greenqueen','Pamela Isley', 'pamelaisley@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 75000.00, '1987-09-20', '', 'Vine Lane', 'Gotham City', '67890', 'USA', NULL),
+ ('speedster','Barry Allen' ,'barryallen@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 90000.00, '1986-03-30', '', 'Speedster Street', 'Central City', '98765', 'USA', NULL),
+ ('emeraldarcher','Oliver Queen', 'oliverqueen@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 80000.00, '1981-11-11', '', 'Arrow Road', 'Star City', '23456', 'USA', NULL),
+ ('manofsteel','Clark Kent' ,'clarkkent@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 95000.00, '1978-07-01', '', 'Super Lane', 'Metropolis', '76543', 'USA', NULL),
+ ('wonderwoman','Diana Prince' ,'dianaprince@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 85000.00, '1985-04-15', '', 'Paradise Island', 'Themyscira', '78901', 'Amazon', NULL),
+ ('thor','Thor Odinson' ,'thor@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 70000.00, '1980-12-25', '', 'Asgard Road', 'Asgard', '11223', 'Asgard', NULL),
+ ('spymaster', 'Natasha Romanoff','natasharomanoff@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 60000.00, '1984-08-03', '', 'Red Room Street', 'Moscow', '00123', 'Russia', NULL),
+ ('starkgenius', 'Tony Stark','tonystark@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 1200000.00, '1970-06-21', '', 'Stark Tower', 'New York', '54321', 'USA', NULL),
+ ('godofthunder', 'Loki Odinson','loki@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 90000.00, '1972-03-05', '', 'Asgard Palace', 'Asgard', '11223', 'Asgard', NULL),
+ ('hawkeye', 'Clint Barton','clintbarton@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 75000.00, '1976-09-08', '', 'Archery Way', 'Brooklyn', '45678', 'USA', NULL),
+ ('scarletwitch', 'Wanda Maximoff' ,'wandamaximoff@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 70000.00, '1989-12-16', '', 'Hex Street', 'Transia', '98765', 'Transia', NULL),
+ ('aquaman', 'Arthur Curry' ,'arthurcurry@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 85000.00, '1982-07-30', '', 'Atlantis Avenue', 'Atlantis', '54321', 'Atlantis', NULL),
+ ('beastmode','Hank Mccoy' ,'hankmccoy@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 60000.00, '1988-02-04', '', 'X-Mansion Road', 'Westchester', '33333', 'USA', NULL),
+ ('stormrider','Ororo Munroe' ,'ororomunroe@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 95000.00, '1987-06-10', '', 'Wakanda Avenue', 'Wakanda', '11223', 'Wakanda', NULL),
+ ('greenlantern','Hal Jordan' ,'haljordan@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 80000.00, '1983-04-20', '', 'Oa Street', 'Oa', '22222', 'Oa', NULL),
+ ('wolverine','James Howlett','logan@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 70000.00, '1842-03-22', '', 'Logan Street', 'Alberta', '77777', 'Canada', NULL),
+ ('wallywest','Wally West' ,'wallywest@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 90000.00, '1992-08-15', '', 'Speedster Lane', 'Keystone City', '11111', 'USA', NULL),
+ ('wadeywilson','Wade Wilson' ,'wadewilson@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 80000.00, '1974-02-20', '', 'Regeneration Road', 'New York', '54321', 'USA', NULL),
+ ('blackpanther','Tchalla' ,'tchalla@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 85000.00, '1980-11-29', '', 'Wakanda Street', 'Wakanda', '11223', 'Wakanda', NULL),
+ ('magentawitch','Wanda Sheperd' ,'wandashepherd@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 75000.00, '1993-05-07', '', 'Salem Road', 'Westview', '54321', 'USA', NULL),
+ ('ladyhawk','Katelyn' ,'katebishop@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 70000.00, '1999-12-03', '', 'Archer Avenue', 'New York', '45678', 'USA', NULL),
+ ('captainspandex','Steve' ,'steve@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 95000.00, '1920-07-04', '', 'Freedom Street', 'Washington, D.C.', '12345', 'USA', NULL),
+ ('aquaticmariner','Namor' ,'namor@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 90000.00, '1940-01-10', '', 'Atlantean Lane', 'Atlantis', '22222', 'Atlantis', NULL),
+ ('starlord','Peter Quill' ,'peterquill@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 80000.00, '1982-12-18', '', 'Milano Avenue', 'Xandar', '98765', 'Xandar', NULL),
+ ('blackbolt','Black Agar' ,'blackagar@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 75000.00, '1975-06-02', '', 'Inhuman Road', 'Attilan', '54321', 'Attilan', NULL),
+ ('colossus','Piotr rasputin' ,'piotrrasputin@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 90000.00, '1978-03-14', '', 'X-Mansion Lane', 'Westchester', '33333', 'USA', NULL),
+ ('gamora', 'Gamora','gamora@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 85000.00, '1984-09-03', '', 'Zen-Whoberi Street', 'Zen-Whoberi', '11223', 'Zen-Whoberi', NULL),
+ ('antman','Scott Lang' ,'scottlang@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 70000.00, '1980-01-22', '', 'Pym Particles Lane', 'New York', '45678', 'USA', NULL),
+ ('zatanna','Zatanna Zatara' ,'zatannazatara@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 80000.00, '1986-10-31', '', 'Mystic Road', 'Shadowcrest', '54321', 'USA', NULL),
+ ('stormqueen','Aurora Munroe' ,'auroramunroe@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 90000.00, '1985-07-19', '', 'Wakanda Lane', 'Wakanda', '98765', 'Wakanda', NULL),
+ ('redskull','Johann Schmidt' ,'johannschmidt@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 75000.00, '1941-11-02', '', 'Nazi Avenue', 'Berlin', '00123', 'Germany', NULL),
+ ('mysterio','Quentin Beck' ,'quentinbeck@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 70000.00, '1969-04-15', '', 'Fishbowl Street', 'New York', '54321', 'USA', NULL),
+ ('cyclops','Scott Summer' ,'scottsummers@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 85000.00, '1973-08-26', '', 'X-Mansion Avenue', 'Westchester', '33333', 'USA', NULL),
+ ('rogue','Anna Marie' ,'annamarie@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 90000.00, '1987-06-04', '', 'Mississippi Road', 'Caldecott', '54321', 'USA', NULL),
+ ('iceprincess','Bobby Drake' ,'bobbydrake@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 70000.00, '1982-03-30', '', 'Frost Lane', 'North Salem', '11223', 'USA', NULL),
+ ('blacksuit','Eddie Mayne' ,'eddieredmayne@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 80000.00, '1988-12-14', '', 'Symbiote Street', 'New York', '45678', 'USA', NULL),
+ ('scarecrow', 'John Crane','jonathancrane@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 75000.00, '1970-10-20', '', 'Fear Lane', 'Gotham City', '00123', 'USA', NULL),
+ ('invisiblewoman','Susan Storm' ,'susanstorm@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 90000.00, '1983-07-22', '', 'Fantastic Road', 'New York', '54321', 'USA', NULL),
+ ('nightcrawler','Kurt Wagner' ,'kurtwagner@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 85000.00, '1984-05-05', '', 'Bamf Avenue', 'Bavaria', '22222', 'Germany', NULL),
+ ('lizardking','Connor','drconnors@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 80000.00, '1977-09-11', '', 'Reptile Lane', 'New York', '98765', 'USA', NULL),
+ ('rocketraccoon','Rocket' ,'rocket@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 75000.00, '1990-12-05', '', 'Guardian Avenue', 'Halfworld', '54321', 'Halfworld', NULL),
+ ('sandman', 'Flint','flintmarko@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 90000.00, '1965-03-18', '', 'Desert Lane', 'New York', '11223', 'USA', NULL),
+ ('starfire', 'Korian' ,'koriandrs@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 85000.00, '1988-07-29', '', 'Tamaran Road', 'Tamaran', '12345', 'Tamaran', NULL),
+ ('juggernaut','Cain' ,'cainmarko@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 80000.00, '1971-02-03', '', 'Juggernaut Street', 'Cain Marko', '33333', 'Marko', NULL),
+ ('raven', 'Rachel','rachelroth@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 70000.00, '1980-10-26', '', 'Azarath Lane', 'Azarath', '54321', 'Azarath', NULL),
+ ('magneto', 'Erik Lensherr' ,'eriklensherr@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 90000.00, '1963-06-05', '', 'Mutant Lane', 'Genosha', '22222', 'Genosha', NULL),
+ ('hulk', 'Bruce Banner','brucebanner@email.com', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 85000.00, '1962-05-02', '', 'Gamma Road', 'New York', '98765', 'USA', NULL);
+ 
+INSERT INTO moneys (user_id, amount,type, state) 
 VALUES 
-  (1,1,10.00,true,'pending'),
-  (2,2,200.00,false, 'denied'),
-  (3,3, 400.00,true, 'accepted'),
-  (4,4, 250.00,false, 'pending'),
-  (5,5, 100.00,true, 'accepted');
+  (1,10.00,true,'pending'),
+  (2,200.00,false, 'denied'),
+  (3, 400.00,true, 'accepted'),
+  (4, 250.00,false, 'pending'),
+  (5, 100.00,true, 'accepted');
 
-INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner)
+INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner_id)
 VALUES
   ('Rare Acoustic Guitar', 'A vintage acoustic guitar with a unique sound.', 80.00, 90.00,'2023-09-01 10:00:00', '2024-10-26 01:30:00', 'strings', 'active', 3),
-  ('Handcrafted Flute', 'A beautifully handcrafted flute with exquisite details.', 70.00, 380.00, '2023-09-05 14:00:00', '2024-11-20 14:00:00', 'woodwinds', 'active', 4),
+  ('Handcrafted Flute', 'A beautifully handcrafted flute with exquisite details.', 70.00, 380.00, '2023-09-05 14:00:00', '2024-11-20 14:00:00', 'woodwinds', 'active', 1),
   ('Vintage Bass Guitar', 'An old-school bass guitar with a unique vibe.', 30.00, 290.00 , '2023-09-03 12:00:00', '2024-11-18 12:00:00', 'brass', 'active', 5),
   ('Handmade Drum Set', 'A custom-made drum set for professional drummers.', 25.00, 250.00 , '2023-09-10 15:00:00', '2024-11-25 15:00:00', 'percussion', 'active', 6),
   ('Grand Piano', 'A beautifully maintained grand piano with a rich, deep tone.', 60.00, 230.00 ,'2023-09-07 11:00:00', '2024-11-22 11:00:00', 'strings', 'active', 7),
   ('Vintage Trumpet', 'A classic trumpet with a warm and mellow sound.', 27.00, 245.00 ,'2023-09-02 09:00:00', '2024-11-17 09:00:00', 'brass', 'active', 8),
-  ('Electric Guitar Kit', 'A DIY electric guitar kit for guitar enthusiasts.', 45.00, 260.00 ,'2023-09-04 13:00:00', '2024-11-19 13:00:00', 'strings', 'active', 9),
+  ('Electric Guitar Kit', 'A DIY electric guitar kit for guitar enthusiasts.', 45.00, 200.00 ,'2023-09-04 13:00:00', '2024-11-19 13:00:00', 'strings', 'active', 9),
   ('Cajon Drum', 'A versatile and portable cajon drum for musicians on the go.', 60.00, 250.00, '2023-09-08 16:00:00', '2024-11-23 16:00:00', 'percussion', 'active', 10),
   ('Saxophone Quartet', 'A set of four saxophones for ensemble performances.', 35.00, 35.00 ,'2023-09-06 10:00:00', '2024-11-21 10:00:00', 'woodwinds', 'active', 11),
   ('Electronic Keyboard', 'A modern electronic keyboard with various sound options.', 20.00, 20.00 ,'2023-09-09 14:00:00', '2024-10-24 14:00:00', 'percussion', 'finished', 12),
   ('Violin and Bow Set', 'A high-quality violin with a matching bow.', 18.00, 190.00 , '2023-10-11 10:00:00', '2023-10-25 10:00:00', 'strings', 'finished', 3),
   ('Classic Flute', 'A classic flute for professional musicians.',30.00 ,300.00, '2023-10-12 11:00:00', '2023-10-26 11:00:00', 'woodwinds', 'finished', 3),
   ('Vintage Drum Machine', 'A vintage drum machine for electronic music production.',40.00 ,90.00, '2023-09-13 12:00:00', '2023-10-27 12:00:00', 'percussion', 'finished', 3),
-  ('Saxophone Solo', 'A high-end saxophone for solo performances.', 400.00 ,400.00, '2023-10-14 13:00:00', '2023-10-28 13:00:00', 'woodwinds', 'active', 19),
-  ('Trumpet Masterclass', 'A masterclass session with a renowned trumpet player.', 150.00,150.00, '2023-10-15 14:00:00', '2023-10-29 14:00:00', 'brass', 'active', 21),
+  ('Saxophone Solo', 'A high-end saxophone for solo performances.', 400.00 ,400.00, '2023-10-14 13:00:00', '2023-10-28 13:00:00', 'woodwinds', 'finished', 19),
+  ('Trumpet Masterclass', 'A masterclass session with a renowned trumpet player.', 150.00,150.00, '2023-10-15 14:00:00', '2023-10-29 14:00:00', 'brass', 'finished', 21),
   ('Bass Guitar Workshop', 'A workshop on advanced bass guitar techniques.',50.00 , 180.00, '2023-09-25 15:00:00', '2023-10-22 15:00:00', 'brass', 'finished', 23),
   ('Piano Concerto Tickets', 'Tickets for a grand piano concerto event.', 80.00, 120.00, '2023-10-17 16:00:00', '2023-10-31 16:00:00', 'strings', 'finished', 25),
   ('Electronic Music Production Course', 'A comprehensive course on electronic music production.', 200.00 , 220.00, '2023-10-18 17:00:00', '2023-11-01 17:00:00', 'percussion', 'finished', 27),
@@ -1851,6 +1860,7 @@ VALUES
 
 INSERT INTO follows (user_id, auction_id)
 VALUES
+  (1, 7),
   (2, 1),
   (5, 1),
   (2, 2),
@@ -1976,11 +1986,11 @@ VALUES
 
 INSERT INTO MetaInfoValue (meta_info_name, value)
 VALUES
-  ('Brand', 'Brand A'),
-  ('Brand', 'Brand B'),
-  ('Brand', 'Brand C'),
-  ('Brand', 'Brand D'),
-  ('Brand', 'Brand E'),
+  ('Brand', 'Yamaha'),
+  ('Brand', 'Gibson'),
+  ('Brand', 'Fender'),
+  ('Brand', 'Roland'),
+  ('Brand', 'Takamine'),
   ('Color', 'Black'),
   ('Color', 'Blue'),
   ('Color', 'Green'),
@@ -2015,12 +2025,11 @@ VALUES
 INSERT INTO AuctionMetaInfoValue (auction_id, meta_info_value_id)
 VALUES
   (1, 1), 
-  (1, 4),
+  (1, 10),
   (2, 2),
-  (2, 5),
+  (2, 13),
   (3, 3),
-  (3, 6);
-
+  (3, 10);
 
 ```
 

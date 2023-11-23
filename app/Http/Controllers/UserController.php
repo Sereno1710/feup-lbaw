@@ -21,12 +21,16 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
+        $this->authorize('update', $user);
+
         return view('pages/editprofile', compact('user'));
     }
 
     public function update(Request $request)
     {
         $user = Auth::user();
+
+        $this->authorize('update', $user);
 
         $request->validate([
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,

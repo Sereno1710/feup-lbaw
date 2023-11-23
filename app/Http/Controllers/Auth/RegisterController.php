@@ -35,11 +35,13 @@ class RegisterController extends Controller
             'date_of_birth' => 'required|date',
         ]);
         
-        $birth= $request->date_of_birth;
-
-        if(!$this->autherize('over18', $birth)){
-            return redirect()->back()->with('error', 'Must be over 18 to register!');
+        $birth= strtotime($request->date_of_birth);
+        $min = strtotime('+18 years', $then);
+        if(time() < $min){
+            return redirect()->back()->with('error', 'Must be 18 years old to register');
         }
+
+
 
         User::create([
             'username' => $request->username,

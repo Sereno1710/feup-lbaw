@@ -36,7 +36,7 @@
                     <form class="m-auto max-w-xl text-stone-800 demote-form"  enctype="multipart/form-data">
                         @csrf
                         <input id="data-user-id" type="hidden" name="user_id" value="{{ $admin->id }}">
-                        <button class="mt-2 p-2 text-white bg-stone-800 rounded demote-btn" type="button">Demote</button> 
+                        <button name="user_id" class="mt-2 p-2 text-white bg-stone-800 rounded demote-btn" type="button">Demote</button> 
                     </form>
                 </td>
             </tr>
@@ -79,14 +79,14 @@
                     <form class="m-auto max-w-xl text-stone-800 disable-form" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
-                        <button class="mt-2 p-2 text-white bg-stone-800 rounded disable-btn" type="button">Disable</button> 
+                        <button name="user_id" class="mt-2 p-2 text-white bg-stone-800 rounded disable-btn" type="button">Disable</button> 
                     </form>
                     @endif
 
                     <form class="m-auto max-w-xl text-stone-800 promote-form" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input id="data-user-id" type="hidden" name="user_id" value="{{ $user->id }}">
-                        <button class="mt-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button> 
+                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                        <button name="user_id" class="mt-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button> 
                     </form>
                 </td>
             </tr>

@@ -3,7 +3,7 @@ function addEventListeners() {
     if (AdminSection) {
         AdminSection.addEventListener('click', function(event) {
         if (event.target.classList.contains('demote-btn')) {
-          let userId = event.target.getAttribute('data-user-id');
+          let userId = event.target.getAttribute('user_id');
           demoteUser(userId);
         }
       });
@@ -13,11 +13,11 @@ function addEventListeners() {
     if (UsersSection) {
       UsersSection.addEventListener('click', function(event) {
         if (event.target.classList.contains('promote-btn')) {
-          let userId = event.target.getAttribute('data-user-id');
+          let userId = event.target.getAttribute('user_id');
           promoteUser(userId);
         }
         if (event.target.classList.contains('disable-btn')) {
-            let userId = event.target.getAttribute('data-user-id');
+            let userId = event.target.getAttribute('user_id');
             disableUser(userId);
           }
       });
@@ -51,21 +51,10 @@ function addEventListeners() {
             let demoteButton = adminRow.querySelector('.demote-btn');
             adminRow.parentNode.removeChild(adminRow);
             adminRow.id = 'user_row_' + userId;
-            let inactiveUsersTable = document.getElementById('user_section').querySelector('tbody');
+            let UsersTable = document.getElementById('user_section').querySelector('tbody');
+  
     
-            // Add Disable button to the row
-            let disableButton = document.createElement('button');
-            disableButton.className = 'mt-2 p-2 text-white bg-stone-800 rounded disable-btn';
-            disableButton.type = 'button';
-            disableButton.innerText = 'Disable';
-            disableButton.addEventListener('click', function() {
-                disableUser(userId);
-            });
-    
-            let actionsCell = adminRow.querySelector('.flex.flex-row');
-            actionsCell.appendChild(disableButton);
-    
-            inactiveUsersTable.appendChild(adminRow);
+            UsersTable.appendChild(adminRow);
     
             if (demoteButton) {
                 demoteButton.innerText = 'Promote';
@@ -75,7 +64,19 @@ function addEventListeners() {
                 demoteButton.addEventListener('click', function() {
                     promoteUser(userId);
                 });
-            } 
+
+                            // Add Disable button to the row
+              let disableButton = document.createElement('button');
+              disableButton.className = 'mt-2 p-2 text-white bg-stone-800 rounded disable-btn';
+              disableButton.type = 'button';
+              disableButton.innerText = 'Disable';
+              disableButton.addEventListener('click', function() {
+                  disableUser(userId);
+              });
+      
+              let actionsCell = adminRow.querySelector('.flex.flex-row');
+              actionsCell.appendChild(disableButton);
+              } 
         } else {
             console.error('Admin row not found:', userId);
         }
@@ -120,20 +121,20 @@ function removeUserFromTableTable(userId) {
   function demoteUser(userId) {
     let formData = { 'user_id': userId };
   
-    sendAjaxRequest('POST', '/demote' + userId, formData, moveAdminToUserTable(userId));
+    sendAjaxRequest('POST', '/admin/users/demote', formData, moveAdminToUserTable(userId));
   }
   
   function disableUser(userId) {
     let formData = { 'user_id': userId };
   
-    sendAjaxRequest('POST', '/disable' + userId, formData, removeUserFromTable(userId));
+    sendAjaxRequest('POST', '/admin/users/disable', formData, removeUserFromTable(userId));
   }
   
 
   function promoteUser(userId) {
     let formData = { 'user_id': userId };
   
-    sendAjaxRequest('POST', '/promote' + userId, formData, moveUserToAdminTable(userId)); 
+    sendAjaxRequest('POST', '/admin/users/promote' , formData, moveUserToAdminTable(userId)); 
   }
   
     addEventListeners();

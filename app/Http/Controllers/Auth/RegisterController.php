@@ -35,14 +35,18 @@ class RegisterController extends Controller
             'date_of_birth' => 'required|date',
         ]);
         
-        $birth= strtotime($request->date_of_birth);
-        $min = strtotime('+18 years', $birth);
-        if(time() < $min){
-            return back()->withErrors([
-                'date_of_birth' => 'Must be over 18 to register.',
-            ])->onlyInput('date_of_birth');
-        }
 
+        try{
+            $date = new \DateTime($request->date_of_birth);
+            $now = new \DateTime();
+            $interval = $now->diff($date);
+            $age = $interval->y;
+            if($age < 18){
+                throw new \Exception('Must be Over 18 to Register.');
+            }
+        } catch (\Exception $e) {
+            return back()->withError('Error! Must be Over 18 to Register.')->withInput('date_of_birth');
+        }
 
 
         User::create([

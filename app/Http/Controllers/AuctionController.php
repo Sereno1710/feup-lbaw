@@ -143,7 +143,7 @@ class AuctionController extends Controller
         $auctionsQuery = Auction::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
             ->orderByRaw("ts_rank(tsvectors, to_tsquery(?)) DESC", [$keyword]);
 
-        $auctions = $auctionsQuery->simplePaginate(4, ['*'], 'page', $request->input('page'));
+        $auctions = $auctionsQuery->simplePaginate(12, ['*'], 'page', $request->input('page'));
 
         return view('pages.auction.search', ['auctions' => $auctions, 'keyword' => $keyword]);
     }

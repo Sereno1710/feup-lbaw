@@ -15,7 +15,7 @@
         <h3 class="m-4 text-3xl font-bold">Featured Auctions</h3>
         <div class="grid grid-cols-4 gap-8">
             @foreach ($featuredAuctions as $auction)
-            @include('partials.auction_card', ['auction' => $auction])
+            @include('partials.card', ['auction' => $auction])
             @endforeach
         </div>
     </div>

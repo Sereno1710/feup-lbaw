@@ -15,3 +15,4 @@ $description=Str::limit($auction->description, 30);
         <span class="auction-end-time" hidden>{{ $auction->end_time }}</span>
     </div>
 </a>
+<script src="{{ asset('js/auction_time.js') }}"></script>

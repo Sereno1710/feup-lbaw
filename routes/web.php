@@ -25,7 +25,7 @@ use App\Http\Controllers\AdminController;
 */
 
 // Home
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Users
@@ -34,7 +34,6 @@ Route::get('/users/search', [UserController::class, 'search'])->name('users.sear
 // Profile
 Route::get('/profile', [UserController::class, 'show'])->name('profile');
 Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
-Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::get('/user/{userId}', [UserController::class, 'showProfile'])->name('profile.show');
 

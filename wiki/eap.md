@@ -1,14 +1,12 @@
 # EAP: Architecture Specification and Prototype
 
-> Project vision.
-
 ## A7: Web Resources Specification
 
-> Brief presentation of the artifact's goals.
+This artifact provides an overview of the forthcoming web API, emphasizing the required resources along with their characteristics and associated JSON responses. The API encompasses functionalities for creating, reading, updating, and, if applicable, deleting operations for each resource.
 
 ### 1. Overview
 
-> Identify and overview the modules that will be part of the application. 
+This section describes the modules that will be part of the application. 
 
 | Modules | Description |
 |---------|-------------|
@@ -22,21 +20,19 @@
 
 ### 2. Permissions
 
-> Define the permissions used by each module, necessary to access its data and features.  
+This section has the permissions used in our modules, necessary to access its data and features.  
 
 | Identifier | Name | Description |
 |------------|------|-------------|
 | VIS | Visitor | An unauthenticated user |
 | USR | User | An authenticated user |
-| CRE | Creator | Creator of an auction |
+| OWN | Owner | Owner of an auction |
 | SYS | System Manager | Manages the platform |
 | ADM | Admin | Administrates the platform |
 
 ### 3. OpenAPI Specification
 
-> OpenAPI specification in YAML format to describe the vertical prototype's web resources.
-
-> Link to the `a7_openapi.yaml` file in the group's repository.
+This section includes the [SoundSello OpenAPI Specification](https://git.fe.up.pt/lbaw/lbaw2324/lbaw2322/-/blob/main/docs/a7_openapi.yaml).
 
 
 ```yaml
@@ -674,7 +670,7 @@ paths:
 
 ## A8: Vertical prototype
 
-> Brief presentation of the artifact goals.
+In this vertical prototype, we incorporated all the specified features outlined in both the general and theme-specific website requirements documents. We successfully addressed all high-priority user stories, as detailed below. Through this process, we gained valuable experience in navigating and utilizing the provided architecture and its associated technologies. Our implementation covered the visualization of various pages, including home, personal profiles, admin interfaces, search functionalities, and pages for other users. Additionally, we managed all aspects of auction logistics, encompassing the creation of auctions, bidding processes, and related functions.
 
 ### 1. Implemented Features
 
@@ -740,15 +736,18 @@ paths:
 
 | Web Resource Reference | URL                            |
 |------------------------|--------------------------------|
-| R301:       |  |
-| R302:  |  |
+| R301: View Active Auctions | GET /auctions |
+| R302: View Create Auction Page | GET /auction/submit |
+| R303: Submit an Auction | POST /auction/create |
+| R304: View an Auction | GET /auction/{id} |
+| R305: Bid on Auction | POST /auction/{id}/bid |
 
 
 #### Module M04: Search
 
 | Web Resource Reference | URL                            |
 |------------------------|--------------------------------|
-| R401: Search Users      | GET /users/search |
+| R401: Search Users    | GET /users/search |
 | R402: Search Auctions | GET /auction/search |
 
 
@@ -780,15 +779,30 @@ paths:
 | R602: Make a Deposit Request | POST /balance/deposit |
 | R603: Make a Withdraw Request | POST /balance/withdraw|
 
+## 2. Changes to Database
+
+- New table: 'moneys';
+- New insert values for the new table;
+- New triggers: 'deposit' and 'withdrawal';
+- Fixed error in relational schema;
+- New states: 'report_state' and 'transfer_state';
+- New attributes in table users: name, is_anonymizing and biography;
+- New state in reports: 'report_state';
+- Fix trigger: 'anonymaze_user_data';
 
 
-### 2. Prototype
+## 3. Prototype
 
-> URL of the prototype plus user credentials necessary to test all features.  
-> Link to the prototype source code in the group's git repository.  
+For this prototype we focused on implementing the main features of an online instruments auctions website. This includes a basic but functional design, making it easy to test every single feature.
 
+The prototype is available at https://lbaw2322.lbaw.fe.up.pt
 
----
+Credentials:
+
+- Admin user: eduardo@email.com | 1234
+- Regular user: daniel@email.com | 1234
+
+The code is available at https://git.fe.up.pt/lbaw/lbaw2324/lbaw2322
 
 
 ## Revision history

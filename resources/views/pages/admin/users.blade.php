@@ -83,7 +83,7 @@
 
                     <form class="m-auto max-w-xl text-stone-800 promote-form" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <button user_id="{{ $admin->id }}"  class="mt-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button> 
+                        <button user_id="{{ $admin->id}}"  class="mt-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button> 
                     </form>
                 </td>
             </tr>

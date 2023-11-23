@@ -89,25 +89,26 @@ function addEventListeners() {
 
     if (userRow) {
         let demoteButton = userRow.querySelector('.demote-btn');
+        let disableButton = userRow.querySelector('.disable-btn');
         userRow.parentNode.removeChild(userRow);
         userRow.id = 'admin_row_' + userId;
         let adminTable = document.getElementById('admin_section').querySelector('tbody');
-
+        disableButton.remove();
         adminTable.appendChild(userRow);
 
         demoteButton.innerText = 'Promote';
-        demoteButton.classList.remove('demote-btn');
-        demoteButton.classList.add('promote-btn');
-        demoteButton.removeEventListener('click', demoteUser);
+        demoteButton.classList.remove('promote-btn');
+        demoteButton.classList.add('demote-btn');
+        demoteButton.removeEventListener('click', promoteUser);
         demoteButton.addEventListener('click', function() {
-            promoteUser(userId);
+            demoteUser(userId);
         });
     } else {
         console.error('User row not found:', userId);
     }
 }
 
-function removeUserFromTableTable(userId) {
+function removeUserFromTable(userId) {
     let userRow = document.getElementById('user_row_' + userId);
 
     if (userRow) {
@@ -118,14 +119,14 @@ function removeUserFromTableTable(userId) {
 }
 
   
-  function demoteUser(userId) {
-    let formData = { 'user_id': userId };
+function demoteUser(userId) {
+  let formData = { 'user_id': userId };
 
-    sendAjaxRequest('POST', '/admin/demote', formData, function(response) {
-        moveUserToAdminTable(userId);
-        console.log(response.message);
-    });
-  }
+  sendAjaxRequest('POST', '/admin/users/demote', formData, function(response) {
+      moveUserToAdminTable(userId);
+      console.log(response.message);
+  });
+}
   
   function disableUser(userId) {
     let formData = { 'user_id': userId };

@@ -44,7 +44,6 @@ class BalanceController extends Controller
     public function withdraw(Request $request)
     {
         $user = Auth::user();
-
         $request->validate([
             'withdraw_amount' => 'required|numeric|min:0',
             'iban_withdraw' => ['required', 'regex:/^[A-Z]{2}\d{23}$/'],

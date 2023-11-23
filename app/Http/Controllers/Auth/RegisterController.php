@@ -45,7 +45,7 @@ class RegisterController extends Controller
                 throw new \Exception('Must be Over 18 to Register.');
             }
         } catch (\Exception $e) {
-            return back()->withError('Error! Must be Over 18 to Register.')->withInput('date_of_birth');
+            return back()->withError('Error! Must be Over 18 to Register.');
         }
 
 

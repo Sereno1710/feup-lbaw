@@ -14,5 +14,5 @@
     </div>
     @endif
 </div>
-<script src="{{ asset('js/auction.js') }}"></script>
+{{ $auctions->appends(['keyword' => $keyword])->links() }}
 @endsection

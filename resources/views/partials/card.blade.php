@@ -4,7 +4,7 @@ use Illuminate\Support\Str;
 $description=Str::limit($auction->description, 30);
 ?>
 
-<a href="{{ url('/auction/' . $auction->id)}}">
+<a href="{{ url('/auction/' . $auction->id) }}">
     <div class="h-96 bg-white text-stone-800 p-2 rounded-lg shadow-lg flex flex-col items-center justify-center">
         <h4 class="font-bold text-xl">{{ $auction->name }}</h4>
         <p class="text-gray-500">Category: {{ $auction->category }}</p>
@@ -15,3 +15,4 @@ $description=Str::limit($auction->description, 30);
         <span class="auction-end-time" hidden>{{ $auction->end_time }}</span>
     </div>
 </a>
+<script src="{{ asset('js/auction_time.js') }}"></script>

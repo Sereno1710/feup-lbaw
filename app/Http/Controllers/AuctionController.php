@@ -52,7 +52,7 @@ class AuctionController extends Controller
 
         try {
             DB::beginTransaction();
-    
+
             $auction = new Auction($auctionData);
             $auction->save();
 
@@ -67,9 +67,9 @@ class AuctionController extends Controller
                     $auctionMetaInfoValue->save();
                 }
             }
-    
+
             DB::commit();
-    
+
             return redirect()->back()->with('success', 'Bid submitted successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error ocurred. Try again later.');
@@ -108,9 +108,9 @@ class AuctionController extends Controller
     
             Auction::where('id', $auctionId)
                 ->update(['price' => DB::raw($validatedData['amount'] . '::MONEY')]);
-    
+
             DB::commit();
-    
+
             return redirect()->back()->with('success', 'Bid submitted successfully.');
         } catch (\Exception $e) {
             $errorMessages = [
@@ -137,10 +137,12 @@ class AuctionController extends Controller
     {
         $keyword = $request->input('keyword');
 
-        $auctions = Auction::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
-            ->get();
+        $auctionsQuery = Auction::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
+            ->orderByRaw("ts_rank(tsvectors, to_tsquery(?)) DESC", [$keyword]);
 
-        return view('pages.auction.search', ['auctions' => $auctions]);
+        $auctions = $auctionsQuery->simplePaginate(12, ['*'], 'page', $request->input('page'));
+
+        return view('pages.auction.search', ['auctions' => $auctions, 'keyword' => $keyword]);
     }
-    
+
 }

@@ -13,6 +13,6 @@ $description=Str::limit($auction->description, 30);
         <p class="font-bold">Current Bid: {{ $auction->price }}</p>
         <p><span class="auction-remaining-time"></span></p>
         <span class="auction-end-time" hidden>{{ $auction->end_time }}</span>
+        <span class="auction-status" hidden>{{ $auction->state }}</span>
     </div>
 </a>
-<script src="{{ asset('js/auction_time.js') }}"></script>

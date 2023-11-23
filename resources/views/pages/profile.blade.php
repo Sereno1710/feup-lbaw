@@ -35,7 +35,7 @@
                 @endif
             </div>
         </div>
-        <div class="m-0 mx-auto flex flex-row items-center justify-start">
+        <div class="m-0 mx-auto flex flex-row items-start">
             @if (Auth::user()->id == $user->id)
                 <div class="w-96 mx-4 my-4 flex flex-col items-center justify-between p-4 rounded-lg bg-stone-300">
                     <h2 class="mb-4 text-2xl font-bold">Followed Auctions</h2>

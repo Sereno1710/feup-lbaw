@@ -1,1 +1,1 @@
-<div class="bg-stone-50 text-stone-800 m-1 p-2 rounded-2xl shadow-lg items-center">{{ $tag->value }}</div>
+<div class="bg-stone-100 text-stone-800 mx-1 p-2 rounded-2xl shadow-lg items-center">{{ $tag->value }}</div>

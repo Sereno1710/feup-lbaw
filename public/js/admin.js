@@ -43,7 +43,7 @@ function addEventListeners() {
   
 
   
-    function moveAdminToUsersTable(userId) {
+    function moveAdminToUserTable(userId) {
 
         let adminRow = document.getElementById('admin_row_' + userId);
     

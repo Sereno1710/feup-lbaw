@@ -85,7 +85,7 @@
 
                     <form class="m-auto max-w-xl text-stone-800 promote-form" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                        <input id="data-user-id" type="hidden" name="user_id" value="{{ $user->id }}">
                         <button class="mt-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button> 
                     </form>
                 </td>

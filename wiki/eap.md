@@ -947,39 +947,32 @@ In this vertical prototype, we incorporated all the specified features outlined 
 | R304: View an Auction          | GET /auction/{id}      |
 | R305: Bid on Auction           | POST /auction/{id}/bid |
 
-#### Module M04: Search
-
-| Web Resource Reference | URL                 |
-| ---------------------- | ------------------- |
-| R401: Search Users     | GET /users/search   |
-| R402: Search Auctions  | GET /auction/search |
-
-#### Module M05: Administration
+#### Module M04: Administration
 
 | Web Resource Reference       | URL                           |
 | ---------------------------- | ----------------------------- |
-| R501: View Admin Page        | GET /admin                    |
-| R502: View All Users         | GET /admin/users              |
-| R503: Demote User Account    | POST /admin/users/demote      |
-| R504: Promote User Account   | POST /admin/users/promote     |
-| R505: Disable User Account   | POST /admin/users/disable     |
-| R506: View Pending Transfers | GET /admin/transfers          |
-| R507: Approve Transfer       | POST /admin/transfers/approve |
-| R508: Reject Transfer        | POST /admin/transfers/reject  |
-| R509: View All Auctions      | GET /admin/auctions           |
-| R510: Approve Auction        | POST /admin/auctions/approve  |
-| R511: Reject Auction         | POST /admin/auctions/reject   |
-| R512: Pause Auction          | POST /admin/auctions/pause    |
-| R513: Resume Auction         | POST /admin/auctions/resume   |
-| R514: Disable Auction        | POST /admin/auctions/disable  |
+| R401: View Admin Page        | GET /admin                    |
+| R402: View All Users         | GET /admin/users              |
+| R403: Demote User Account    | POST /admin/users/demote      |
+| R404: Promote User Account   | POST /admin/users/promote     |
+| R405: Disable User Account   | POST /admin/users/disable     |
+| R406: View Pending Transfers | GET /admin/transfers          |
+| R407: Approve Transfer       | POST /admin/transfers/approve |
+| R408: Reject Transfer        | POST /admin/transfers/reject  |
+| R409: View All Auctions      | GET /admin/auctions           |
+| R410: Approve Auction        | POST /admin/auctions/approve  |
+| R411: Reject Auction         | POST /admin/auctions/reject   |
+| R412: Pause Auction          | POST /admin/auctions/pause    |
+| R413: Resume Auction         | POST /admin/auctions/resume   |
+| R414: Disable Auction        | POST /admin/auctions/disable  |
 
-#### Module M06: Balance
+#### Module M05: Balance
 
 | Web Resource Reference        | URL                    |
 | ----------------------------- | ---------------------- |
-| R601: View Balance Page       | GET /balance/deposit   |
-| R602: Make a Deposit Request  | POST /balance/deposit  |
-| R603: Make a Withdraw Request | POST /balance/withdraw |
+| R501: View Balance Page       | GET /balance/deposit   |
+| R502: Make a Deposit Request  | POST /balance/deposit  |
+| R503: Make a Withdraw Request | POST /balance/withdraw |
 
 ## 2. Changes to Database
 
@@ -991,6 +984,7 @@ In this vertical prototype, we incorporated all the specified features outlined 
 - New attributes in table users: name, is_anonymizing and biography;
 - New state in reports: 'report_state';
 - Fix trigger: 'anonymaze_user_data';
+- Changed from owner to owner_id;
 
 ## 3. Prototype
 

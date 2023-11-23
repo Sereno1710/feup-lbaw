@@ -47,13 +47,13 @@ class AdminController extends Controller
     }
 
     public function demote(Request $request) {
-        
         $this->authorize('index', Admin::class);
-        if(count(Admin::all()) > 1) {
+    
+        if (count(Admin::all()) > 1) {
             Admin::where(['user_id' => $request->user_id])->delete();
         }
-
-        return redirect('/admin/users')->with('success', 'User demoted successfully!');
+    
+        return response()->json(['message' => 'User demoted successfully']);
     }
 
     public function promote(Request $request) {

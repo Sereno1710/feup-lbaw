@@ -120,8 +120,11 @@ function removeUserFromTableTable(userId) {
   
   function demoteUser(userId) {
     let formData = { 'user_id': userId };
-  
-    sendAjaxRequest('POST', '/admin/users/demote', formData, moveAdminToUserTable(userId));
+
+    sendAjaxRequest('POST', '/admin/demote', formData, function(response) {
+        moveUserToAdminTable(userId);
+        console.log(response.message);
+    });
   }
   
   function disableUser(userId) {

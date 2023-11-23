@@ -210,7 +210,7 @@ To develop a well-designed database, it is crucial to have a clear understanding
 | R01                    | Users                | 10k                    | 10                   | 
 | R02                    | SystemManager        | 10                     | 1                    |
 | R03                    | Admin                | 1                      | 0                    |
-| R04 | Transfer | 1k | 1|
+| R04                    | Transfer             | 1k                     | 1                    |
 | R05                    | Auction              | 1k                     | 1                    |
 | R06                    | AuctionWinner        | 1k                     | 1                    |
 | R07                    | AuctionPhoto         | 1k                     | 1                    |
@@ -233,38 +233,38 @@ To develop a well-designed database, it is crucial to have a clear understanding
 To improve querries it is essential to have performance indices. One for username search,
 another for receiving notifications and lastly for auction state. The most important performance index is IDX01 since it involves user research.
 
-| **Index**           | IDX01                                  |
-| ---                 | ---                                    |
-| **Relation**        | users |
-| **Attribute**       | username |
-| **Type**            | Hash |
-| **Cardinality**     | High |
-| **Clustering**      | No |
-| **Justification**   | The attribute username is subject to many searches in queries, like when showing auctions or comments, so creating an index for this attribute helps performance. Since in these queries, we will search for the exact username, we chose to use hashing, and clustering is not necessary. |
+| **Index**         | IDX01                                                                                                                                                                                                                                                                                      |
+|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Relation**      | users                                                                                                                                                                                                                                                                                      |
+| **Attribute**     | username                                                                                                                                                                                                                                                                                   |
+| **Type**          | Hash                                                                                                                                                                                                                                                                                       |
+| **Cardinality**   | High                                                                                                                                                                                                                                                                                       |
+| **Clustering**    | No                                                                                                                                                                                                                                                                                         |
+| **Justification** | The attribute username is subject to many searches in queries, like when showing auctions or comments, so creating an index for this attribute helps performance. Since in these queries, we will search for the exact username, we chose to use hashing, and clustering is not necessary. |
 ```sql
 CREATE INDEX username_search ON users USING HASH (username);
 ```
 
-| **Index** | IDX02 |
-| --- | --- |
-| **Relation**        | Notification |
-| **Attribute**       | receiver_id |
-| **Type**            | Hash |
-| **Cardinality**     | Medium |
-| **Clustering**      | No |
-| **Justification**   | The system will send a lot of notifications, and it always needs to see who to send it to, so receiver_id will be a part of many queries. These queries will look for the exact id, so we chose hashing as the type for the index, and clustering is not necessary. |
+| **Index**         | IDX02                                                                                                                                                                                                                                                               |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Relation**      | Notification                                                                                                                                                                                                                                                        |
+| **Attribute**     | receiver_id                                                                                                                                                                                                                                                         |
+| **Type**          | Hash                                                                                                                                                                                                                                                                |
+| **Cardinality**   | Medium                                                                                                                                                                                                                                                              |
+| **Clustering**    | No                                                                                                                                                                                                                                                                  |
+| **Justification** | The system will send a lot of notifications, and it always needs to see who to send it to, so receiver_id will be a part of many queries. These queries will look for the exact id, so we chose hashing as the type for the index, and clustering is not necessary. |
 ```sql
 CREATE INDEX notification_receiver ON Notification USING HASH (receiver_id);
 ```
 
-| **Index** | IDX03 |
-| --- | --- |
-| **Relation**        | Auction |
-| **Attribute**       | state |
-| **Type**            | Hash |
-| **Cardinality**     | Low |
-| **Clustering**      | No |
-| **Justification**   | The attribute state will be involved in many queries, since every time we want to show auctions to an authenticated user, we will look only for the ones that are active. Hashing is the most effective method since we are don't need to sort the values, and it's also more effective if we don't use clustering. |
+| **Index**         | IDX03                                                                                                                                                                                                                                                                                                               |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Relation**      | Auction                                                                                                                                                                                                                                                                                                             |
+| **Attribute**     | state                                                                                                                                                                                                                                                                                                               |
+| **Type**          | Hash                                                                                                                                                                                                                                                                                                                |
+| **Cardinality**   | Low                                                                                                                                                                                                                                                                                                                 |
+| **Clustering**    | No                                                                                                                                                                                                                                                                                                                  |
+| **Justification** | The attribute state will be involved in many queries, since every time we want to show auctions to an authenticated user, we will look only for the ones that are active. Hashing is the most effective method since we are don't need to sort the values, and it's also more effective if we don't use clustering. |
 ```sql
 CREATE INDEX auction_state ON Auction USING HASH (state);
 ```
@@ -275,12 +275,12 @@ CREATE INDEX auction_state ON Auction USING HASH (state);
 Full-text search must be provided for our system. User, Auction and category based auction searches are available in our database.
 
 
-| **Index** | IDX04 |
-| --- | --- |
-| **Relation** | user |
-| **Attribute** | name, username |
-| **Type** | GIN |
-| **Clustering** | No |
+| **Index**         | IDX04                                                                                                                                                                                   |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Relation**      | user                                                                                                                                                                                    |
+| **Attribute**     | name, username                                                                                                                                                                          |
+| **Type**          | GIN                                                                                                                                                                                     |
+| **Clustering**    | No                                                                                                                                                                                      |
 | **Justification** | To provide full-text search features to look for users based on matching names and usernames. The GIN index type is chosen because the indexed fields are not expected to change often. |
 ```sql
 ALTER TABLE users
@@ -313,13 +313,13 @@ EXECUTE FUNCTION user_fullsearch_update();
 CREATE INDEX search_user ON users USING GIN (tsvectors);
 ```
 
-| **Index**           | IDX05                                  |
-| ---                 | ---                                    |
-| **Relation**        | auction  |
-| **Attribute**       | name, category, description   |
-| **Type**            | GIN              |
-| **Clustering**      | No               |
-| **Justification**   | To provide full-text search features to look for auctions based on matching names, categories and descriptions. The GIN index type is chosen because the indexed fields are not expected to change often.   |
+| **Index**         | IDX05                                                                                                                                                                                                     |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Relation**      | auction                                                                                                                                                                                                   |
+| **Attribute**     | name, category, description                                                                                                                                                                               |
+| **Type**          | GIN                                                                                                                                                                                                       |
+| **Clustering**    | No                                                                                                                                                                                                        |
+| **Justification** | To provide full-text search features to look for auctions based on matching names, categories and descriptions. The GIN index type is chosen because the indexed fields are not expected to change often. |
 ```sql
 ALTER TABLE Auction
 ADD COLUMN tsvectors TSVECTOR;
@@ -357,8 +357,8 @@ CREATE INDEX search_auction ON Auction USING GIN (tsvectors);
 
 Triggers are used to enforce complex integrity rules that can't be achieved through simpler methods. They are defined by specifying when they should activate, what conditions they should check, and the code they should execute. Triggers also help maintain the accuracy of full-text indexes.
 
-| **Trigger** | TRIGGER01 |
-| --- | --- |
+| **Trigger**     | TRIGGER01                                                                                                                                            |
+|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Description** | Upon account deletion, shared user data (e.g. comments, reviews, likes) is kept but is made anonymous, in order to maintain system integrity. (BR01) |
 
 ```sql
@@ -391,8 +391,8 @@ EXECUTE FUNCTION anonymize_user_data();
 ```
 
 
-| **Trigger** | TRIGGER02 |
-| --- | --- |
+| **Trigger**     | TRIGGER02                                                                  |
+|-----------------|----------------------------------------------------------------------------|
 | **Description** | An auction can only be disabled if there are no bids. (business rule BR02) |
 
 ```sql

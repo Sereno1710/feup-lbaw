@@ -42,7 +42,6 @@ class UserController extends Controller
             'city' => 'nullable|string|max:255',
             'zip_code' => 'nullable|string|max:10',
             'country' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $user->update([
@@ -58,8 +57,11 @@ class UserController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('profile_images', 'public');
-            $user->update(['image' => $imagePath]);
+            $existingImagePath = "images/profile/{$user->id}.jpg";
+            if (file_exists($existingImagePath)) {
+                unlink($existingImagePath);
+            }
+            $request->file('image')->move('images/profile', "{$user->id}.jpg");
         }
 
         return redirect('/profile')->with('success', 'Profile updated successfully!');

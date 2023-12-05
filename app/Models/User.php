@@ -52,4 +52,11 @@ class User extends Authenticatable
     {
         return User::join('admin', 'users.id', '=', 'admin.user_id')->orderBy('id', 'asc')->get();
     }
+    public function profileImagePath()
+    {
+        $files = glob("images/profile/".$this->id.".jpg", GLOB_BRACE);
+        $default = "/images/profile/default.jpg";
+        if(sizeof($files) < 1) return $default;
+        return "/".$files[0];
+    }
 }

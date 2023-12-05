@@ -13,7 +13,15 @@
     <div class="flex flex-col items-center">
         <div class="flex flex-row items-center">
             <div class="user-avatar">
-                <img class="rounded-full" src="https://picsum.photos/200" alt="Profile Picture">
+                @php
+                    if (Auth::check() && !isset($user)){
+                        $profileImagePath = Auth::user()->profileImagePath();
+                    }
+                    else{
+                        $profileImagePath = $user->profileImagePath();
+                    }
+                @endphp
+                <img style="max-height: 16rem; max-width: 16rem;" class="rounded-full" src="{{ asset($profileImagePath) }}" alt="Profile Picture">
             </div>
             <div class="mx-4 flex flex-col">
                 @if (Auth::user()->id == $user->id)

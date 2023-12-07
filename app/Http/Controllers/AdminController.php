@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-   
 use App\Models\Admin;   
 use App\Models\User; 
 use App\Models\Auction;; 
@@ -23,9 +22,8 @@ class AdminController extends Controller
     public function getUsers()
     {
         $this->authorize('index', Admin::class);
-        $users = User::activeUsers();
-        $admins = User::activeAdmins();
-        return view('pages.admin.users', ['users' => $users, 'admins' => $admins]);
+        $users = User::active();
+        return view('pages.admin.users', ['users' => $users]);
     }
 
     public function getAuctions()
@@ -39,15 +37,20 @@ class AdminController extends Controller
     public function getTransfers()
     {
         $this->authorize('index', Admin::class);
-        
+    
         $deposits = moneys::deposits();
         $withdrawals = moneys::withdrawals();
         $others = moneys::notPending();
-        return view('pages.admin.transfers', ['deposits' => $deposits, 'withdrawals' => $withdrawals, 'others' => $others]);
-    }
+    
+        $view = request()->is('admin/transfers/deposits') ? 'deposits' :
+                (request()->is('admin/transfers/withdrawals') ? 'withdrawals' : 'completed');
 
-    public function demote(Request $request) {
-        
+        return view("pages.admin.transfers.$view", compact('deposits', 'withdrawals', 'others'));
+    }
+    
+
+    public function demote(Request $request) 
+    {    
         $this->authorize('index', Admin::class);
         if(count(Admin::all()) > 1) {
             Admin::where(['user_id' => $request->user_id])->delete();
@@ -56,30 +59,33 @@ class AdminController extends Controller
         return redirect('/admin/users')->with('success', 'User demoted successfully!');
     }
 
-    public function promote(Request $request) {
-        
+    public function promote(Request $request) 
+    {    
         $this->authorize('index', Admin::class);
         Admin::insert([ 'user_id' => $request->user_id]);
 
         return redirect('/admin/users')->with('success', 'User promoted successfully!');
     }
 
-    public function disable(Request $request) {
+    public function disable(Request $request) 
+    {
         $this->authorize('index', Admin::class);
         User::where(['id' => $request->user_id])->update(['is_anonymizing' => true]);
         return redirect('/admin/users')->with('success', 'User promoted successfully!');
     }
 
-    public function approve(Request $request) {
-        $this->authorize('index', Admin::class);
-        moneys::where(['id' => $request->id])->update(['state' => 'accepted']);
-        return redirect('/admin/transfers')->with('success', 'Transfer approved successfully!');
-    }
-
     public function reject(Request $request) {
         $this->authorize('index', Admin::class);
         moneys::where(['id' => $request->id])->update(['state' => 'denied']);
-        return redirect('/admin/transfers')->with('success', 'Transfer rejected successfully!');
+        $view = $request->view;
+        return redirect('/admin/transfers/'.$view)->with('success', 'Transfer rejected successfully!');
+    }
+
+    public function approve(Request $request) {
+        $this->authorize('index', Admin::class);
+        moneys::where(['id' => $request->id])->update(['state' => 'accepted']);
+        $view = $request->view;
+        return redirect('/admin/transfers/'.$view)->with('success', 'Transfer approved successfully!');
     }
 
     public function approveAuction(Request $request) {

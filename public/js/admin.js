@@ -1,24 +1,15 @@
 function addEventListeners() {
-  let AdminSection = document.getElementById("admin_section");
-  if (AdminSection) {
-    AdminSection.addEventListener("click", function (event) {
-      if (event.target.classList.contains("demote-btn")) {
-        let userId = event.target.getAttribute("user_id");
-        demoteUser(userId);
-      }
-    });
-  }
+  let usersTable = document.getElementById("users_table");
+  if (usersTable) {
+    usersTable.addEventListener("click", function (event) {
+      let userId = event.target.getAttribute("user_id");
 
-  let UsersSection = document.getElementById("user_section");
-  if (UsersSection) {
-    UsersSection.addEventListener("click", function (event) {
       if (event.target.classList.contains("promote-btn")) {
-        let userId = event.target.getAttribute("user_id");
         promoteUser(userId);
-      }
-      if (event.target.classList.contains("disable-btn")) {
-        let userId = event.target.getAttribute("user_id");
+      } else if (event.target.classList.contains("disable-btn")) {
         disableUser(userId);
+      } else if (event.target.classList.contains("demote-btn")) {
+        demoteUser(userId);
       }
     });
   }
@@ -46,30 +37,61 @@ function sendAjaxRequest(method, url, data, handler) {
   request.send(encodeForAjax(data));
 }
 
-function moveAdminToUserTable(userId) {
-  let adminRow = document.getElementById("admin_row_" + userId);
+function UserToAdmin(userId) {
+  let userRow = document.getElementById("user_row_" + userId);
+
+  if (userRow) {
+    let index = Array.from(userRow.parentNode.children).indexOf(userRow);
+
+    let disableButton = userRow.querySelector(".disable-btn");
+    let promoteButton = userRow.querySelector(".promote-btn");
+    disableButton.remove();
+    promoteButton.remove();
+
+    userRow.id = "user_row_" + userId; 
+    let usersTable = document.getElementById("users_table");
+    
+    usersTable.querySelector("tbody").insertBefore(userRow, usersTable.querySelector("tbody").children[index]);
+
+    let demoteButton = document.createElement("button");
+    demoteButton.className = "mx-2 p-2 text-white bg-stone-800 rounded demote-btn";
+    demoteButton.type = "button";
+    demoteButton.innerText = "Demote";
+    demoteButton.setAttribute('user_id', userId);
+
+    let actionsCell = userRow.querySelector(".flex.flex-row");
+    actionsCell.appendChild(demoteButton);
+    let roleRow = userRow.querySelector("#role");
+    if (roleRow) {
+      roleRow.innerText = "Admin";
+    }
+  } else {
+    console.error("User row not found:", userId);
+  }
+}
+
+function AdminToUser(userId) {
+  // Store the current scroll position
+  let scrollY = window.scrollY;
+
+  let adminRow = document.getElementById("user_row_" + userId);
 
   if (adminRow) {
+    let index = Array.from(adminRow.parentNode.children).indexOf(adminRow);
     let demoteButton = adminRow.querySelector(".demote-btn");
     demoteButton.remove();
-    
-    adminRow.parentNode.removeChild(adminRow);
-    adminRow.id = "user_row_" + userId;
-    let UsersTable = document
-      .getElementById("user_section")
-      .querySelector("tbody");
-    UsersTable.appendChild(adminRow);
 
+    adminRow.id = "user_row_" + userId; 
+    let usersTable = document.getElementById("users_table");
+    usersTable.querySelector("tbody").insertBefore(adminRow, usersTable.querySelector("tbody").children[index]);
     let disableButton = document.createElement("button");
-    disableButton.className =
-      "mt-2 p-2 text-white bg-stone-800 rounded disable-btn";
+    disableButton.className = "mx-2 p-2 text-white bg-stone-800 rounded disable-btn";
     disableButton.type = "button";
     disableButton.innerText = "Disable";
     disableButton.setAttribute('user_id', userId);
 
     let promoteButton = document.createElement("button");
-    promoteButton.className =
-      "mt-2 p-2 text-white bg-stone-800 rounded promote-btn";
+    promoteButton.className = "mx-2 p-2 text-white bg-stone-800 rounded promote-btn";
     promoteButton.type = "button";
     promoteButton.innerText = "Promote";
     promoteButton.setAttribute('user_id', userId);
@@ -77,46 +99,11 @@ function moveAdminToUserTable(userId) {
     let actionsCell = adminRow.querySelector(".flex.flex-row");
     actionsCell.appendChild(disableButton);
     actionsCell.appendChild(promoteButton);
-  } else {
-    console.error("Admin row not found:", userId);
-  }
-}
 
-function moveUserToAdminTable(userId) {
-  let userRow = document.getElementById("user_row_" + userId);
-
-  if (userRow) {
-    let disableButton = userRow.querySelector(".disable-btn");
-    let promoteButton = userRow.querySelector(".promote-btn");
-    disableButton.remove();
-    promoteButton.remove();
-
-    userRow.parentNode.removeChild(userRow);
-    userRow.id = "admin_row_" + userId;
-    let adminTable = document
-      .getElementById("admin_section")
-      .querySelector("tbody");
-    adminTable.appendChild(userRow);
-
-    let demoteButton = document.createElement("button");
-    demoteButton.className =
-      "mt-2 p-2 text-white bg-stone-800 rounded demote-btn";
-    demoteButton.type = "button";
-    demoteButton.innerText = "Demote";
-    demoteButton.setAttribute('user_id', userId);
-
-    let actionsCell = userRow.querySelector(".flex.flex-row");
-    actionsCell.appendChild(demoteButton);
-  } else {
-    console.error("User row not found:", userId);
-  }
-}
-
-function removeUserFromTable(userId) {
-  let userRow = document.getElementById("user_row_" + userId);
-
-  if (userRow) {
-    userRow.parentNode.removeChild(userRow);
+    let roleRow = adminRow.querySelector("#role");
+    if (roleRow) {
+      roleRow.innerText = "User"; 
+    }
   } else {
     console.error("User row not found:", userId);
   }
@@ -126,8 +113,18 @@ function demoteUser(userId) {
   let formData = { user_id: userId };
 
   sendAjaxRequest("POST", "/admin/users/demote", formData, function (response) {
-    moveAdminToUserTable(userId);
+    AdminToUser(userId);
   });
+}
+
+function removeUser(userId) {
+  let userRow = document.getElementById("user_row_" + userId);
+
+  if (userRow) {
+    userRow.remove();
+  } else {
+    console.error("User row not found:", userId);
+  }
 }
 
 function disableUser(userId) {
@@ -137,7 +134,7 @@ function disableUser(userId) {
     "POST",
     "/admin/users/disable",
     formData,
-    removeUserFromTable(userId)
+    removeUser(userId)
   );
 }
 
@@ -148,7 +145,7 @@ function promoteUser(userId) {
     "POST",
     "/admin/users/promote",
     formData,
-    moveUserToAdminTable(userId)
+    UserToAdmin(userId)
   );
 }
 

@@ -12,7 +12,7 @@
         </div>
         <div class="bg-white text-stone-800 p-2 rounded-lg shadow-lg flex flex-row justify-between items-center">
             <h4 class="font-bold text-xl">Transfers</h4>
-            <a class= "mx-4" href="{{ url('/admin/transfers') }}">View All</a>
+            <a class= "mx-4" href="{{ url('/admin/transfers/deposits') }}">View All</a>
         </div>
         <div class="bg-white text-stone-800 p-2 rounded-lg shadow-lg flex flex-row justify-between items-center">
             <h4 class="font-bold text-xl">Auctions</h4>

@@ -44,4 +44,12 @@ class Auction extends Model
             ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
             ->get();
     }
+
+    public function auctionImagePath()
+    {
+        $files = glob("images/auction/".$this->id.".jpg", GLOB_BRACE);
+        $default = "/images/auction/default.jpg";
+        if(sizeof($files) < 1) return $default;
+        return "/".$files[0];
+    }
 }

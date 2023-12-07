@@ -29,7 +29,7 @@
     <div class="mx-2 flex flex-col overflow-x-auto">
         <h1 class="text-4xl font-bold">Transfers Completed</h1>
         <br>
-        <div class="sm:-mx-6 lg:-mx-8">
+        <div class="mx-6 mx-8">
             <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                 <div class="overflow-x-auto">
                     <table class="min-w-full border-separate">

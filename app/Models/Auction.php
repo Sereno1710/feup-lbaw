@@ -23,23 +23,36 @@ class Auction extends Model
         return $this->hasMany(Bid::class, 'auction_id');
     }
 
-    public function tags() {
+    public function tags() 
+    {
         return $this->belongstoMany(MetaInfoValue::class, 'auctionmetainfovalue', 'auction_id', 'meta_info_value_id');
     }
 
-    public static function activeAuctions() {
+    public static function activeAuctions() 
+    {
         return Auction::where('state', 'active');
     }
-    public static function noActions() {
-        return Auction::where('state', 'pending')->orWhere('state', 'finished')->orWhere('state', 'approved')->orWhere('state', 'denied')->orWhere('state', 'disabled')
+
+    public static function others() 
+    {
+        return Auction::where('state', 'finished')->orWhere('state', 'approved')->orWhere('state', 'denied')->orWhere('state', 'disabled')
             ->join('users', 'users.id', '=', 'auction.owner_id')
             ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
             ->get();
 
     }
 
-    public static function active() {
-        return Auction::where('state', 'active')->orWhere('state', 'paused')->orWhere('state', 'pending')
+    public static function active() 
+    {
+        return Auction::where('state', 'active')->orWhere('state', 'paused')
+            ->join('users', 'users.id', '=', 'auction.owner_id')
+            ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
+            ->get();
+    }
+
+    public static function pending()
+    {
+        return Auction::where('state', 'pending')
             ->join('users', 'users.id', '=', 'auction.owner_id')
             ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
             ->get();

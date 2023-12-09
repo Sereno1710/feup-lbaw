@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use App\Models\Admin;
@@ -43,14 +42,9 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\moneys', 'id')->where('user_id', $this->id)->where('state', 'accepted')->orderBy('id', 'desc');
     }
 
-    public static function activeUsers()
+    public static function active()
     {
-        return User::where('name', '!=', 'Anonymous')->leftJoin('admin', 'users.id', '=', 'admin.user_id')->whereNull('admin.user_id')->orderBy('id', 'asc')->get();
-    }
-
-    public static function activeAdmins()
-    {
-        return User::join('admin', 'users.id', '=', 'admin.user_id')->orderBy('id', 'asc')->get();
+        return User::where('is_anonymizing', '!=', 'true')->orderBy('id', 'asc')->paginate(10);
     }
     public function profileImagePath()
     {

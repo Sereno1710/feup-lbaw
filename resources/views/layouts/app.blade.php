@@ -11,7 +11,7 @@
 
 <body>
     <header class="fixed top-0 w-screen p-16 pt-4 pb-4 bg-white text-stone-800 shadow-lg">
-        <div class="items-center m-auto flex justify-between ">
+        <nav class="items-center m-auto flex justify-between ">
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
             <div class="flex justify-between items-center">
                 <form class="p-1 bg-stone-200 rounded-lg" action="/auction/search" method="GET">
@@ -35,8 +35,11 @@
                 <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
                 @endif
             </div>
-        </div>
-    </header>
+        </nav>
+        <nav class="m-auto" >
+                @yield('nav-bar')
+        </nav>
+    </header>   
     <main>
         <section id="content" class="m-32">
             @yield('content')

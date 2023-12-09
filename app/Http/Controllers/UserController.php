@@ -79,8 +79,6 @@ class UserController extends Controller
         return view('pages.users.search', ['users' => $users, 'keyword' => $keyword]);
     }
 
-
-
     public function showProfile($userId)
     {
         $user = User::findOrFail($userId);
@@ -90,5 +88,18 @@ class UserController extends Controller
             return redirect('/profile');
         }
         return view('pages/profile', ['user' => $user, 'followedAuctions' => $followedAuctions, 'ownedAuctions' => $ownedAuctions ]);
+    }
+
+    public function delete(Request $request){
+        
+        $user = Auth::user();
+
+        User::where(['id' => $user->id])->update(['is_anonymizing' => true]);
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('home')
+            ->withSuccess('You have logged out successfully!');
     }
 }

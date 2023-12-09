@@ -38,6 +38,7 @@ Route::get('/profile', [UserController::class, 'show'])->name('profile');
 Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
 Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::get('/user/{userId}', [UserController::class, 'showProfile'])->name('profile.show');
+Route::post('/profile/delete', [UserController::class, 'delete'])->name('profile.delete');
 
 // Balance
 Route::get('/balance', [BalanceController::class, 'index'])->name('balance');

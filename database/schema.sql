@@ -336,7 +336,7 @@ BEGIN
     NEW.zip_code := NULL;
     NEW.country := NULL;
     NEW.rating := NULL;
-    NEW.image := NULL;
+    NEW.remember_token := NULL;
   END IF;
   RETURN NEW;
 END;

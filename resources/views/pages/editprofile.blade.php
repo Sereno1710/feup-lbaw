@@ -53,5 +53,31 @@
     <input class="p-2 mb-2 border border-stone-400 rounded" type="file" id="image" name="image">
 
     <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Save Changes</button>
+
+    <p class="mt-4 text-center">
+        If you want to delete your account click <span class="text-red-500 cursor-pointer underline" onclick="showDeletePopup()">here</span>.
+    </p>
+
+    <div id="deleteConfirmation" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-md text-center">
+            <p class="text-red-500 mb-4">Are you sure you want to delete your account? This action cannot be reversed.</p>
+            <button class="mt-2 p-2 text-white bg-red-500 rounded" type="button" onclick="confirmDelete()">Yes, I want to delete my account</button>
+            <button class="mt-2 p-2 text-white bg-blue-500 rounded" type="button" onclick="cancelDelete()">Cancel</button>
+        </div>
+    </div>
 </form>
+
+<script>
+    function showDeletePopup() {
+        document.getElementById('deleteConfirmation').classList.remove('hidden');
+    }
+
+    function confirmDelete() {
+        window.location.href = "{{ route('profile.delete') }}";
+    }
+
+    function cancelDelete() {
+        document.getElementById('deleteConfirmation').classList.add('hidden');
+    }
+</script>
 @endsection

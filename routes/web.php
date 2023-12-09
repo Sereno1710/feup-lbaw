@@ -9,7 +9,6 @@ use App\Http\Controllers\Auth\RegisterController;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\AdminController;

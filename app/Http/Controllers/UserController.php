@@ -79,8 +79,6 @@ class UserController extends Controller
         return view('pages.users.search', ['users' => $users, 'keyword' => $keyword]);
     }
 
-
-
     public function showProfile($userId)
     {
         $user = User::findOrFail($userId);

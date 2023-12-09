@@ -9,7 +9,7 @@ This artifact provides an overview of the forthcoming web API, emphasizing the r
 This section describes the modules that will be part of the application.
 
 | Modules             | Description                                                                                                         |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------- |
+|---------------------|---------------------------------------------------------------------------------------------------------------------|
 | M01: Authentication | Web resources for user authentication. These encompass key functionalities such as user login/logout, registration. |
 | M02: Users          | Web resources associated with searching user information like what auctions he created or followes.                 |
 | M03: Auctions       | Web resources associated with auctions like creating, bidding, commenting, following/unfollowing.                   |
@@ -21,7 +21,7 @@ This section describes the modules that will be part of the application.
 This section has the permissions used in our modules, necessary to access its data and features.
 
 | Identifier | Name           | Description                |
-| ---------- | -------------- | -------------------------- |
+|------------|----------------|----------------------------|
 | VIS        | Visitor        | An unauthenticated user    |
 | USR        | User           | An authenticated user      |
 | OWN        | Owner          | Owner of an auction        |
@@ -909,13 +909,14 @@ In this vertical prototype, we incorporated all the specified features outlined 
 #### 1.1. Implemented User Stories
 
 | User Story reference | Name                         | Priority | Description                                                                                                                                                                                                                                     |
-| -------------------- | ---------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|----------------------|------------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | US01                 | See Home Page                | High     | As a user, I want to be able to see the home page whenever I enter the website so that I can start using the website.                                                                                                                           |
 | US02                 | View Active Auctions         | High     | As a user, I want to be able to view a list of currently active auctions so that I can bid on items that are currently being auctioned.                                                                                                         |
 | US03                 | View Auction Details         | High     | As a user, I want to be able to click on an auction from the list to view its detailed information, including item description, current highest bid, and auction end time, so that I can get more insight into the product.                     |
 | US04                 | Exact match search           | High     | As a user, I want to be able to search with a specific text so that I can quickly find a specific item.                                                                                                                                         |
 | US05                 | Full text search             | High     | As a user, I want to be able to search words or phrases within extensive text so that I can find the item I want faster.                                                                                                                        |
 | US06                 | View User Profiles           | High     | As a user, I want to be able to view other user profiles that are registered on the platform so that I can see their activity and items they have listed or bid on.                                                                             |
+| US08                 | Consult FAQ / Help           | Medium   | As a user, I want an FAQ / Help section so that I can find a solution to a problem.                                                                                                                                                             |                                                                                                                                                                                                                                       
 | US10                 | Log in                       | High     | As a user, I want to be able to log in to my account so that I can manage my settings and track my activity securely.                                                                                                                           |
 | US11                 | Register Account             | High     | As a user, I want to be able to register for a new account so that I can participate in auctions and save favorite items.                                                                                                                       |
 | US13                 | Log out                      | High     | As an authenticated user, I want the ability to log out of my account so that I can end my session in a secure way preventing it from unauthorized access.                                                                                      |
@@ -925,12 +926,16 @@ In this vertical prototype, we incorporated all the specified features outlined 
 | US17                 | Edit Profile                 | High     | As an authenticated user, I want to be able to edit and update my user profile information so that I can keep my personal details and preferences updated.                                                                                      |
 | US18                 | Deposit Money on Account     | High     | As an authenticated user, I want to be able to deposit money into my account so that I can use that money to participate in active auctions.                                                                                                    |
 | US19                 | Withdraw Money from Account  | High     | As an authenticated user, I want to be able to withdraw money from my account into the bank.                                                                                                                                                    |
+| US21                 | View My Auctions             | Medium   | As an authenticated user, I want to be able to view my auctions so that I can see all the items I'm selling and all the items I've bought.                                                                                                      |
+| US22                 | View Followed Auctions       | Medium   | As an authenticated user, I want to be able to see all the auctions I've followed so that I can keep track of those auctions.                                                                                                                   |
 | US29                 | View Auction Bidding History | High     | As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise.                                                                                                                                    |
 | US35                 | View Auction Bidding History | High     | As a seller, I want to be able to see all of the bids made in this auction, so that I can see the bids rise.                                                                                                                                    |
 | US36                 | Disable Auction              | High     | As a seller, I want to be able to disable my auction if no one has submitted a bid so that I can keep my item if I change my mind. Whilst being able to make that same auction active again at another time.                                    |
 | US38                 | Approve Auction              | High     | As a system manager, I want to be able to approve pending auctions, so that they can be ready to be bid on.                                                                                                                                     |
+| US39                 | Pause Auctions               | Medium   | As a system manager, I want to be able to stop an auction, so that I can delay the auction process in case of technical issues, guideline violations, or other necessary reasons.                                                               |
+| US40                 | Resume Auctions              | Medium   | As an administrator, I want to be able to resume a previously paused auction, so that I can allow users to continue bidding.                                                                                                                    |
 | US44                 | Manage User Accounts         | High     | As an administrator, I want to have the ability to manage users, including the ability to edit existing user profiles, create new accounts, search for certain users, and add system managers, so that I can have total control over the users. |
-
+| US45                 | Deactivate User Accounts     | Medium   | As an administrator, I want to be able to deactivate user accounts, so that I can remove inactive or unauthorized users from the system completely.                                                                                             |
 ...
 
 ### 1.2. Implemented Web Resources
@@ -938,7 +943,7 @@ In this vertical prototype, we incorporated all the specified features outlined 
 #### Module M01: Authentication
 
 | Web Resource Reference | URL            |
-| ---------------------- | -------------- |
+|------------------------|----------------|
 | R101: Login Form       | GET /login     |
 | R102: Login Action     | POST /login    |
 | R103: Logout Action    | GET /logout    |
@@ -948,7 +953,7 @@ In this vertical prototype, we incorporated all the specified features outlined 
 #### Module M02: Users
 
 | Web Resource Reference         | URL                 |
-| ------------------------------ | ------------------- |
+|--------------------------------|---------------------|
 | R201: View Home Page           | GET /               |
 | R202: View Home Page           | GET /home           |
 | R204: View Own Profile         | GET /profile        |
@@ -963,19 +968,19 @@ In this vertical prototype, we incorporated all the specified features outlined 
 
 #### Module M03: Auction
 
-| Web Resource Reference         | URL                    |
-| ------------------------------ | ---------------------- |
-| R301: View Active Auctions     | GET /auctions          |
-| R302: View Create Auction Page | GET /auction/submit    |
-| R303: Submit an Auction        | POST /auction/create   |
-| R304: View an Auction          | GET /auction/{id}      |
-| R307: Bid on Auction           | POST /auction/{id}/bid |
-| R309: Start Auction            | POST /auction/{id}/start|
+| Web Resource Reference         | URL                      |
+|--------------------------------|--------------------------|
+| R301: View Active Auctions     | GET /auctions            |
+| R302: View Create Auction Page | GET /auction/submit      |
+| R303: Submit an Auction        | POST /auction/create     |
+| R304: View an Auction          | GET /auction/{id}        |
+| R307: Bid on Auction           | POST /auction/{id}/bid   |
+| R309: Start Auction            | POST /auction/{id}/start |
 
 #### Module M04: Administration
 
 | Web Resource Reference       | URL                           |
-| ---------------------------- | ----------------------------- |
+|------------------------------|-------------------------------|
 | R401: View Admin Page        | GET /admin                    |
 | R402: View All Users         | GET /admin/users              |
 | R403: Demote User Account    | POST /admin/users/demote      |
@@ -994,7 +999,7 @@ In this vertical prototype, we incorporated all the specified features outlined 
 #### Module M05: Balance
 
 | Web Resource Reference        | URL                    |
-| ----------------------------- | ---------------------- |
+|-------------------------------|------------------------|
 | R501: View Balance Page       | GET /balance/deposit   |
 | R502: Make a Deposit Request  | POST /balance/deposit  |
 | R503: Make a Withdraw Request | POST /balance/withdraw |

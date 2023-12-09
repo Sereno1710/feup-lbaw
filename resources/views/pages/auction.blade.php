@@ -17,7 +17,10 @@
             </div>
         </div>
         <div class="mt-4 w-full flex flex-row items-start justify-evenly">
-            <img class="m-4 max-h-64 rounded-lg" src="https://picsum.photos/250" alt="auctionphoto">
+            @php
+                $auctionImagePath = $auction->auctionImagePath();
+            @endphp
+            <img class="m-4 max-h-64 rounded-lg" src="{{ asset($auctionImagePath) }}" alt="auctionphoto">
             <table class="table-fixed w-full text-left ">
                 <tr class="border-b border-stone-300">
                     <th class="border-r border-stone-300">

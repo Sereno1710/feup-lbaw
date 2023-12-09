@@ -14,33 +14,6 @@ class BalanceController extends Controller
         return view('pages/balance', compact('user'));
     }
 
-    public function deposit(Request $request)
-    {
-        $user = Auth::user();
-
-        $request->validate([
-            'deposit_amount' => 'required|numeric|min:0',
-            'iban_deposit' => ['required', 'regex:/^[A-Z]{2}\d{23}$/'],
-        ]);
-    
-        moneys::create([
-            'user_id' => $user->id,
-            'amount' => $request->input('deposit_amount'),
-            'type' => true, // Deposit
-        ]);
-
-        $balance = $user->balance;
-        $depositAmount = $request->input('deposit_amount');
-
-        $numericBalance = preg_replace('/[^0-9.]/', '', $balance);
-
-        $numericBalance = (float) $numericBalance;
-
-        $newBalance = $numericBalance + $depositAmount;
-
-        return redirect('/home')->with('success', 'Deposit successful!');
-    }
-
     public function withdraw(Request $request)
     {
         $user = Auth::user();

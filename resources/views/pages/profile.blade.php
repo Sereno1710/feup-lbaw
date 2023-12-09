@@ -13,10 +13,18 @@
     <div class="flex flex-col items-center">
         <div class="flex flex-row items-center">
             <div class="user-avatar">
-                <img class="rounded-full" src="https://picsum.photos/200" alt="Profile Picture">
+                @php
+                    if (Auth::check() && !isset($user)){
+                        $profileImagePath = Auth::user()->profileImagePath();
+                    }
+                    else{
+                        $profileImagePath = $user->profileImagePath();
+                    }
+                @endphp
+                <img style="max-height: 16rem; max-width: 16rem;" class="rounded-full" src="{{ asset($profileImagePath) }}" alt="Profile Picture">
             </div>
             <div class="mx-4 flex flex-col">
-                @if (Auth::user()->id == $user->id)
+                @if (Auth::check() && Auth::user()->id == $user->id)
                     <p class="text-xl">&#64;{{ Auth::user()->username }}</p>
                     <p class="text-2xl">{{ Auth::user()->name }} <a class="mx-2 text-sm underline" href="{{ route('profile.edit') }}">[edit profile]</a></p>
                     @if (Auth::user()->rating == NULL)
@@ -36,7 +44,7 @@
             </div>
         </div>
         <div class="m-0 mx-auto flex flex-row items-start">
-            @if (Auth::user()->id == $user->id)
+            @if (Auth::check() && Auth::user()->id == $user->id)
                 <div class="w-96 mx-4 my-4 flex flex-col items-center justify-between p-4 rounded-lg bg-stone-300">
                     <h2 class="mb-4 text-2xl font-bold">Followed Auctions</h2>
                     <div class="grid grid-cols-1 gap-8">

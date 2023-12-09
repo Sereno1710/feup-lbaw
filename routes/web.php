@@ -13,6 +13,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\StripeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,8 +41,10 @@ Route::get('/user/{userId}', [UserController::class, 'showProfile'])->name('prof
 
 // Balance
 Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
-Route::post('/balance/deposit', [BalanceController::class, 'deposit'])->name('balance.deposit');
 Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
+Route::get('/checkout', [StripeController::class, 'checkout'])->name('checkout');
+Route::post('/balance/deposit', [StripeController::class, 'deposit'])->name('deposit.stripe');
+Route::get('/success', [StripeController::class, 'success'])->name('success');
 
 // Footer
 Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('aboutUs');

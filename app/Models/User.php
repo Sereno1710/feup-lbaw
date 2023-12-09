@@ -46,5 +46,11 @@ class User extends Authenticatable
     {
         return User::where('is_anonymizing', '!=', 'true')->orderBy('id', 'asc')->paginate(10);
     }
-    
+    public function profileImagePath()
+    {
+        $files = glob("images/profile/".$this->id.".jpg", GLOB_BRACE);
+        $default = "/images/profile/default.jpg";
+        if(sizeof($files) < 1) return $default;
+        return "/".$files[0];
+    }
 }

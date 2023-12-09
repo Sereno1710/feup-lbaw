@@ -118,7 +118,7 @@ CREATE TABLE users (
   zip_code VARCHAR(10) DEFAULT NULL,
   country VARCHAR(255) DEFAULT NULL,
   rating FLOAT CHECK (rating >= 0 AND rating <= 5) DEFAULT NULL,
-  image BYTEA
+  remember_token VARCHAR(256) DEFAULT NULL
 );
   ALTER TABLE users ADD COLUMN is_anonymizing BOOLEAN DEFAULT false;
 -- SystemManager table

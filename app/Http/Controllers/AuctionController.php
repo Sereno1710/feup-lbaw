@@ -79,12 +79,16 @@ class AuctionController extends Controller
         $auctionData['price'] = $validatedData['starting_price'];
         $auctionData['category'] = $validatedData['category'];
         $auctionData['owner_id'] = Auth::user()->id;
-
+        
         try {
             DB::beginTransaction();
 
             $auction = new Auction($auctionData);
             $auction->save();
+
+            if ($request->hasFile('image')) {
+                $request->file('image')->move('images/auction', "{$auction->id}.jpg");
+            }
 
             $metaInfos = $request->input('categories', []);
 

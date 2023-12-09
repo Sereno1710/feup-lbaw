@@ -37,7 +37,7 @@ class Auction extends Model
     {
         return Auction::where('state', 'finished')->orWhere('state', 'approved')->orWhere('state', 'denied')->orWhere('state', 'disabled')
             ->join('users', 'users.id', '=', 'auction.owner_id')
-            ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
+            ->select('auction.id', 'users.username','auction.name', 'auction.initial_price', 'auction.price','auction.state')
             ->get();
 
     }
@@ -46,7 +46,7 @@ class Auction extends Model
     {
         return Auction::where('state', 'active')->orWhere('state', 'paused')
             ->join('users', 'users.id', '=', 'auction.owner_id')
-            ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
+            ->select('auction.id', 'users.username','auction.name', 'auction.initial_price', 'auction.price','auction.state')
             ->get();
     }
 
@@ -54,7 +54,7 @@ class Auction extends Model
     {
         return Auction::where('state', 'pending')
             ->join('users', 'users.id', '=', 'auction.owner_id')
-            ->select('auction.id', 'users.username', 'auction.initial_price', 'auction.price','auction.state')
+            ->select('auction.id', 'users.username','auction.name', 'auction.initial_price', 'auction.price','auction.state')
             ->get();
     }
 }

@@ -71,12 +71,14 @@ Route::get('/admin/transfers/withdrawals', [AdminController::class, 'getTransfer
 Route::get('/admin/transfers/completed', [AdminController::class, 'getTransfers'])->name('admin.transfers.completed');
 Route::post('/admin/transfers/approve', [AdminController::class, 'approve'])->name('admin.approve');
 Route::post('/admin/transfers/reject', [AdminController::class, 'reject'])->name('admin.reject');
-Route::get('/admin/auctions', [AdminController::class, 'getAuctions'])->name('admin.auctions');
-Route::post('/admin/auctions/approve', [AdminController::class, 'approveAuction'])->name('admin.approveAuction');
-Route::post('/admin/auctions/reject', [AdminController::class, 'rejectAuction'])->name('admin.rejectAuction');
-Route::post('/admin/auctions/pause', [AdminController::class, 'pauseAuction'])->name('admin.pauseAuction');
-Route::post('/admin/auctions/resume', [AdminController::class, 'resumeAuction'])->name('admin.resumeAuction');
-Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'])->name('admin.disableAuction');
+Route::get('/admin/auctions/active', [AdminController::class, 'getAuctions'])->name('admin.auctions.active');
+Route::get('/admin/auctions/pending', [AdminController::class, 'getAuctions'])->name('admin.auctions.pending');
+Route::get('/admin/auctions/others', [AdminController::class, 'getAuctions'])->name('admin.auctions.others');
+Route::post('/admin/auctions/approve', [AdminController::class, 'approveAuction'])->name('admin.auctions.approveAuction');
+Route::post('/admin/auctions/reject', [AdminController::class, 'rejectAuction'])->name('admin.auctions.rejectAuction');
+Route::post('/admin/auctions/pause', [AdminController::class, 'pauseAuction'])->name('admin.auctions.pauseAuction');
+Route::post('/admin/auctions/resume', [AdminController::class, 'resumeAuction'])->name('admin.auctions.resumeAuction');
+Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'])->name('admin.auctions.disableAuction');
 
 // API
 Route::controller(CardController::class)->group(function () {

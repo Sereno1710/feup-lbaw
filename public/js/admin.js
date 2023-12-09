@@ -71,8 +71,6 @@ function UserToAdmin(userId) {
 }
 
 function AdminToUser(userId) {
-  // Store the current scroll position
-  let scrollY = window.scrollY;
 
   let adminRow = document.getElementById("user_row_" + userId);
 

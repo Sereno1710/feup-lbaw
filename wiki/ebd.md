@@ -864,37 +864,56 @@ The following transactions ensure data integrity when multiple operations are co
 
 
 ```sql
-BEGIN TRANSACTION;
+BEGIN;
 
+-- Set the isolation level (you can set it at the beginning)
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
-INSERT INTO Bid(user_id, auction_id, amount, time)
-  VALUES ($user_id, $auction_id, $amount, $time);
+-- Insert the new bid
+INSERT INTO Bid (user_id, auction_id, amount, time)
+VALUES ($user_id, $auction_id, $amount, $time);
 
+-- Deduct the bid amount from the user's balance
 UPDATE users SET balance = balance - $amount WHERE id = $user_id;
 
-UPDATE users SET balance= balance + (SELECT amount
-FROM (  SELECT user_id, amount 
-        FROM Bid
-        WHERE auction_id = $auction_id
-        ORDER BY amount DESC
-        LIMIT 2)
-AS Last2Bids
-ORDER BY amount ASC
-LIMIT 1) WHERE id = (SELECT user_id
-FROM (  SELECT user_id, amount 
-        FROM Bid
-        WHERE auction_id = $auction_id
-        ORDER BY amount DESC
-        LIMIT 2)
-AS Last2Bids
-ORDER BY amount ASC
-LIMIT 1);
+-- Update the auction price if the new bid is higher
+UPDATE Auction SET price = $amount WHERE id = $auction_id AND $amount > price;
 
-UPDATE Auction SET price = $amount WHERE id = $user_id;
+-- Update the balances of the top two bidders
+UPDATE users
+SET balance = balance + (
+    SELECT amount
+    FROM Bid
+    WHERE auction_id = $auction_id
+    ORDER BY amount DESC
+    LIMIT 1
+)
+WHERE id = (
+    SELECT user_id
+    FROM Bid
+    WHERE auction_id = $auction_id
+    ORDER BY amount DESC
+    LIMIT 1
+);
 
+UPDATE users
+SET balance = balance + (
+    SELECT amount
+    FROM Bid
+    WHERE auction_id = $auction_id
+    ORDER BY amount DESC
+    LIMIT 1 OFFSET 1
+)
+WHERE id = (
+    SELECT user_id
+    FROM Bid
+    WHERE auction_id = $auction_id
+    ORDER BY amount DESC
+    LIMIT 1 OFFSET 1
+);
 
-END TRANSACTION;
+COMMIT;
+
 ```
 
 | Transaction | TRAN02 |

@@ -105,7 +105,7 @@ class AuctionController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Bid submitted successfully.');
+            return redirect()->back()->with('success', 'Auction submitted successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error ocurred. Try again later.');
         }
@@ -120,6 +120,8 @@ class AuctionController extends Controller
     
         try {
             DB::beginTransaction();
+
+            DB::statement('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
             
             DB::table('users')
                 ->where('id', function ($query) use ($auctionId) {
@@ -165,7 +167,7 @@ class AuctionController extends Controller
                 }
             }
 
-            return redirect()->back()->with('error', 'Error submitting bid.');
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 

@@ -1,4 +1,4 @@
-@extends('layouts.profile')
+@extends('layouts.app')
 
 @section('content')
     <div>
@@ -21,7 +21,7 @@
                         $profileImagePath = $user->profileImagePath();
                     }
                 @endphp
-                <img style="max-height: 16rem; max-width: 16rem;" class="rounded-full" src="{{ asset($profileImagePath) }}" alt="Profile Picture">
+                <img class="h-[12rem] w-[12rem] object-cover rounded-full" src="{{ asset($profileImagePath) }}" alt="Profile Picture">
             </div>
             <div class="mx-4 flex flex-col">
                 @if (Auth::check() && Auth::user()->id == $user->id)

@@ -21,6 +21,7 @@ class AuctionController extends Controller
 
         return view('pages.auction', ['auction' => $auction, 'bids' => $bids]);
     }
+    
     public function showActiveAuctions()
     {
         $activeAuctions = $activeAuctions = Auction::activeAuctions()->get();

@@ -11,7 +11,7 @@ $bio=Str::limit($user->biography, 30);
         @php
             $profileImagePath = $user->profileImagePath();
         @endphp
-        <img class="rounded-lg" src="{{ asset($profileImagePath) }}" alt="User Image 1">
+        <img class="h-[12rem] w-[12rem] object-cover rounded-lg" src="{{ asset($profileImagePath) }}" alt="User Image 1">
         <p>{{ $bio }}</p>
         @if($user->rating != 0)
         <p>Rating: {{ $user->rating }}</p>

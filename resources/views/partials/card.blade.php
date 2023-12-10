@@ -11,7 +11,7 @@ $description=Str::limit($auction->description, 30);
         @php
             $auctionImagePath = $auction->auctionImagePath();
         @endphp
-        <img class="rounded-lg" src="{{ asset($auctionImagePath) }}" alt="Auction Image 1">
+        <img class="h-[12rem] w-[12rem] object-cover rounded-lg" src="{{ asset($auctionImagePath) }}" alt="Auction Image 1">
         <p>{{ $description }}</p>
         <p class="font-bold">Current Bid: {{ $auction->price }}</p>
         <p><span class="auction-remaining-time"></span></p>

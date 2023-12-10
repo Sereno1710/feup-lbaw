@@ -4,8 +4,9 @@
 <head>
     <title>SoundSello</title>
     @vite('resources/css/app.css')
-    <script src="{{ asset('js/admin.js') }}" defer></script>
-    <script src="{{ asset('js/auction_time.js') }}" defer></script>
+    @vite('resources/js/app.js')
+    @vite('resources/js/admin.js')
+    @vite('resources/js/auction_time.js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 

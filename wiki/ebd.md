@@ -864,56 +864,29 @@ The following transactions ensure data integrity when multiple operations are co
 
 
 ```sql
-BEGIN;
+BEGIN TRANSACTION;
 
--- Set the isolation level (you can set it at the beginning)
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
--- Insert the new bid
-INSERT INTO Bid (user_id, auction_id, amount, time)
-VALUES ($user_id, $auction_id, $amount, $time);
+UPDATE users
+SET balance = balance + LastBid.amount
+FROM (
+    SELECT user_id, amount
+    FROM bid
+    WHERE auction_id = :auction_id
+    ORDER BY amount DESC
+    LIMIT 1
+) AS LastBid
+WHERE users.id = LastBid.user_id;
 
--- Deduct the bid amount from the user's balance
+INSERT INTO Bid(user_id, auction_id, amount, time)
+  VALUES ($user_id, $auction_id, $amount, $time);
+
 UPDATE users SET balance = balance - $amount WHERE id = $user_id;
 
--- Update the auction price if the new bid is higher
-UPDATE Auction SET price = $amount WHERE id = $auction_id AND $amount > price;
+UPDATE Auction SET price = $amount WHERE id = $user_id;
 
--- Update the balances of the top two bidders
-UPDATE users
-SET balance = balance + (
-    SELECT amount
-    FROM Bid
-    WHERE auction_id = $auction_id
-    ORDER BY amount DESC
-    LIMIT 1
-)
-WHERE id = (
-    SELECT user_id
-    FROM Bid
-    WHERE auction_id = $auction_id
-    ORDER BY amount DESC
-    LIMIT 1
-);
-
-UPDATE users
-SET balance = balance + (
-    SELECT amount
-    FROM Bid
-    WHERE auction_id = $auction_id
-    ORDER BY amount DESC
-    LIMIT 1 OFFSET 1
-)
-WHERE id = (
-    SELECT user_id
-    FROM Bid
-    WHERE auction_id = $auction_id
-    ORDER BY amount DESC
-    LIMIT 1 OFFSET 1
-);
-
-COMMIT;
-
+END TRANSACTION;
 ```
 
 | Transaction | TRAN02 |
@@ -2078,10 +2051,16 @@ Changes made to the first submission:
 
 - José Santos (Editor)
 
+### 17/11/2023
+
+1. Fixed Transaction 1 to match laravel code
+- Daniel Gago (Editor)
+
+
 ***
 GROUP0202, 25/10/2023
 
-* Daniel Gago, up202108791@edu.fe.up.pt
+* Daniel Gago, up202108791@edu.fe.up.pt (Editor)
 * Eduardo Oliveira, up202108843@edu.fe.up.pt 
-* José Santos, up202108729@edu.fe.up.pt (Editor)
+* José Santos, up202108729@edu.fe.up.pt
 * Máximo Pereira, up202108887@edu.fe.up.pt

@@ -21,14 +21,17 @@ class AdminController extends Controller
 
     public function getUsers()
     {
-        $this->authorize('index', Admin::class);
+        if(!$this->authorize('index', Admin::class) or !$this->authorize('index',SystemManager::class)) 
+            return redirect('/')->with('failure', 'You do not have the permissions for this action!');
         $users = User::active();
         return view('pages.admin.users', ['users' => $users]);
     }
 
     public function getAuctions()
     {
-        $this->authorize('index', Admin::class);
+        if(!$this->authorize('index', Admin::class) or !$this->authorize('index',SystemManager::class)) 
+            return redirect('/')->with('failure', 'You do not have the permissions for this action!');
+           
         $active = Auction::active();
         $pending = Auction::pending();
         $others = Auction::others();
@@ -41,7 +44,8 @@ class AdminController extends Controller
 
     public function getTransfers()
     {
-        $this->authorize('index', Admin::class);
+        if(!$this->authorize('index', Admin::class))
+            return redirect('/')->with('failure', 'You do not have the permissions for this action!');
     
         $deposits = moneys::deposits();
         $withdrawals = moneys::withdrawals();

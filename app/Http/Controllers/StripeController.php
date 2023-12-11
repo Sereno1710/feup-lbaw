@@ -11,7 +11,7 @@ class StripeController extends Controller
 {
     public function checkout()
     {
-        return view('checkout');
+        return view('balance');
     }
 
     public function deposit(Request $request)

@@ -16,7 +16,7 @@ class AdminController extends Controller
     public function index()
     {
         $this->authorize('index', Admin::class);
-        return view('pages/admin');
+        return getUser();
     }
 
     public function getUsers()

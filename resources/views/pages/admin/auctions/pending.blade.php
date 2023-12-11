@@ -1,10 +1,13 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('nav-bar')
-    <br>
-    <br>
-    <br>
     <div class="max-w-screen px-2 py-3 mx-auto">
+        <div class="flex justify-between items-center">
+                    <form class="p-1 bg-stone-200 rounded-lg" action="/auction/search" method="GET">
+                        <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search auctions">
+                        <button type="submit">🔎</button>
+                    </form>
+        </div>
         <div class="flex items-center">
             <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
                 <li>
@@ -22,11 +25,7 @@
 @endsection
 
 @section('content')
-    <br>
-    <br>
-    <br>
-    <br>
-    <div class="mx-2 flex flex-col overflow-x-auto">
+    <div class="mx-2 flex flex-col overflow-x-auto m-8">
         <h1 class="text-4xl font-bold">Pending Auctions</h1>
         <br>
         <div class="mx-6 mx-8">

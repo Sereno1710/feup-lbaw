@@ -24,6 +24,11 @@ class User extends Authenticatable
         return count(Admin::where('user_id', $this->id)->get()) > 0;
     }
 
+    public function isSystemManager()
+    {
+        return count(SystemManager::where('user_id', $this->id)->get()) > 0;
+    }
+
     public function ownAuction() {
       return $this->hasMany('App\Models\Auction', 'owner_id')->orderBy('initial_time', 'desc');
     }

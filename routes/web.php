@@ -12,8 +12,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\StripeController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -41,10 +39,8 @@ Route::post('/profile/delete', [UserController::class, 'delete'])->name('profile
 
 // Balance
 Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
+Route::post('/balance/deposit', [BalanceController::class, 'deposit'])->name('balance.deposit');
 Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
-Route::get('/checkout', [StripeController::class, 'checkout'])->name('checkout');
-Route::post('/balance/deposit', [StripeController::class, 'deposit'])->name('deposit.stripe');
-Route::get('/success', [StripeController::class, 'success'])->name('success');
 
 // Footer
 Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('aboutUs');
@@ -75,14 +71,14 @@ Route::get('/admin/transfers/withdrawals', [AdminController::class, 'getTransfer
 Route::get('/admin/transfers/completed', [AdminController::class, 'getTransfers'])->name('admin.transfers.completed');
 Route::post('/admin/transfers/approve', [AdminController::class, 'approve'])->name('admin.approve');
 Route::post('/admin/transfers/reject', [AdminController::class, 'reject'])->name('admin.reject');
-Route::get('/admin/auctions/active', [AdminController::class, 'getAuctions'])->name('admin.auctions.active');
 Route::get('/admin/auctions/pending', [AdminController::class, 'getAuctions'])->name('admin.auctions.pending');
+Route::get('/admin/auctions/active', [AdminController::class, 'getAuctions'])->name('admin.auctions.active');
 Route::get('/admin/auctions/others', [AdminController::class, 'getAuctions'])->name('admin.auctions.others');
-Route::post('/admin/auctions/approve', [AdminController::class, 'approveAuction'])->name('admin.auctions.approveAuction');
-Route::post('/admin/auctions/reject', [AdminController::class, 'rejectAuction'])->name('admin.auctions.rejectAuction');
-Route::post('/admin/auctions/pause', [AdminController::class, 'pauseAuction'])->name('admin.auctions.pauseAuction');
-Route::post('/admin/auctions/resume', [AdminController::class, 'resumeAuction'])->name('admin.auctions.resumeAuction');
-Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'])->name('admin.auctions.disableAuction');
+Route::post('/admin/auctions/approve', [AdminController::class, 'approveAuction'])->name('admin.approveAuction');
+Route::post('/admin/auctions/reject', [AdminController::class, 'rejectAuction'])->name('admin.rejectAuction');
+Route::post('/admin/auctions/pause', [AdminController::class, 'pauseAuction'])->name('admin.pauseAuction');
+Route::post('/admin/auctions/resume', [AdminController::class, 'resumeAuction'])->name('admin.resumeAuction');
+Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'])->name('admin.disableAuction');
 
 // API
 Route::controller(CardController::class)->group(function () {

@@ -42,19 +42,27 @@
                                     <td class="py-2 px-4 border border-slate-300" id="role">
                                         @if ($user->isAdmin())
                                             Admin
+                                        @elseif ($user->isSystemManager())
+                                            System Manager
                                         @else
-                                            User
+                                            User    
                                         @endif
                                     </td>
                                     <td class="py-2 px-4 border border-slate-300 flex flex-row">
-                                    @if ($user->isAdmin())
+                                    @if ($user->isSystemManager())
                                         <button user_id="{{ $user->id }}" name="user_id"
                                             class="mx-2 p-2 text-white bg-stone-800 rounded demote-btn"
                                             type="button">Demote</button>
                                     @else
-                                        <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded disable-btn" type="button">Disable</button>
-                                            
-                                        <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button>
+                                        @if($user->isAdmin() && !Auth::user()->isAdmin() && !Auth::user()->isSystemManager())
+                                            <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded disable-btn" type="button">Disable</button>
+                                            <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button>
+                                        @endif
+                                        @if($user->isBanned())
+                                            <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded unban-btn" type="button">Unban</button>
+                                        @elseif(!$user->isAdmin() && !$user->isSystemManager())
+                                            <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded ban-btn" type="button">Ban</button>
+                                        @endif
                                     @endif
                                     </td>
                                 </tr>

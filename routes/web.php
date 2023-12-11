@@ -26,8 +26,11 @@ use App\Http\Controllers\StripeController;
 */
 
 // Home
-Route::get('/', [HomeController::class, 'index']);
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/home', 'index')->name('home');
+    Route::get('/search', 'search')->name('search');
+});
 
 // Users
 Route::get('/users/search', [UserController::class, 'search'])->name('users.search');

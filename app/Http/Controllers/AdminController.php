@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin;   
+use App\Models\SystemManager;
 use App\Models\User; 
 use App\Models\Auction;; 
 use App\Models\Report;
@@ -21,8 +22,7 @@ class AdminController extends Controller
 
     public function getUsers()
     {
-        if(!$this->authorize('index', Admin::class) or !$this->authorize('index',SystemManager::class)) 
-            return redirect('/')->with('failure', 'You do not have the permissions for this action!');
+        $this->authorize('index', Admin::class);
         $users = User::active();
         return view('pages.admin.users', ['users' => $users]);
     }
@@ -61,8 +61,8 @@ class AdminController extends Controller
     public function demote(Request $request) 
     {    
         $this->authorize('index', Admin::class);
-        if(count(Admin::all()) > 1) {
-            Admin::where(['user_id' => $request->user_id])->delete();
+        if(count(SystemManager::all()) > 1) {
+            SystemManager::where(['user_id' => $request->user_id])->delete();
         }
 
         return redirect('/admin/users')->with('success', 'User demoted successfully!');
@@ -71,7 +71,7 @@ class AdminController extends Controller
     public function promote(Request $request) 
     {    
         $this->authorize('index', Admin::class);
-        Admin::insert([ 'user_id' => $request->user_id]);
+        SystemManager::insert([ 'user_id' => $request->user_id]);
 
         return redirect('/admin/users')->with('success', 'User promoted successfully!');
     }
@@ -79,8 +79,22 @@ class AdminController extends Controller
     public function disable(Request $request) 
     {
         $this->authorize('index', Admin::class);
-        User::where(['id' => $request->user_id])->update(['is_anonymizing' => true]);
+        User::where(['id' => $request->user_id])->update(['state' => 'disabled']);
         return redirect('/admin/users')->with('success', 'User promoted successfully!');
+    }
+
+    public function ban(Request $request) 
+    {
+        $this->authorize('index', Admin::class);
+        User::where(['id' => $request->user_id])->update(['state' => 'banned']);
+        return redirect('/admin/users')->with('success', 'User banned successfully!');
+    }  
+    
+    public function unban(Request $request) 
+    {
+        $this->authorize('index', Admin::class);
+        User::where(['id' => $request->user_id])->update(['state' => 'active']);
+        return redirect('/admin/users')->with('success', 'User unbanned successfully!');
     }
 
     public function reject(Request $request) {

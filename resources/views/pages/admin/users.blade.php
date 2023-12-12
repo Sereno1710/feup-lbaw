@@ -49,14 +49,18 @@
                                         @endif
                                     </td>
                                     <td class="py-2 px-4 border border-slate-300 flex flex-row">
-                                    @if ($user->isSystemManager())
+                                    @if ($user->isAdmin())
+                                        None
+                                    @elseif ($user->isSystemManager() && !$user->isAdmin())
                                         <button user_id="{{ $user->id }}" name="user_id"
                                             class="mx-2 p-2 text-white bg-stone-800 rounded demote-btn"
                                             type="button">Demote</button>
                                     @else
-                                        @if($user->isAdmin() && !Auth::user()->isAdmin() && !Auth::user()->isSystemManager())
+                                        @if(!$user->isAdmin() && !$user->isSystemManager() && Auth::user()->isAdmin() && Auth::user()->isSystemManager())
                                             <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded disable-btn" type="button">Disable</button>
-                                            <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button>
+                                        @if(!$user->isBanned())
+                                                <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button>
+                                            @endif
                                         @endif
                                         @if($user->isBanned())
                                             <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded unban-btn" type="button">Unban</button>

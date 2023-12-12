@@ -66,6 +66,8 @@ Route::get('/admin/users', [AdminController::class, 'getUsers'])->name('admin.us
 Route::post('/admin/users/demote', [AdminController::class, 'demote'])->name('admin.demote');
 Route::post('/admin/users/promote', [AdminController::class, 'promote'])->name('admin.promote');
 Route::post('/admin/users/disable', [AdminController::class, 'disable'])->name('admin.disable');
+Route::post('/admin/users/ban', [AdminController::class, 'ban'])->name('admin.ban');
+Route::post('/admin/users/unban', [AdminController::class, 'unban'])->name('admin.unban');
 Route::get('/admin/transfers/deposits', [AdminController::class, 'getTransfers'])->name('admin.transfers.deposits');
 Route::get('/admin/transfers/withdrawals', [AdminController::class, 'getTransfers'])->name('admin.transfers.withdrawals');
 Route::get('/admin/transfers/completed', [AdminController::class, 'getTransfers'])->name('admin.transfers.completed');

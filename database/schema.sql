@@ -331,7 +331,7 @@ CREATE OR REPLACE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF NEW.is_anonymizing THEN
+  IF NEW.state = 'disabled' THEN
     NEW.username := 'anonymous' || OLD.id;
     NEW.name := 'Anonymous';
     NEW.email := NULL;
@@ -344,7 +344,6 @@ BEGIN
     NEW.country := NULL;
     NEW.rating := NULL;
     NEW.remember_token := NULL;
-    NEW.state := 'disabled';
     NEW.biography := NULL;
   END IF;
   RETURN NEW;
@@ -389,6 +388,7 @@ DECLARE
   i_price MONEY;
   user_balance MONEY;
   current_state auction_state;
+  user_state user_state;
 BEGIN
   SELECT user_id, amount INTO highest_bidder, current_highest_bid
   FROM Bid

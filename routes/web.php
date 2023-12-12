@@ -13,6 +13,7 @@ use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\MailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,9 +106,13 @@ Route::controller(LoginController::class)->group(function () {
     Route::get('/login', 'showLoginForm')->name('login');
     Route::post('/login', 'authenticate');
     Route::get('/logout', 'logout')->name('logout');
+    Route::get('/recoverpassword', 'indexRecoverPassword')->name('password.recover');
 });
 
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
 });
+
+// Email
+Route::post('/recoverpassword/send', [MailController::class, 'send'])->name('password.sendmail');

@@ -5,7 +5,7 @@ $bio=Str::limit($user->biography, 30);
 ?>
 
 <a href="{{ url('/user/' . $user->id) }}">
-    <div class="bg-white text-stone-800 p-2 rounded-lg shadow-lg flex flex-col items-center">
+    <div class="h-96 bg-white text-stone-800 p-2 rounded-lg shadow-lg flex flex-col items-center justify-center">
         <h4 class="font-bold text-xl">{{ $user->name }}</h4>
         <p class="text-gray-500">&#64;{{ $user->username }}</p>
         @php

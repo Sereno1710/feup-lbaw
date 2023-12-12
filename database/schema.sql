@@ -266,6 +266,7 @@ CREATE FUNCTION user_fullsearch_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
+            setweight(to_tsvector('english', NEW.biography), 'C') ||
             setweight(to_tsvector('english', NEW.username), 'B') ||
             setweight(to_tsvector('english', NEW.name), 'A')
         );
@@ -273,6 +274,7 @@ BEGIN
     IF TG_OP = 'UPDATE' THEN
         IF NEW.username <> OLD.username THEN
             NEW.tsvectors = (
+                setweight(to_tsvector('english', NEW.biography), 'C') ||
                 setweight(to_tsvector('english', NEW.username), 'B') ||
                 setweight(to_tsvector('english', NEW.name), 'A')
             );
@@ -296,6 +298,7 @@ CREATE FUNCTION auction_search_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         NEW.tsvectors = (
+            setweight(to_tsvector('english', NEW.description), 'C') ||
             setweight(to_tsvector('english', NEW.name), 'B') ||
             setweight(to_tsvector('english', NEW.category::text), 'A')
         );
@@ -303,6 +306,7 @@ BEGIN
     IF TG_OP = 'UPDATE' THEN
         IF NEW.name <> OLD.name OR NEW.category <> OLD.category THEN
             NEW.tsvectors = (
+                setweight(to_tsvector('english', NEW.description), 'C') ||
                 setweight(to_tsvector('english', NEW.name), 'B') ||
                 setweight(to_tsvector('english', NEW.category::text), 'A')
             );

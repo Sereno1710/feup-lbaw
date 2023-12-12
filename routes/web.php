@@ -24,8 +24,11 @@ use App\Http\Controllers\AdminController;
 */
 
 // Home
-Route::get('/', [HomeController::class, 'index']);
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/home', 'index')->name('home');
+    Route::get('/search', 'search')->name('search');
+});
 
 // Users
 Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
@@ -39,8 +42,10 @@ Route::post('/profile/delete', [UserController::class, 'delete'])->name('profile
 
 // Balance
 Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
-Route::post('/balance/deposit', [BalanceController::class, 'deposit'])->name('balance.deposit');
 Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
+Route::get('/checkout', [StripeController::class, 'checkout'])->name('checkout');
+Route::post('/balance/deposit', [StripeController::class, 'deposit'])->name('deposit.stripe');
+Route::get('/success', [StripeController::class, 'success'])->name('success');
 
 // Footer
 Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('aboutUs');

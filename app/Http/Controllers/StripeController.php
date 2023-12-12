@@ -11,7 +11,7 @@ class StripeController extends Controller
 {
     public function checkout()
     {
-        return view('balance');
+        return view('pages.balance');
     }
 
     public function deposit(Request $request)
@@ -38,24 +38,24 @@ class StripeController extends Controller
                 ],
             ],
             'mode'        => 'payment',
-            'success_url' => route('success'),
+            'success_url' => route('success', ['depositAmount' => $depositAmount]),
             'cancel_url'  => route('checkout'),
         ]);
-
-        $user = Auth::user();
-
-        $newMoneys = moneys::create([
-            'user_id' => $user->id,
-            'amount' => $request->input('deposit_amount'),
-            'type' => true, // Deposit
-        ]);
-        moneys::where(['id' => $newMoneys->id])->update(['state' => 'accepted']);
 
         return redirect()->away($session->url);
     }
 
-    public function success()
+    public function success($depositAmount)
     {
+        $user = Auth::user();
+
+        $newMoneys = moneys::create([
+            'user_id' => $user->id,
+            'amount' => $depositAmount,
+            'type' => true, // Deposit
+        ]);
+        moneys::where(['id' => $newMoneys->id])->update(['state' => 'accepted']);
+        
         return redirect('/home');
     }
 }

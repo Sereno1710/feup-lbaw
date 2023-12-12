@@ -47,7 +47,7 @@ Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
 Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
 Route::get('/checkout', [StripeController::class, 'checkout'])->name('checkout');
 Route::post('/balance/deposit', [StripeController::class, 'deposit'])->name('deposit.stripe');
-Route::get('/success', [StripeController::class, 'success'])->name('success');
+Route::get('/success/{depositAmount}', [StripeController::class, 'success'])->name('success');
 
 // Footer
 Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('aboutUs');

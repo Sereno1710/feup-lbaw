@@ -146,6 +146,11 @@ class AuctionController extends Controller
 
             DB::commit();
 
+            $bid = $request->input('amount');
+            $bidder = Auth::user();
+            $auction = Auction::find($auctionId);
+            event(new AuctionBid($bid, $bidder, $auction));
+
             return redirect()->back()->with('success', 'Bid submitted successfully.');
         } catch (\Exception $e) {
             $errorMessages = [

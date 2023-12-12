@@ -7,6 +7,19 @@
     <script src="{{ asset('js/admin.js') }}" defer></script>
     <script src="{{ asset('js/auction_time.js') }}" defer></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <script src="https://js.pusher.com/7.0/pusher.min.js" defer></script>
+    <script>
+        const pusher = new Pusher(pusherAppKey, {
+            cluster: pusherCluster,
+            encrypted: true
+        });
+
+        const channel = pusher.subscribe('tutorial02');
+        channel.bind('notification-postlike', function(data)) {
+            console.log(`New notification: ${data.message}`);
+        }
+    </script>
 </head>
 
 <body>

@@ -15,7 +15,7 @@
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
             <div class="flex justify-between items-center">
                 <form class="p-1 bg-stone-200 rounded-lg" action="/search" method="GET">
-                    <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search auctions and users">
+                    <input class="bg-stone-200 outline-none" type="text" name="input" placeholder="Search auctions and users">
                     <button type="submit">🔎</button>
                 </form>
                 @if (Auth::check() && Auth::user()->isAdmin())

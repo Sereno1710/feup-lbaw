@@ -22,15 +22,34 @@ class HomeController extends Controller
 
     public function search(Request $request)
     {
-        $keyword = $request->input('keyword');
+        $input = $request->input('input');
 
-        $auctionsQuery = Auction::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
-            ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$keyword])
-            ->get();
+        if (empty($input)) {
+            $auctionsQuery = Auction::whereRaw("tsvectors @@ to_tsquery('english', '*')")
+                ->orderByRaw("ts_rank(tsvectors, to_tsquery('*')) DESC")
+                ->get();
 
-        $usersQuery = User::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
-            ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$keyword])
-            ->get();
+            $usersQuery = User::whereRaw("tsvectors @@ to_tsquery('english', '*')")
+                ->orderByRaw("ts_rank(tsvectors, to_tsquery('*')) DESC")
+                ->get();
+        } else {
+            // split on 1+ whitespace & ignore empty (eg. trailing space)
+            $searchValues = preg_split('/\s+/', $input, -1, PREG_SPLIT_NO_EMPTY);
+
+            $auctionsQuery = Auction::where(function ($q) use ($searchValues) {
+                foreach ($searchValues as $value) {
+                    $q->orWhereRaw("tsvectors @@ to_tsquery('english', ?)", [$value . ':*'])
+                        ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$value . ':*']);
+                }
+            })->get();
+
+            $usersQuery = User::where(function ($q) use ($searchValues) {
+                foreach ($searchValues as $value) {
+                    $q->orWhereRaw("tsvectors @@ to_tsquery('english', ?)", [$value . ':*'])
+                        ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$value . ':*']);
+                }
+            })->get();
+        }
 
         // Add a type property to distinguish between users and auctions
         $auctions = $auctionsQuery->map(function ($auction) {
@@ -57,7 +76,7 @@ class HomeController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('pages.search', ['results' => $results, 'keyword' => $keyword]);
+        return view('pages.search', ['results' => $results, 'input' => $input]);
     }
 
     public function aboutUs()

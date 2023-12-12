@@ -18,5 +18,5 @@
     </div>
     @endif
 </div>
-{{ $results->appends(['keyword' => $keyword])->links() }}
+{{ $results->appends(['input' => $input])->links() }}
 @endsection

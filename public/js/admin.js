@@ -1,4 +1,4 @@
-function addEventListeners() {
+function addUserEventListeners() {
   let usersTable = document.getElementById("users_table");
   if (usersTable) {
     usersTable.addEventListener("click", function (event) {
@@ -18,6 +18,23 @@ function addEventListeners() {
     });
   }
 }
+
+function addTransferEventListeners() {
+  let transfersTable = document.getElementById("transfers_table");
+  if (transfersTable) {
+    transfersTable.addEventListener("click", function (event) {
+      let transferId = event.target.getAttribute("transfer_id");
+      let view = event.target.getAttribute("view");
+      if (event.target.classList.contains("approve-btn")) {
+        approveTransfer(transferId, view);
+      } else if (event.target.classList.contains("reject-btn")) {
+        rejectTransfer(transferId, view);
+      } 
+    });
+  }
+}
+
+
 
 function encodeForAjax(data) {
   if (data == null) return null;
@@ -180,6 +197,16 @@ function unbanUserjs(userId) {
   }
 }
 
+function removeTransfer(transferId, view) { 
+  let transferRow = document.getElementById("transfer_row_" + transferId);
+  if(transferRow) {
+    transferRow.remove();
+  }
+  else {
+    console.error("Transfer row not found:", transferId);
+  }
+}
+
 function demoteUser(userId) {
   let formData = { user_id: userId };
 
@@ -244,4 +271,16 @@ function unbanUser(userId) {
   );
 }
 
-addEventListeners();
+function approveTransfer(transferId, view) {
+  let formData = { transfer_id: transferId , view: view};
+
+  sendAjaxRequest(
+    "POST",
+    "/admin/transfers/approve",
+    formData,
+    removeTransfer(transferId, view)
+  );
+}
+
+addUserEventListeners();
+addTransferEventListeners();

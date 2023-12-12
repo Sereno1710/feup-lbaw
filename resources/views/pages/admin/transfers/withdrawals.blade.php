@@ -39,25 +39,13 @@
         </thead>
         <tbody>
             @foreach ($withdrawals as $withdrawal)
-            <tr>
+            <tr id="transfer_row_{{$withdrawal->id}}">
                 <td class="py-2 px-4 border border-slate-300">{{ $withdrawal->id }}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $withdrawal->username }}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $withdrawal->amount }}</td>
                 <td class="py-2 px-4 border border-slate-300 flex flex-row">
-                    <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.approve') }}" enctype="multipart/form-data">
-                        @csrf
-                        @method('POST')
-                        <input type="hidden" name="id" value="{{ $withdrawal->id }}">
-                        <input type="hidden" name="view" value="withdrawals">
-                        <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Approve</button> 
-                    </form>
-                    <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.reject') }}" enctype="multipart/form-data">
-                        @csrf
-                        @method('POST')
-                        <input type="hidden" name="id" value="{{ $withdrawal->id}}">
-                        <input type="hidden" name="view" value="withdrawals">
-                        <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Reject</button> 
-                    </form>
+                    <button transfer_id="{{ $withdrawal->id }}" view="withdrawals" class="mx-2 p-2 text-white bg-stone-800 rounded approve-btn" type="button">Approve</button>
+                    <button transfer_id="{{ $withdrawal->id }}" view="withdrawals" class="mx-2 p-2 text-white bg-stone-800 rounded reject-btn" type="button">Reject</button>
                 </td>
             </tr>
             @endforeach

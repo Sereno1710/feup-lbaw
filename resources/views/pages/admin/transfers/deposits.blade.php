@@ -27,12 +27,12 @@
             <div class="overflow-x-auto">
                 <table class="min-w-full text-left text-sm font-light">
                 <thead class="border-b font-medium dark:border-neutral-500">
-                    <tr>
+                    <tr id="transfer_row_{{$deposit->id}}">
                         <th class="py-2 px-4 border border-slate-300">ID</th> 
-                <th class="py-2 px-4 border border-slate-300">Username</th>
-                <th class="py-2 px-4 border border-slate-300">Amount</th>
-                <th class="py-2 px-4 border border-slate-300">Actions</th>
-            </tr>
+                        <th class="py-2 px-4 border border-slate-300">Username</th>
+                        <th class="py-2 px-4 border border-slate-300">Amount</th>
+                        <th class="py-2 px-4 border border-slate-300">Actions</th>
+                    </tr>
         </thead>
         <tbody>
             @foreach ($deposits as $deposit)
@@ -41,20 +41,8 @@
                 <td class="py-2 px-4 border border-slate-300">{{ $deposit->username}}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $deposit->amount }}</td>
                 <td class="py-2 px-4 border border-slate-300 flex flex-row">
-                    <form class="m-auto text-stone-800" method="POST" action="{{ route('admin.approve') }}" enctype="multipart/form-data">
-                        @csrf
-                        @method('POST')
-                        <input type="hidden" name="id" value="{{ $deposit->id }}">
-                        <input type="hidden" name="view" value="deposits">
-                        <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Approve</button> 
-                    </form>
-                    <form class="m-auto text-stone-800" method="POST" action="{{ route('admin.reject') }}" enctype="multipart/form-data">
-                        @csrf
-                        @method('POST')
-                        <input type="hidden" name="id" value="{{ $deposit->id }}">
-                        <input type="hidden" name="view" value="deposits">
-                        <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Reject</button> 
-                    </form>
+                    <button transfer_id="{{ $deposit->id }}" view="deposits" class="mx-2 p-2 text-white bg-stone-800 rounded approve-btn" type="button">Approve</button>
+                    <button transfer_id="{{ $deposit->id }}" view="deposits" class="mx-2 p-2 text-white bg-stone-800 rounded reject-btn" type="button">Reject</button>
                 </td>
             </tr>
             @endforeach

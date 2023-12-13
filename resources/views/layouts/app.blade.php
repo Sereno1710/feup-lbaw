@@ -7,19 +7,6 @@
     <script src="{{ asset('js/admin.js') }}" defer></script>
     <script src="{{ asset('js/auction_time.js') }}" defer></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <script src="https://js.pusher.com/7.0/pusher.min.js" defer></script>
-    <script>
-        const pusher = new Pusher(pusherAppKey, {
-            cluster: pusherCluster,
-            encrypted: true
-        });
-
-        const channel = pusher.subscribe('tutorial02');
-        channel.bind('notification-postlike', function(data)) {
-            console.log(`New notification: ${data.message}`);
-        }
-    </script>
 </head>
 
 <body>
@@ -40,7 +27,30 @@
                     <div class="user-info">
                         <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
                         <a href="{{ url('/balance') }}" class="ml-4">{{ Auth::user()->balance}}</a>
-                        <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
+                        <button class="notification-icon" id="notificationBtn" onclick="toggleNotifications()">🔔</button>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            @if (Auth::check())
+                                @php
+                                    $notifications = \App\Models\Notification::where('receiver_id', Auth::user()->id)
+                                        ->orderBy('date', 'desc')
+                                        ->get();
+                                @endphp
+
+                                <div class="notification-content">
+                                    <div class="notification-list">
+                                        <ul>
+                                            @foreach ($notifications as $notification)
+                                                <li>
+                                                    @if ($notification->notification_type == 'auction_bid')
+                                                        Someone just made a higher bid in "this auction"
+                                                    @endif
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                     <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
                 @else
@@ -74,4 +84,19 @@
     </footer>
 </body>
 
+<script>
+    function toggleNotifications() {
+        var dropdown = document.getElementById("notificationDropdown");
+        dropdown.classList.toggle("show");
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('#notificationBtn')) {
+            var dropdown = document.getElementById("notificationDropdown");
+            if (dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            }
+        }
+    }
+</script>
 </html>

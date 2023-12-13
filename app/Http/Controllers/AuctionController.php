@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-
+use App\Events\AuctionBid;
 use App\Models\Bid;
 use App\Models\Auction;
 use App\Models\MetaInfo;
@@ -128,7 +128,7 @@ class AuctionController extends Controller
                 })
                 ->update(['balance' => DB::raw('balance + (SELECT amount FROM (SELECT user_id, amount FROM bid WHERE auction_id = :auction_id ORDER BY amount DESC LIMIT 1) AS LastBid)')]);
 
-
+                
             $bid = new Bid([
                 'user_id' => Auth::user()->id,
                 'auction_id' => $auctionId,
@@ -145,11 +145,6 @@ class AuctionController extends Controller
                 ->update(['price' => DB::raw($validatedData['amount'] . '::MONEY')]);
 
             DB::commit();
-
-            $bid = $request->input('amount');
-            $bidder = Auth::user();
-            $auction = Auction::find($auctionId);
-            event(new AuctionBid($bid, $bidder, $auction));
 
             return redirect()->back()->with('success', 'Bid submitted successfully.');
         } catch (\Exception $e) {

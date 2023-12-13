@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 
 class AuctionBid implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, SerializesModels;
 
     public $bid;
     public $bidder;
@@ -24,25 +24,16 @@ class AuctionBid implements ShouldBroadcast
         $this->bid = $bid;
         $this->bidder = $bidder;
         $this->auction = $auction;
-        $this->message = $bidder->name . 'has just bid' . $bid . 'in' .$auction->name;
+        $this->message = $bidder->name . ' has just bid ' . $bid . ' in ' . $auction->name;
     }
 
-    public function broadcastOn(): array
+    public function broadcastOn(): PrivateChannel
     {   
-        $bids = DB::table('Bid')
-            ->select('user_id')
-            ->where('auction_id', $this->auction->id)
-            ->distinct()
-            ->pluck('user_id');
-
-        $channels = [
-            new PrivateChannel('user.' . $this->bidder->id),
-            new PrivateChannel('user.' . $this->auction->owner_id),
-            new Channel('auction.' . $this->auction->id),
-        ];
-        foreach ($bids as $userId) {
-            $channels[] = new PrivateChannel('user.' . $userId);
-        }
-        return $channels;
+        return new PrivateChannel('user.' . $this->bidder->id);
     }
+
+    public function broadcastAs() {
+        return 'userBid';
+    }
+
 }

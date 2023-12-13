@@ -39,10 +39,23 @@
                                 <div class="notification-content">
                                     <div class="notification-list">
                                         <ul>
+                                            @php
+    	                                        $displayedAuctions = [];
+    	                                    @endphp
+
                                             @foreach ($notifications as $notification)
-                                                <li>
-                                                    @if ($notification->notification_type == 'auction_bid')
-                                                        Someone just made a higher bid in "this auction"
+                                                <li class="{{ $notification->viewed ? 'text-gray-500' : 'text-black' }}">
+                                                    @php
+                                                        $bid = \App\Models\Bid::where('id', $notification->bid_id)->first();
+                                                        $auction = $bid ? $bid->auction : null;
+                                                    @endphp
+
+                                                    @if ($auction && !in_array($auction->id, $displayedAuctions))
+                                                        Someone just made a higher bid in <a href="{{ url('/auction/' . $auction->id) }}" class = "underline">{{ $auction->name }}</a>
+                                                        @php
+                                                            $displayedAuctions[] = $auction->id;
+                                                        @endphp
+                                                    @else
                                                     @endif
                                                 </li>
                                             @endforeach

@@ -6,6 +6,7 @@
     @vite('resources/css/app.css')
     <script src="{{ asset('js/admin.js') }}" defer></script>
     <script src="{{ asset('js/auction_time.js') }}" defer></script>
+    <script src="{{ asset('js/dropdown.js') }}" defer></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
@@ -15,7 +16,8 @@
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
             <div class="flex justify-between items-center">
                 <form class="p-1 bg-stone-200 rounded-lg" action="/search" method="GET">
-                    <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search auctions and users">
+                    <input class="bg-stone-200 outline-none" type="text" name="keyword"
+                        placeholder="Search auctions and users">
                     <button type="submit">🔎</button>
                 </form>
                 @if (Auth::check() && Auth::user()->isAdmin())
@@ -23,46 +25,49 @@
                 @endif
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
-                    <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
-                    <div class="user-info">
-                        <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
-                        <a href="{{ url('/balance') }}" class="ml-4">{{ Auth::user()->balance}}</a>
-                        <button class="notification-icon" id="notificationBtn" onclick="toggleNotifications()">🔔</button>
-                        <div class="notification-dropdown" id="notificationDropdown">
-                            @if (Auth::check())
-                                @php
-                                    $notifications = \App\Models\Notification::where('receiver_id', Auth::user()->id)
-                                        ->orderBy('date', 'desc')
-                                        ->get();
-                                @endphp
+                <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
+                <div class="user-info">
+                    <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
+                    <a href="{{ url('/balance') }}" class="ml-4">{{ Auth::user()->balance}}</a>
+                    <button class="notification-icon dropdown-button" id="notificationBtn">🔔</button>
+                    <div class="dropdown-content hidden bg-gray-100 absolute right-0 mt-2 p-4 border rounded max-h-40 overflow-y-auto"
+                        id="notificationDropdown">
+                        @if (Auth::check())
+                        @php
+                        $notifications = \App\Models\Notification::where('receiver_id', Auth::user()->id)
+                        ->orderBy('date', 'desc')
+                        ->get();
+                        @endphp
 
-                                <div class="notification-content">
-                                    <div class="notification-list">
-                                        <ul>
-                                            @foreach ($notifications as $notification)
-                                                <li>
-                                                    @if ($notification->notification_type == 'auction_bid')
-                                                        Someone just made a higher bid in "this auction"
-                                                    @endif
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
-                            @endif
+                        <div class="notification-content">
+                            <div class="notification-list">
+                                <ul>
+                                    @foreach ($notifications as $notification)
+                                    <li class="border-b py-2">
+                                        @if ($notification->notification_type == 'auction_bid')
+                                        Someone just made a higher bid in "this auction"
+                                        @else
+                                        Not a bid notification
+                                        @endif
+                                    </li>
+                                    @endforeach
+                                </ul>
+                            </div>
                         </div>
+                        @endif
                     </div>
-                    <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
+                </div>
+                <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
                 @else
                 <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
                 <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
                 @endif
             </div>
         </nav>
-        <nav class="m-auto" >
-                @yield('nav-bar')
+        <nav class="m-auto">
+            @yield('nav-bar')
         </nav>
-    </header>   
+    </header>
     <main>
         <section id="content" class="m-32">
             @yield('content')
@@ -84,19 +89,4 @@
     </footer>
 </body>
 
-<script>
-    function toggleNotifications() {
-        var dropdown = document.getElementById("notificationDropdown");
-        dropdown.classList.toggle("show");
-    }
-
-    window.onclick = function(event) {
-        if (!event.target.matches('#notificationBtn')) {
-            var dropdown = document.getElementById("notificationDropdown");
-            if (dropdown.classList.contains('show')) {
-                dropdown.classList.remove('show');
-            }
-        }
-    }
-</script>
 </html>

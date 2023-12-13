@@ -31,7 +31,7 @@
         <div class="mx-6 mx-8">
             <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full border-seperate">
+                    <table class="min-w-full border-seperate" id="auctions_table">
                         <thead>
                             <tr>
                                 <th class="py-2 px-4 border border-slate-300">ID</th> 
@@ -45,7 +45,7 @@
                         </thead>
                         <tbody>
                         @foreach ($pending as $auction)
-                        <tr>
+                        <tr id="auction_row_{{$auction->id}}">
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->id }}</td>
                             <td class="py-2 px-4 border border-slate-300">{{$auction->username }}</td>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->name }}</td>
@@ -53,24 +53,17 @@
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->price }}</td>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->state }}</td>
                             <td class="py-2 px-4 border border-slate-300 flex flex-row">
-                                <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.auctions.approveAuction') }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('POST')
-                                    <input type="hidden" name="id" value="{{ $auction->id }}">
-                                    <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Approve</button> 
-                                </form>
-                                <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.auctions.rejectAuction') }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('POST')
-                                    <input type="hidden" name="id" value="{{ $auction->id }}">
-                                    <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Reject</button> 
-                                </form>
+                            <button auction_id="{{ $auction->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded approve-btn" type="button">Approve</button>
+                            <button auction_id="{{ $auction->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded reject-btn" type="button">Reject</button>
                             </td>
                         </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>  
+                <div>
+                    {{ $pending->links() }}
+                </div>
             </div>
         </div>
     </div>

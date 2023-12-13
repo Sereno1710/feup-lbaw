@@ -47,7 +47,7 @@
                         <tr>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->id }}</td>
                             <td class="py-2 px-4 border border-slate-300">{{$auction->username }}</td>
-                            <td class="py-2 px-4 border border-slate-300">{{ $auction->name }}</td>
+                            <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/auction/' . $auction->id) }}">{{ $auction->name }}</a></td>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->initial_price }}</td>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->price }}</td>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->state }}</td>
@@ -56,6 +56,9 @@
                         </tbody>
                     </table>
                 </div>  
+                <div>
+                    {{ $others->links() }}
+                </div>
             </div>
         </div>
     </div>

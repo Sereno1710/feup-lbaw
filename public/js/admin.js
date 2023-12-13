@@ -16,6 +16,7 @@ function addUserEventListeners() {
     });
   }
 }
+
 function addPopupEventListeners() {
   let popup = document.getElementById("pop");
   if (popup) {
@@ -28,8 +29,6 @@ function addPopupEventListeners() {
   }
 }
 
-
-
 function addTransferEventListeners() {
   let transfersTable = document.getElementById("transfers_table");
   if (transfersTable) {
@@ -40,12 +39,28 @@ function addTransferEventListeners() {
         approveTransfer(transferId, view);
       } else if (event.target.classList.contains("reject-btn")) {
         rejectTransfer(transferId, view);
-      } 
+      }  
     });
   }
 }
 
-
+function addAuctionEventListeners() {
+  let auctionsTable = document.getElementById("auctions_table");
+  if (auctionsTable) {
+    auctionsTable.addEventListener("click", function (event) {
+      let auctionId = event.target.getAttribute("auction_id");
+      if (event.target.classList.contains("resume-btn")) {
+        resumeAuction(auctionId);
+      } else if (event.target.classList.contains("pause-btn")) { 
+        pauseAuction(auctionId);
+      } else if (event.target.classList.contains("approve-btn")) { 
+        approveAuction(auctionId);
+      } else if (event.target.classList.contains("reject-btn")) { 
+        rejectAuction(auctionId);
+      }
+    });
+  }
+}
 
 function encodeForAjax(data) {
   if (data == null) return null;
@@ -209,7 +224,7 @@ function unbanUserjs(userId) {
   }
 }
 
-function removeTransfer(transferId, view) { 
+function removeTransfer(transferId) { 
   let transferRow = document.getElementById("transfer_row_" + transferId);
   if(transferRow) {
     transferRow.remove();
@@ -217,17 +232,6 @@ function removeTransfer(transferId, view) {
   else {
     console.error("Transfer row not found:", transferId);
   }
-}
-
-function demoteUser(userId) {
-  let formData = { user_id: userId };
-
-  sendAjaxRequest(
-    "POST",
-    "/admin/users/demote",
-    formData,
-    SysToUser(userId)
-  );
 }
 
 function removeUser(userId) {
@@ -240,20 +244,107 @@ function removeUser(userId) {
     console.error("User row not found:", userId);
   }
 }
+
 function confirmDelete() {
   document.getElementById('delete').removeAttribute('user_id');
+  document.getElementById('over').classList.add('hidden');
   document.getElementById('disableUser').classList.add('hidden');
+  
 }
 
 function showDeletePopup(userId) {
   userIdToDelete = userId;  
+  document.getElementById('over').classList.remove('hidden');
   document.getElementById('disableUser').classList.remove('hidden');
   document.getElementById('delete').setAttribute('user_id', userIdToDelete);
 }
 
 function cancelDelete() {
-
+  document.getElementById('over').classList.add('hidden');
   document.getElementById('disableUser').classList.add('hidden');
+}
+
+function pauseAuctionJs(auctionId) {
+  let auctionRow = document.getElementById("auction_row_" + auctionId);
+  if(auctionRow) { 
+    let index = Array.from(auctionRow.parentNode.children).indexOf(auctionRow);
+    let pauseButton = auctionRow.querySelector(".pause-btn");
+    pauseButton.remove();
+    let auctionsTable = document.getElementById("auctions_table");
+    auctionsTable.querySelector("tbody").insertBefore(auctionRow, auctionsTable.querySelector("tbody").children[index]);
+    let resumeButton = document.createElement("button");
+    resumeButton.className = "mx-2 p-2 text-white bg-stone-800 rounded resume-btn";
+    resumeButton.type = "button";
+    resumeButton.innerText = "Resume";
+    resumeButton.setAttribute('auction_id', auctionId);
+    let actionsCell = auctionRow.querySelector(".flex.flex-row");
+    actionsCell.appendChild(resumeButton);
+
+    let state = auctionRow.querySelector("#state");
+    if(state) {
+      state.innerText = "paused";
+    } else {
+      console.error("Auction state not found:", auctionId);
+    }
+  } else {
+    console.error("Auction row not found:", auctionId);
+  }
+}
+
+function resAuction(auctionId) {
+  let auctionRow = document.getElementById("auction_row_" + auctionId);
+  if(auctionRow) {
+    let index = Array.from(auctionRow.parentNode.children).indexOf(auctionRow);
+    let resumeButton = auctionRow.querySelector(".resume-btn");
+    resumeButton.remove();
+    let auctionsTable = document.getElementById("auctions_table");
+    auctionsTable.querySelector("tbody").insertBefore(auctionRow, auctionsTable.querySelector("tbody").children[index]);
+    let pauseButton = document.createElement("button");
+    pauseButton.className = "mx-2 p-2 text-white bg-stone-800 rounded pause-btn";
+    pauseButton.type = "button";
+    pauseButton.innerText = "Pause";
+    pauseButton.setAttribute('auction_id', auctionId);
+    let actionsCell = auctionRow.querySelector(".flex.flex-row");
+    actionsCell.appendChild(pauseButton);
+
+    let state = auctionRow.querySelector("#state");
+    if(state) {
+      state.innerText = "active";
+    } else {
+      console.error("Auction state not found:", auctionId);
+    }
+  } else {
+    console.error("Auction row not found:", auctionId);
+  }
+}
+
+function appAuction(auctionId) {
+  let auctionRow = document.getElementById("auction_row_" + auctionId);
+  if(auctionRow) {
+    auctionRow.remove();
+  } else {
+    console.error("Auction row not found:", auctionId);
+  }
+}
+
+function rejAuction(auctionId) { 
+  let auctionRow = document.getElementById("auction_row_" + auctionId);
+  if(auctionRow) {
+    auctionRow.remove();
+  } else {
+    console.error("Auction row not found:", auctionId);
+  }
+}
+
+function demoteUser(userId) {
+  let formData = { user_id: userId };
+
+  sendAjaxRequest(
+    "POST",
+    "/admin/users/demote",
+    formData,
+    SysToUser(userId)
+  );
 }
 
 function disableUser(userId) {
@@ -307,10 +398,67 @@ function approveTransfer(transferId, view) {
     "POST",
     "/admin/transfers/approve",
     formData,
-    removeTransfer(transferId, view)
+    removeTransfer(transferId)
   );
 }
+
+function rejectTransfer(transferId, view) {
+  let formData = { transfer_id: transferId , view: view};
+
+  sendAjaxRequest(
+    "POST",
+    "/admin/transfers/reject",
+    formData,
+    removeTransfer(transferId)
+  );
+}
+
+function resumeAuction(auctionId) {
+  let formData = { auction_id: auctionId };
+
+  sendAjaxRequest(
+    "POST",
+    "/admin/auctions/resume",
+    formData,
+    resAuction(auctionId)
+  );
+}
+
+function pauseAuction(auctionId) {
+  let formData = { auction_id: auctionId };
+
+  sendAjaxRequest(
+    "POST",
+    "/admin/auctions/pause",
+    formData,
+    pauseAuctionJs(auctionId)
+  );
+}
+
+function approveAuction(auctionId) {
+  let formData = { auction_id: auctionId };
+
+  sendAjaxRequest(
+    "POST",
+    "/admin/auctions/approve",
+    formData,
+    appAuction(auctionId)
+  );
+}
+
+function rejectAuction(auctionId) {
+  let formData = { auction_id: auctionId };
+
+  sendAjaxRequest(
+    "POST",
+    "/admin/auctions/reject",
+    formData,
+    rejAuction(auctionId)
+  );
+}
+
 
 addUserEventListeners();
 addPopupEventListeners();
 addTransferEventListeners();
+addAuctionEventListeners();

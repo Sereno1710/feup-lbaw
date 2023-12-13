@@ -82,8 +82,7 @@ CREATE TYPE auction_state AS ENUM (
     'finished',
     'paused',
     'approved',
-    'denied',
-    'disabled'
+    'denied'
 );
 
 

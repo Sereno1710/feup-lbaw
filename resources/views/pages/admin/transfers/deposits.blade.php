@@ -25,9 +25,9 @@
     <div class="mx-6 mx-8">
         <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
             <div class="overflow-x-auto">
-                <table class="min-w-full text-left text-sm font-light">
+                <table id="transfers_table" class="min-w-full text-left text-sm font-light">
                 <thead class="border-b font-medium dark:border-neutral-500">
-                    <tr id="transfer_row_{{$deposit->id}}">
+                    <tr>
                         <th class="py-2 px-4 border border-slate-300">ID</th> 
                         <th class="py-2 px-4 border border-slate-300">Username</th>
                         <th class="py-2 px-4 border border-slate-300">Amount</th>
@@ -36,7 +36,7 @@
         </thead>
         <tbody>
             @foreach ($deposits as $deposit)
-            <tr>
+            <tr id="transfer_row_{{$deposit->id}}">
                 <td class="py-2 px-4 border border-slate-300">{{ $deposit->id }}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $deposit->username}}</td>
                 <td class="py-2 px-4 border border-slate-300">{{ $deposit->amount }}</td>

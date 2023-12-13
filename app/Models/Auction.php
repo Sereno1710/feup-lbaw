@@ -35,7 +35,7 @@ class Auction extends Model
 
     public static function others() 
     {
-        return Auction::where('state', 'finished')->orWhere('state', 'approved')->orWhere('state', 'denied')->orWhere('state', 'disabled')
+        return Auction::where('auction.state', 'finished')->orWhere('auction.state', 'approved')->orWhere('auction.state', 'denied')
             ->join('users', 'users.id', '=', 'auction.owner_id')
             ->select('auction.id', 'users.username','auction.name', 'auction.initial_price', 'auction.price','auction.state')
             ->paginate(10);
@@ -44,7 +44,7 @@ class Auction extends Model
 
     public static function active() 
     {
-        return Auction::where('state', 'active')->orWhere('state', 'paused')
+        return Auction::where('auction.state', 'active')->orWhere('auction.state', 'paused')
             ->join('users', 'users.id', '=', 'auction.owner_id')
             ->select('auction.id', 'users.username','auction.name', 'auction.initial_price', 'auction.price','auction.state')
             ->paginate(10);
@@ -52,7 +52,7 @@ class Auction extends Model
 
     public static function pending()
     {
-        return Auction::where('state', 'pending')
+        return Auction::where('auction.state', 'pending')
             ->join('users', 'users.id', '=', 'auction.owner_id')
             ->select('auction.id', 'users.username','auction.name', 'auction.initial_price', 'auction.price','auction.state')
             ->paginate(10);

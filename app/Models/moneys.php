@@ -28,7 +28,7 @@ class moneys extends Model
 
     public static function deposits() {
         return moneys::where('type', true)
-            ->where('state', 'pending')->join('users', 'moneys.user_id', '=', 'users.id')
+            ->where('moneys.state', 'pending')->join('users', 'moneys.user_id', '=', 'users.id')
             ->select('moneys.id', 'users.username', 'moneys.amount')
             ->where('moneys.state', 'pending')
             ->orderBy('moneys.id', 'asc')
@@ -37,7 +37,7 @@ class moneys extends Model
 
     public static function withdrawals() {
         return moneys::where('type', false)
-            ->where('state', 'pending')->join('users', 'moneys.user_id', '=', 'users.id')
+            ->where('moneys.state', 'pending')->join('users', 'moneys.user_id', '=', 'users.id')
             ->select('moneys.id', 'users.username', 'moneys.amount')
             ->where('moneys.state', 'pending')
             ->orderBy('moneys.id', 'asc')
@@ -45,7 +45,7 @@ class moneys extends Model
     }
 
     public static function notPending() {
-        return moneys::where('state','!=', 'pending')
+        return moneys::where('moneys.state','!=', 'pending')
             ->join('users', 'moneys.user_id', '=', 'users.id')
             ->select('moneys.id', 'users.username', 'moneys.amount', 'moneys.state')
             ->orderBy('moneys.id', 'asc')

@@ -1,3 +1,6 @@
+<?php
+use Carbon\Carbon;
+?>
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 
@@ -42,10 +45,27 @@
                         <div class="notification-content">
                             <div class="notification-list">
                                 <ul>
+                                    @php
+                                    $displayedAuctions = [];
+                                    @endphp
+
                                     @foreach ($notifications as $notification)
-                                    <li class="border-b py-2">
-                                        @if ($notification->notification_type == 'auction_bid')
-                                        Someone just made a higher bid in "this auction"
+                                    <li
+                                        class="border-b py-2 {{ $notification->viewed ? 'text-gray-500' : 'text-black' }}">
+                                        @php
+                                        $bid = \App\Models\Bid::where('id', $notification->bid_id)->first();
+                                        $auction = $bid ? $bid->auction : null;
+                                        $formattedDate = \Carbon\Carbon::parse($notification->date)->format('F j, Y g:i
+                                        A');
+                                        @endphp
+
+                                        @if ($auction && !in_array($auction->id, $displayedAuctions))
+                                        Someone just made a higher bid in <a
+                                            href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{
+                                            $auction->name }}</a> <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
+                                        @php
+                                        $displayedAuctions[] = $auction->id;
+                                        @endphp
                                         @else
                                         Not a bid notification
                                         @endif

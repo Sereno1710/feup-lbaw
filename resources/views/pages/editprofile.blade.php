@@ -21,6 +21,11 @@
     <label class="mt-2 mb-1" for="username">Username:</label>
     <input class="p-2 mb-2 border border-stone-400 rounded" type="text" id="username" name="username"
         value="{{ $user->username }}" required>
+    @if ($errors->has('username'))
+        <span class="error">
+            {{ $errors->first('username') }}
+        </span>
+    @endif
 
     <label class="mt-2 mb-1" for="name">Name:</label>
     <input class="p-2 mb-2 border border-stone-400 rounded" type="text" id="name" name="name" value="{{ $user->name }}"
@@ -29,9 +34,30 @@
     <label class="mt-2 mb-1" for="email">Email:</label>
     <input class="p-2 mb-2 border border-stone-400 rounded" type="email" id="email" name="email"
         value="{{ $user->email }}" required>
+    @if ($errors->has('email'))
+        <span class="error">
+            {{ $errors->first('email') }}
+        </span>
+    @endif
 
-    <label class="mt-2 mb-1" for="password">New Password:</label>
-    <input class="p-2 mb-2 border border-stone-400 rounded" type="password" id="password" name="password">
+    <label class="mt-2 mb-1" for="current_password">Current Password:</label>
+    <input class="p-2 mb-2 border border-stone-400 rounded" type="password" id="current_password" name="current_password">
+    @if ($errors->has('current_password'))
+        <span class="error">
+            {{ $errors->first('current_password') }}
+        </span>
+    @endif
+
+    <label class="mt-2 mb-1" for="new_password">New Password:</label>
+    <input class="p-2 mb-2 border border-stone-400 rounded" type="password" id="new_password" name="new_password">
+    @if ($errors->has('new_password'))
+        <span class="error">
+            {{ $errors->first('new_password') }}
+        </span>
+    @endif
+
+    <label class="mt-2 mb-1" for="new_password_confirmation">Confirm New Password:</label>
+    <input class="p-2 mb-2 border border-stone-400 rounded" type="password" id="new_password_confirmation" name="new_password_confirmation">
 
     <label class="mt-2 mb-1" for="biography">Biography:</label>
     <input class="p-2 mb-2 border border-stone-400 rounded" type="text" id="biography" name="biography"
@@ -58,12 +84,12 @@
     <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Save Changes</button>
 
     <p class="mt-4 text-center">
-        If you want to delete your account click <span class="text-red-500 cursor-pointer underline" onclick="showDeletePopup()">here</span>.
+        If you want to delete your account click <span class="text-black-500 cursor-pointer underline" onclick="showDeletePopup()">here</span>.
     </p>
 
     <div id="deleteConfirmation" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black bg-opacity-50 flex items-center justify-center">
         <div class="bg-white p-8 rounded-md text-center">
-            <p class="text-red-500 mb-4">Are you sure you want to delete your account? This action cannot be reversed.</p>
+            <p class="text-black-500 mb-4">Are you sure you want to delete your account? This action cannot be reversed.</p>
             <button class="mt-2 p-2 text-white bg-red-500 rounded" type="button" onclick="confirmDelete()">Yes, I want to delete my account</button>
             <button class="mt-2 p-2 text-white bg-blue-500 rounded" type="button" onclick="cancelDelete()">Cancel</button>
         </div>

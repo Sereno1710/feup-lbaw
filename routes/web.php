@@ -13,6 +13,8 @@ use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\MailController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -46,7 +48,7 @@ Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
 Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
 Route::get('/checkout', [StripeController::class, 'checkout'])->name('checkout');
 Route::post('/balance/deposit', [StripeController::class, 'deposit'])->name('deposit.stripe');
-Route::get('/success', [StripeController::class, 'success'])->name('success');
+Route::get('/success/{depositAmount}', [StripeController::class, 'success'])->name('success');
 
 // Footer
 Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('aboutUs');
@@ -106,9 +108,13 @@ Route::controller(LoginController::class)->group(function () {
     Route::get('/login', 'showLoginForm')->name('login');
     Route::post('/login', 'authenticate');
     Route::get('/logout', 'logout')->name('logout');
+    Route::get('/recoverpassword', 'indexRecoverPassword')->name('password.recover');
 });
 
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
 });
+
+// Email
+Route::post('/recoverpassword/send', [MailController::class, 'send'])->name('password.sendmail');

@@ -57,5 +57,9 @@ class LoginController extends Controller
         return redirect()->route('home')
             ->withSuccess('You have logged out successfully!');
     } 
+
+    public function indexRecoverPassword(){
+        return view('auth.recoverpassword');
+    }
 }
 

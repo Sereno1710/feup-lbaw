@@ -50,7 +50,6 @@ class RegisterController extends Controller
                 'zip_code' => null,
                 'country' => null,
                 'rating' => null,
-                'image' => null,
             ]);
         } catch (\Exception $e) {
             return back()->withError($e->getMessage());

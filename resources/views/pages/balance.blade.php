@@ -3,7 +3,7 @@
 @section('content')
 <div class="balance-container mx-auto mt-8 p-8 bg-white rounded-lg shadow-md max-w-md">
     <h2 class="text-2xl font-bold mb-4">Your Balance</h2>
-    <p class="mb-4">Current Balance: {{ $user->balance }}</p>
+    <p class="mb-4">Current Balance: {{ Auth::user()->balance }}</p>
 
     <form method="post" action="{{ route('deposit.stripe') }}" class="mb-8">
         <div class="mb-4">    

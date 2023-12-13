@@ -59,6 +59,8 @@ Route::controller(AuctionController::class)->group(function () {
     Route::get('/auction/submit', 'showAuctionForm');
     Route::get('/auction/search','search')->name('auction.search');
     Route::post('/auction/create', 'createAuction')->name('auction.create');
+    Route::post('/auction/follow', 'followAuction')->name('auction.follow');
+    Route::post('/auction/unfollow', 'unfollowAuction')->name('auction.unfollow');
     Route::get('/auction/{id}', 'showAuction');
     Route::post('/auction/{id}/bid', 'auctionBid');
     Route::post('/auction/{id}/start', 'startAuction');

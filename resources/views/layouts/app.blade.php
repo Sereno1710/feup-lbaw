@@ -5,8 +5,7 @@
     <title>SoundSello</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @vite('resources/js/admin.js')
-    @vite('resources/js/auction_time.js')
+    @vite('resources/js/auction.js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 

@@ -12,9 +12,27 @@
         <div class="w-full px-4 py-1 flex flex-row items-end justify-between border-b-2 border-stone-400">
             <div class="flex flex-row items-end">
                 <h2 class="text-3xl">{{ $auction->name }}</h2>
-                <p class="text-sm mx-5"> STATUS: {{ $auction->state }}
-                <p>
+                <p class="text-sm mx-5"> STATUS: {{ $auction->state }}</p>
             </div>
+            @if (Auth::check())
+                <div class="flex flex-row items-end">
+                    <div title="Follow" class="mx-1 hover:cursor-pointer">
+                        @if (Auth::user()->followedAuctions->contains($auction))
+                            <img id="follow_icon" class="h-[2.5rem]" src="{{ asset('images/icons/full_heart.png') }}"
+                                alt="Full Heart Icon" data-action="unfollow" data-user-id={{ Auth::user()->id }}
+                                data-auction-id="{{ $auction->id }}">
+                        @else
+                            <img id="follow_icon" class="h-[2.5rem]" src="{{ asset('images/icons/empty_heart.png') }}"
+                                alt="Empty Heart Icon" data-action="follow" data-user-id={{ Auth::user()->id }}
+                                data-auction-id="{{ $auction->id }}">
+                        @endif
+                    </div>
+                    <div title="Report" class="mx-1 hover:cursor-pointer">
+                        <img id="report_icon" class="h-[2.5rem]" src="{{ asset('images/icons/warning.png') }}"
+                            alt="Report Icon">
+                    </div>
+                </div>
+            @endif
         </div>
         <div class="mt-4 w-full flex flex-row items-center justify-evenly">
             @php

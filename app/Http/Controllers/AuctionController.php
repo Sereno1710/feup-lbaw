@@ -11,6 +11,7 @@ use App\Models\Bid;
 use App\Models\Auction;
 use App\Models\MetaInfo;
 use App\Models\AuctionMetaInfoValue;
+use App\Models\follows;
 
 class AuctionController extends Controller
 {
@@ -169,6 +170,34 @@ class AuctionController extends Controller
 
             return redirect()->back()->with('error', $e->getMessage());
         }
+    }
+
+    public function followAuction(Request $request)
+    {
+        $userId = $request->user_id;
+        if ($request->user_id != Auth::user()->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        follows::create([
+            'user_id' => $request->user_id,
+            'auction_id' => $request->auction_id,
+        ]);
+
+        return response()->json(['message' => 'Auction followed successfully']);
+    }
+
+    public function unfollowAuction(Request $request)
+    {
+        if ($request->user_id != Auth::user()->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        follows::where('user_id', $request->user_id)
+            ->where('auction_id', $request->auction_id)
+            ->delete();
+
+        return response()->json(['message' => 'Auction unfollowed successfully']);
     }
 
     public function search(Request $request)

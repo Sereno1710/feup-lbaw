@@ -1,3 +1,6 @@
+<?php
+use Carbon\Carbon;
+?>
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 
@@ -6,6 +9,7 @@
     @vite('resources/css/app.css')
     <script src="{{ asset('js/admin.js') }}" defer></script>
     <script src="{{ asset('js/auction_time.js') }}" defer></script>
+    <script src="{{ asset('js/dropdown.js') }}" defer></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
@@ -23,23 +27,66 @@
                 @endif
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
-                    <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
-                    <div class="user-info">
-                        <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
-                        <a href="{{ url('/balance') }}" class="ml-4">{{ Auth::user()->balance}}</a>
-                        <a href="{{ url('/notifications') }}" class="notification-icon">🔔</a>
+                <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
+                <div class="user-info">
+                    <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
+                    <a href="{{ url('/balance') }}" class="ml-4">{{ Auth::user()->balance}}</a>
+                    <button class="notification-icon dropdown-button" id="notificationBtn">🔔</button>
+                    <div class="dropdown-content hidden bg-gray-100 absolute right-0 mt-2 p-4 border rounded max-h-40 overflow-y-auto"
+                        id="notificationDropdown">
+                        @if (Auth::check())
+                        @php
+                        $notifications = \App\Models\Notification::where('receiver_id', Auth::user()->id)
+                        ->orderBy('date', 'desc')
+                        ->get();
+                        @endphp
+
+                        <div class="notification-content">
+                            <div class="notification-list">
+                                <ul>
+                                    @php
+                                    $displayedAuctions = [];
+                                    @endphp
+
+                                    @foreach ($notifications as $notification)
+                                    <li
+                                        class="border-b py-2 {{ $notification->viewed ? 'text-gray-500' : 'text-black' }}">
+                                        @php
+                                        $bid = \App\Models\Bid::where('id', $notification->bid_id)->first();
+                                        $auction = $bid ? $bid->auction : null;
+                                        $formattedDate = \Carbon\Carbon::parse($notification->date)->format('F j, Y g:i
+                                        A');
+                                        @endphp
+
+                                        @if ($auction && !in_array($auction->id, $displayedAuctions))
+                                        Someone just made a higher bid in <a
+                                            href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{
+                                            $auction->name }}</a> <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
+                                        @php
+                                        $displayedAuctions[] = $auction->id;
+                                        @endphp
+                                        @else
+                                        Not a bid notification
+                                        @endif
+                                    </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                        @endif
                     </div>
-                    <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
+                </div>
+                <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
                 @else
                 <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
                 <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
                 @endif
             </div>
         </nav>
-        <nav class="m-auto" >
-                @yield('nav-bar')
+        <nav class="m-auto">
+            @yield('nav-bar')
         </nav>
-    </header>   
+    </header>
     <main>
         <section id="content" class="m-32">
             @yield('content')

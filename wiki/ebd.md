@@ -368,7 +368,7 @@ BEGIN
   IF NEW.state = 'disabled' THEN
     NEW.username := 'anonymous' || OLD.id;
     NEW.name := 'Anonymous';
-    NEW.email := NULL;
+    NEW.email := 'anonymous' || OLD.id || '@soundsello.com';
     NEW.password := 'anonymous';
     NEW.date_of_birth := '1900-01-01';
     NEW.balance := 0.00;
@@ -1278,7 +1278,7 @@ BEGIN
   IF NEW.state = 'disabled' THEN
     NEW.username := 'anonymous' || OLD.id;
     NEW.name := 'Anonymous';
-    NEW.email := NULL;
+    NEW.email := 'anonymous' || OLD.id || '@soundsello.com';
     NEW.password := 'anonymous';
     NEW.date_of_birth := '1900-01-01';
     NEW.balance := 0.00;
@@ -2077,6 +2077,12 @@ Changes made to the first submission:
 1. Removed is_anonymizing from users table
 2. Added user_state to UML,SQL,Relational Schema
 3. Fixed triggers associated with user_state
+
+- José Santos (Editor)
+
+### 13/12/2023
+
+1. Changed anonymize trigger, email not NULL now 
 
 - José Santos (Editor)
 

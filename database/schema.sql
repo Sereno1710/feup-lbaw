@@ -338,7 +338,7 @@ BEGIN
   IF NEW.state = 'disabled' THEN
     NEW.username := 'anonymous' || OLD.id;
     NEW.name := 'Anonymous';
-    NEW.email := NULL;
+    NEW.email := 'anonymous' || OLD.id || '@soundsello.com';
     NEW.password := 'anonymous';
     NEW.date_of_birth := '1900-01-01';
     NEW.balance := 0.00;

@@ -29,7 +29,6 @@ class User extends Authenticatable
         return $this->state == 'banned';
     }
 
-
     public function isSystemManager()
     {
         return count(SystemManager::where('user_id', $this->id)->get()) > 0;
@@ -57,6 +56,7 @@ class User extends Authenticatable
     {
         return User::where('state', '!=', 'disabled')->orderBy('id', 'asc')->paginate(10);
     }
+
     public function profileImagePath()
     {
         $files = glob("images/profile/".$this->id.".jpg", GLOB_BRACE);

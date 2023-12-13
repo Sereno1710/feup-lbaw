@@ -80,7 +80,7 @@ class AdminController extends Controller
     {
         $this->authorize('index', Admin::class);
         User::where(['id' => $request->user_id])->update(['state' => 'disabled']);
-        return redirect('/admin/users')->with('success', 'User promoted successfully!');
+        return redirect('/admin/users')->with('success', 'User disabled successfully!');
     }
 
     public function ban(Request $request) 

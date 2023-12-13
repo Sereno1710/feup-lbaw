@@ -57,7 +57,7 @@
                                             type="button">Demote</button>
                                     @else
                                         @if(!$user->isAdmin() && !$user->isSystemManager() && Auth::user()->isAdmin() && Auth::user()->isSystemManager())
-                                            <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded disable-btn" type="button">Disable</button>
+                                        <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded popup-btn" type="button" onclick="showDeletePopup({{ $user->id }})">Delete</button>
                                         @if(!$user->isBanned())
                                                 <button user_id="{{ $user->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded promote-btn" type="button">Promote</button>
                                             @endif
@@ -79,4 +79,12 @@
                 </div>
             </div>
 
+
+            <div id="disableUser" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black bg-opacity-50 flex items-center justify-center z-1">
+                <div class="bg-white p-8 rounded-md text-center" id="pop">
+                    <p class="text-red-500 mb-4">Are you sure you want to delete your account? This action cannot be reversed.</p>
+                    <button id="delete" class="mt-2 p-2 text-white bg-red-500 rounded disable-btn" type="button">Yes, I want to delete my account</button>
+                    <button class="mt-2 p-2 text-white bg-blue-500 rounded" type="button" onclick="cancelDelete()">Cancel</button>
+                </div>
+            </div>
 @endsection

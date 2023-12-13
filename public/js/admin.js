@@ -6,8 +6,6 @@ function addUserEventListeners() {
 
       if (event.target.classList.contains("promote-btn")) {
         promoteUser(userId);
-      } else if (event.target.classList.contains("disable-btn")) {
-        disableUser(userId);
       } else if (event.target.classList.contains("demote-btn")) {
         demoteUser(userId);
       } else if (event.target.classList.contains("ban-btn")) {
@@ -18,6 +16,19 @@ function addUserEventListeners() {
     });
   }
 }
+function addPopupEventListeners() {
+  let popup = document.getElementById("pop");
+  if (popup) {
+    popup.addEventListener("click", function (event) {
+      let userId = event.target.getAttribute("user_id");
+      if (event.target.classList.contains("disable-btn")) {
+        disableUser(userId);
+      }
+    });
+  }
+}
+
+
 
 function addTransferEventListeners() {
   let transfersTable = document.getElementById("transfers_table");
@@ -64,7 +75,7 @@ function UserToSys(userId) {
   if (userRow) {
     let index = Array.from(userRow.parentNode.children).indexOf(userRow);
 
-    let disableButton = userRow.querySelector(".disable-btn");
+    let disableButton = userRow.querySelector(".popup-btn");
     let promoteButton = userRow.querySelector(".promote-btn");
     let banButton = userRow.querySelector(".ban-btn");
     disableButton.remove();
@@ -108,11 +119,11 @@ function SysToUser(userId) {
     usersTable.querySelector("tbody").insertBefore(userRow, usersTable.querySelector("tbody").children[index]);
 
     let disableButton = document.createElement("button");
-    disableButton.className = "mx-2 p-2 text-white bg-stone-800 rounded disable-btn";
+    disableButton.className = "mx-2 p-2 text-white bg-stone-800 rounded popup-btn";
     disableButton.type = "button";
-    disableButton.innerText = "Disable";
+    disableButton.innerText = "Delete";
     disableButton.setAttribute('user_id', userId);
-
+    disableButton.setAttribute('onclick', 'showDeletePopup('+userId+')');
     let promoteButton = document.createElement("button");
     promoteButton.className = "mx-2 p-2 text-white bg-stone-800 rounded promote-btn";
     promoteButton.type = "button";
@@ -143,6 +154,7 @@ function banUserJs(userId) {
   let userRow = document.getElementById("user_row_" + userId);
 
   if(userRow) {
+
     let index = Array.from(userRow.parentNode.children).indexOf(userRow);
     let promoteButton = userRow.querySelector(".promote-btn");
     let banButton = userRow.querySelector(".ban-btn");
@@ -223,9 +235,25 @@ function removeUser(userId) {
 
   if (userRow) {
     userRow.remove();
+    confirmDelete();
   } else {
     console.error("User row not found:", userId);
   }
+}
+function confirmDelete() {
+  document.getElementById('delete').removeAttribute('user_id');
+  document.getElementById('disableUser').classList.add('hidden');
+}
+
+function showDeletePopup(userId) {
+  userIdToDelete = userId;  
+  document.getElementById('disableUser').classList.remove('hidden');
+  document.getElementById('delete').setAttribute('user_id', userIdToDelete);
+}
+
+function cancelDelete() {
+
+  document.getElementById('disableUser').classList.add('hidden');
 }
 
 function disableUser(userId) {
@@ -237,6 +265,7 @@ function disableUser(userId) {
     formData,
     removeUser(userId)
   );
+  
 }
 
 function promoteUser(userId) {
@@ -283,4 +312,5 @@ function approveTransfer(transferId, view) {
 }
 
 addUserEventListeners();
+addPopupEventListeners();
 addTransferEventListeners();

@@ -10,7 +10,6 @@
 
 <body class="flex h-screen">
     
-    <!-- Sidebar -->
     <div class="side-menu bg-stone-800 w-3/12 p-4">
         <div class="flex items-center justify-center">
             <h1 class="text-white h-20" style="font-size: 20px;">SoundSello</h1>
@@ -19,7 +18,9 @@
             <li class="py-2 px-4 flex items-center"><a href="{{ url('/home') }}">Home Page</a></li>
             <li class="py-2 px-4 flex items-center"><a href="{{url('/admin/users')}}">Users</a></li>
             <li class="py-2 px-4 flex items-center"><a href="{{url('admin/auctions/active')}}">Auctions</a></li>
+            @if (Auth::user()->isAdmin())
             <li class="py-2 px-4 flex items-center"><a href="{{url('admin/transfers/deposits')}}">Transfers</a></li>
+            @endif
             <li class="py-2 px-4 flex items-center"><a>Reports</a></li>
         </ul>
     </div>

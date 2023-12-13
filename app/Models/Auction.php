@@ -46,7 +46,7 @@ class Auction extends Model
     {
         return Auction::where('auction.state', 'active')->orWhere('auction.state', 'paused')
             ->join('users', 'users.id', '=', 'auction.owner_id')
-            ->select('auction.id', 'users.username','auction.name', 'auction.initial_price', 'auction.price','auction.state')
+            ->select('auction.id', 'users.username','auction.owner_id','auction.name', 'auction.initial_price', 'auction.price','auction.state')
             ->paginate(10);
     }
 

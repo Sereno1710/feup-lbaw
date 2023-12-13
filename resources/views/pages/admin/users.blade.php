@@ -3,12 +3,13 @@
 @section('nav-bar')
 
 <div class="max-w-screen px-2 py-3 mx-auto">
-        <div class="flex justify-between items-center">
-            <form class="p-1 bg-stone-200" action="/users/search" method="GET">
-                    <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search users">
-                    <button type="submit">🔎</button>
-            </form>
-        </div>
+<div class="flex items-center">
+            <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
+                <li>
+                    <a href="/admin/users" class="text-black font-bold">Users</a>
+                </li>
+            </ul>
+</div>
 </div>
 @endsection
 @section('content')

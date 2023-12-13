@@ -48,15 +48,12 @@ class AdminController extends Controller
     {
         if(!$this->authorize('index', Admin::class))
             return redirect('/')->with('failure', 'You do not have the permissions for this action!');
-    
-        $deposits = moneys::deposits();
         $withdrawals = moneys::withdrawals();
         $others = moneys::notPending();
     
-        $view = request()->is('admin/transfers/deposits') ? 'deposits' :
-                (request()->is('admin/transfers/withdrawals') ? 'withdrawals' : 'completed');
+        $view = request()->is('admin/transfers/withdrawals') ? 'withdrawals' : 'completed';
 
-        return view("pages.admin.transfers.$view", compact('deposits', 'withdrawals', 'others'));
+        return view("pages.admin.transfers.$view", compact('withdrawals', 'others'));
     }
     
 
@@ -106,16 +103,13 @@ class AdminController extends Controller
     public function reject(Request $request) {
         $this->authorize('index', Admin::class);
         moneys::where(['id' => $request->transfer_id])->update(['state' => 'denied']);
-        $view = $request->view;
-        return redirect('/admin/transfers/'.$view)->with('success', 'Transfer rejected successfully!');
+        return redirect('/admin/transfers/withdrawals')->with('success', 'Transfer approved successfully!');
     }
 
     public function approve(Request $request) {
         $this->authorize('index', Admin::class);
         moneys::where(['id' => $request->transfer_id])->update(['state' => 'accepted']);
-        $view = $request->view;
-        echo "<script> console.log($view); </script>";
-        return redirect('/admin/transfers/'.$view)->with('success', 'Transfer approved successfully!');
+        return redirect('/admin/transfers/withdrawals')->with('success', 'Transfer approved successfully!');
     }
 
     public function approveAuction(Request $request) {
@@ -148,5 +142,25 @@ class AdminController extends Controller
     
         Auction::where(['id' => $request->auction_id])->update(['state' => 'active']);
         return redirect('/admin/auctions/active')->with('success', 'Auction resumed successfully!');
+    }
+
+    public function getReports(Request $request){
+        if(!$this->authorize('index', Admin::class) or !$this->authorize('index', SystemManager::class))
+        return redirect('/')->with('failure', 'You do not have the permissions for this action!');
+
+        $listed= Report::listed();
+        $reviewed=Report::reviewed();
+
+        $view = request()->is('admin/reports/listed') ? 'listed' : 'reviewed';
+        return view("pages.admin.reports.$view",compact('listed', 'reviewed'));
+    }
+
+    public function reviewReport(Request $request) {
+        $this->authorize('index', Admin::class);
+
+
+        Report::where(['user_id' => $request->user_id, 'auction_id' => $request->auction_id])->update(['state' => $request->state]);
+
+        return redirect('/admin/reports/listed')->with('success', 'Report updated successefully');
     }
 }

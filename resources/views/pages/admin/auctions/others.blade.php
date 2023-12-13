@@ -2,12 +2,6 @@
 
 @section('nav-bar')
     <div class="max-w-screen px-2 py-3 mx-auto">
-        <div class="flex justify-between items-center">
-                    <form class="p-1 bg-stone-200 rounded-lg" action="/auction/search" method="GET">
-                        <input class="bg-stone-200 outline-none" type="text" name="keyword" placeholder="Search auctions">
-                        <button type="submit">🔎</button>
-                    </form>
-        </div>
         <div class="flex items-center">
             <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
                 <li>
@@ -46,7 +40,7 @@
                         @foreach ($others as $auction)
                         <tr>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->id }}</td>
-                            <td class="py-2 px-4 border border-slate-300">{{$auction->username }}</td>
+                            <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/user/' . $auction->owner_id) }}">{{$auction->username }}</a></td>
                             <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/auction/' . $auction->id) }}">{{ $auction->name }}</a></td>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->initial_price }}</td>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->price }}</td>

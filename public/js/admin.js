@@ -34,11 +34,10 @@ function addTransferEventListeners() {
   if (transfersTable) {
     transfersTable.addEventListener("click", function (event) {
       let transferId = event.target.getAttribute("transfer_id");
-      let view = event.target.getAttribute("view");
       if (event.target.classList.contains("approve-btn")) {
-        approveTransfer(transferId, view);
+        approveTransfer(transferId);
       } else if (event.target.classList.contains("reject-btn")) {
-        rejectTransfer(transferId, view);
+        rejectTransfer(transferId);
       }  
     });
   }
@@ -57,6 +56,20 @@ function addAuctionEventListeners() {
         approveAuction(auctionId);
       } else if (event.target.classList.contains("reject-btn")) { 
         rejectAuction(auctionId);
+      }
+    });
+  }
+}
+
+function addReportEventListeners() {
+  let reportTable = document.getElementById("report_table");
+  if(reportTable) {
+    reportTable.addEventListener("click",function (event) {
+      let reportId = [event.target.getAttribute("user_id"),event.target.getAttribute("auction_id")];
+      if (event.target.classList.contains("relevant-btn")){
+        relevantReport(reportId);
+      } else if (event.target.classList.contains("irrelevant-btn")){
+        irrelevantReport(reportId);
       }
     });
   }
@@ -336,6 +349,15 @@ function rejAuction(auctionId) {
   }
 }
 
+function removeReport(reportId) {
+  let reportRow = document.getElementById("report_row_" + reportId[0] + "_" + reportId[1]);
+  if(reportRow) {
+    reportRow.remove();
+  } else {
+    console.error("Report row not found:", reportId);
+  }
+}
+
 function demoteUser(userId) {
   let formData = { user_id: userId };
 
@@ -391,8 +413,8 @@ function unbanUser(userId) {
   );
 }
 
-function approveTransfer(transferId, view) {
-  let formData = { transfer_id: transferId , view: view};
+function approveTransfer(transferId) {
+  let formData = { transfer_id: transferId};
 
   sendAjaxRequest(
     "POST",
@@ -402,8 +424,8 @@ function approveTransfer(transferId, view) {
   );
 }
 
-function rejectTransfer(transferId, view) {
-  let formData = { transfer_id: transferId , view: view};
+function rejectTransfer(transferId) {
+  let formData = { transfer_id: transferId};
 
   sendAjaxRequest(
     "POST",
@@ -457,8 +479,31 @@ function rejectAuction(auctionId) {
   );
 }
 
+function relevantReport(reportId) {
+  let formData = { user_id: reportId[0], auction_id: reportId[1] , state: 'reviewed'};
+
+  sendAjaxRequest(
+    "POST",
+    "/admin/reports/update",
+    formData,
+    removeReport(reportId)
+  );
+}
+
+function irrelevantReport(reportId) {
+  let formData = { user_id: reportId[0], auction_id: reportId[1] , state: 'unrelated'};
+
+  sendAjaxRequest(
+    "POST",
+    "/admin/reports/update",
+    formData,
+    removeReport(reportId)
+  );
+}
+
 
 addUserEventListeners();
 addPopupEventListeners();
 addTransferEventListeners();
 addAuctionEventListeners();
+addReportEventListeners();

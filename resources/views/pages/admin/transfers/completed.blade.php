@@ -5,9 +5,6 @@
         <div class="flex items-center">
             <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
                 <li>
-                    <a href="/admin/transfers/deposits" class="text-black">Deposits</a>
-                </li>
-                <li>
                     <a href="/admin/transfers/withdrawals" class="text-black">Withdrawals</a>
                 </li>
                 <li> 
@@ -45,6 +42,9 @@
                         @endforeach
                         </tbody>
                     </table>
+                </div>
+                <div>
+                    {{ $others->links() }}
                 </div>
             </div>
         </div>

@@ -46,31 +46,37 @@
         </div>
         <div class="m-0 mx-auto flex flex-row items-start">
             @if (Auth::check() && Auth::user()->id == $user->id)
-            <div class="m-2 p-4 rounded-lg bg-stone-300">
-                <h3 class="m-4 text-3xl font-bold">Followed Auctions</h3>
-                <div class="grid grid-cols-2 gap-8">
-                        @foreach ($user->followedAuctions as $auction)
-                            @include('partials.card', ['auction' => $auction])
-                        @endforeach
+                @if ($user->followedAuctions->count() > 0)
+                    <div class="m-2 p-4 rounded-lg bg-stone-300">
+                        <h3 class="m-4 text-3xl font-bold">Followed Auctions</h3>
+                        <div class="grid grid-cols-2 gap-8">
+                            @foreach ($user->followedAuctions as $auction)
+                                @include('partials.card', ['auction' => $auction])
+                            @endforeach
+                        </div>
                     </div>
-                </div>
-                <div class="m-2 p-4 rounded-lg bg-stone-300">
-                    <h3 class="m-4 text-3xl font-bold">Owned Auctions</h3>
-                    <div class="grid grid-cols-2 gap-8">
-                        @foreach ($user->ownAuction as $auction)
-                            @include('partials.card', ['auction' => $auction])
-                        @endforeach
+                @endif
+                @if ($user->ownAuction->count() > 0)
+                    <div class="m-2 p-4 rounded-lg bg-stone-300">
+                        <h3 class="m-4 text-3xl font-bold">Owned Auctions</h3>
+                        <div class="grid grid-cols-2 gap-8">
+                            @foreach ($user->ownAuction as $auction)
+                                @include('partials.card', ['auction' => $auction])
+                            @endforeach
+                        </div>
                     </div>
-                </div>
+                @endif
             @else
-            <div class="m-2 p-4 rounded-lg bg-stone-300">
-                <h3 class="m-4 text-3xl font-bold">Owned Auctions</h3>
-                <div class="grid grid-cols-4 gap-8">
-                        @foreach ($user->ownPublicAuction as $auction)
-                            @include('partials.card', ['auction' => $auction])
-                        @endforeach
+                @if ($user->ownPublicAuction->count() > 0)
+                    <div class="m-2 p-4 rounded-lg bg-stone-300">
+                        <h3 class="m-4 text-3xl font-bold">Owned Auctions</h3>
+                        <div class="grid grid-cols-4 gap-8">
+                            @foreach ($user->ownPublicAuction as $auction)
+                                @include('partials.card', ['auction' => $auction])
+                            @endforeach
+                        </div>
                     </div>
-                </div>
+                @endif
             @endif
 
         </div>

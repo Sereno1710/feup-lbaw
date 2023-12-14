@@ -1,16 +1,16 @@
 function addEventListeners () {
-  let searchResults = document.getElementById('results')
   let buttons = document.getElementById('filters')
+  var resultsArray = JSON.parse(searchResults)
 
-  if (searchResults && buttons) {
+  if (resultsArray && buttons) {
     buttons.addEventListener('click', function (event) {
       let button = event.target
       if (button.classList.contains('all')) {
-        showAll(searchResults)
+        showAll(resultsArray)
       } else if (button.classList.contains('auctions')) {
-        showAuctions(searchResults)
+        showAuctions(resultsArray)
       } else if (button.classList.contains('users')) {
-        showUsers(searchResults)
+        showUsers(resultsArray)
       }
       changeColours(button)
     })
@@ -68,10 +68,30 @@ function sendAjaxRequest (method, url, data, handler) {
   request.send(encodeForAjax(data))
 }
 
-function showAll (searchResults) {}
+function showAll (resultsArray) {
+  resultsArray.forEach(result => {
+    result.style.display = 'block'
+  })
+}
 
-function showAuctions (searchResults) {}
+function showAuctions (resultsArray) {
+  resultsArray.forEach(result => {
+    if (result.type === 'auction') {
+      result.style.display = 'block'
+    } else {
+      result.style.display = 'none'
+    }
+  })
+}
 
-function showUsers (searchResults) {}
+function showUsers (resultsArray) {
+  resultsArray.forEach(result => {
+    if (result.type === 'user') {
+      result.style.display = 'block'
+    } else {
+      result.style.display = 'none'
+    }
+  })
+}
 
-addEventListeners(searchResults)
+addEventListeners()

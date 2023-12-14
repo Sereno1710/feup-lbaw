@@ -39,11 +39,13 @@ class HomeController extends Controller
             $auctionsQuery1 = Auction::where('name', 'like', $input)
                 ->orWhere('category', 'like', $input)
                 ->orWhere('description', 'like', $input)
+                ->where('state', 'active')
                 ->get();
 
             $usersQuery1 = User::where('name', 'like', $input)
                 ->orWhere('username', 'like', $input)
                 ->orWhere('biography', 'like', $input)
+                ->where('username', '!=', 'anonymous')
                 ->get();
 
             $auctionsQuery2 = Auction::where(function ($q) use ($searchValues) {
@@ -51,14 +53,16 @@ class HomeController extends Controller
                     $q->orWhereRaw("tsvectors @@ to_tsquery('english', ?)", [$value . ':*'])
                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$value . ':*']);
                 }
-            })->get();
+            })->where('state', 'active')
+                ->get();
 
             $usersQuery2 = User::where(function ($q) use ($searchValues) {
                 foreach ($searchValues as $value) {
                     $q->orWhereRaw("tsvectors @@ to_tsquery('english', ?)", [$value . ':*'])
                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$value . ':*']);
                 }
-            })->get();
+            })->where('username', '!=', 'anonymous')
+                ->get();
 
             $auctionsQuery = $auctionsQuery1->merge($auctionsQuery2);
             $usersQuery = $usersQuery1->merge($usersQuery2);

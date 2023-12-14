@@ -95,6 +95,9 @@ Route::get('admin/reports/listed', [AdminController::class, 'getReports'])->name
 Route::get('admin/reports/reviewed', [AdminController::class, 'getReports'])->name('admin.getreviewed');
 Route::post('admin/reports/update', [AdminController::class, 'reviewReport'])->name('admin.reviewReport');
 
+
+
+
 // API
 Route::controller(CardController::class)->group(function () {
     Route::put('/api/cards', 'create');

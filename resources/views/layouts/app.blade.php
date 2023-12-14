@@ -22,15 +22,13 @@ use Carbon\Carbon;
                     <input class="bg-stone-200 outline-none" type="text" name="input" placeholder="Search auctions and users">
                     <button type="submit">🔎</button>
                 </form>
-                @if (Auth::check() && Auth::user()->isAdmin())
+                @if (Auth::check() && (Auth::user()->isAdmin() or Auth::user()->isSystemManager()))
                 <a href="{{ url('/admin/users') }}" class="ml-4">Admin</a>
                 @endif
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
                 <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
-                <div class="user-info">
-                    <a href="{{ url('/profile') }}" class="ml-4">{{ Auth::user()->name }}</a>
-                    <a href="{{ url('/balance') }}" class="ml-4">{{ Auth::user()->balance}}</a>
+                <div class="user-info ml-4">
                     <button class="notification-icon dropdown-button" id="notificationBtn">🔔</button>
                     <div class="dropdown-content hidden bg-gray-100 absolute right-0 mt-2 p-4 border rounded max-h-40 overflow-y-auto"
                         id="notificationDropdown">
@@ -42,6 +40,8 @@ use Carbon\Carbon;
                         @endphp
 
                         <div class="notification-content">
+                            <div class="notification-header">
+                                <h3 class="text-lg font-bold">Notifications</h3> </div>
                             <div class="notification-list">
                                 <ul>
                                     @php
@@ -61,7 +61,7 @@ use Carbon\Carbon;
                                         @if ($auction && !in_array($auction->id, $displayedAuctions))
                                         Someone just made a higher bid in <a
                                             href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{
-                                            $auction->name }}</a> <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
+                                            $auction->name }}</a> <p class="text-gray-600 text-sm">{{ $formattedDate }}</p>
                                         @php
                                         $displayedAuctions[] = $auction->id;
                                         @endphp
@@ -75,8 +75,32 @@ use Carbon\Carbon;
                         </div>
                         @endif
                     </div>
+                    @php
+                        $profileImagePath = Auth::user()->profileImagePath();
+                    @endphp
+                    <button class="m-2 dropdown-button" id="profileBtn">
+                    <img class="w-[3rem] h-[3rem] rounded-full object-cover" src="{{ asset($profileImagePath) }}"> 
+                    </button>
+                    <div class="dropdown-content hidden bg-stone-900 absolute mt-2 p-4 border rounded max-h-30 max-w-20 overflow-y-auto rounded-lg"
+                        id="profileDropdown">
+
+                        <div class="profile-content">
+                            <div class="profile-list">
+                                <ul>
+                                    <li class="border-b py-2 text-white">
+                                        <a href="{{ url('/profile') }}" class="hover:text-gray-400">Profile</a>
+                                    </li>
+                                    <li class="border-b py-2 text-white">
+                                        <a href="{{ url('/balance') }}" class="hover:text-gray-400">{{Auth::user()->balance}}</a>
+                                    </li>
+                                    <li class="py-2 text-white">
+                                        <a href="{{ url('/logout') }}" class="hover:text-gray-400">Log out</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <a href="{{ url('/logout') }}" class="ml-4">Logout</a>
                 @else
                 <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
                 <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>

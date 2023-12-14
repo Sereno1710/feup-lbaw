@@ -113,9 +113,8 @@ class AdminController extends Controller
     }
 
     public function approveAuction(Request $request) {
-        if(!$this->authorize('index', Admin::class) or !$this->authorize('index', SystemManager::class))
+       if(!$this->authorize('index', Admin::class) or !$this->authorize('index', SystemManager::class))
             return redirect('/')->with('failure', 'You do not have the permissions for this action!');
-    
         Auction::where(['id' => $request->auction_id])->update(['state' => 'approved']);
         return redirect('/admin/auctions/pending')->with('success', 'Auction approved successfully!');
     }
@@ -156,7 +155,8 @@ class AdminController extends Controller
     }
 
     public function reviewReport(Request $request) {
-        $this->authorize('index', Admin::class);
+        if(!$this->authorize('index', Admin::class) or !$this->authorize('index', SystemManager::class))
+        return redirect('/')->with('failure', 'You do not have the permissions for this action!');
 
 
         Report::where(['user_id' => $request->user_id, 'auction_id' => $request->auction_id])->update(['state' => $request->state]);

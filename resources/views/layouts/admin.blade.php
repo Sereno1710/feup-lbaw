@@ -10,7 +10,7 @@
 
 <body class="flex">
 
-    <div class="bg-stone-800 w-3/14 p-4 sticky top-0 h-screen fixed">
+    <div class="bg-stone-800 w-3/12 p-4 sticky top-0 h-screen fixed">
         <div class="flex items-center justify-center">
             <h1 class="text-white h-20" style="font-size: 24px; font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
         </div>
@@ -24,7 +24,7 @@
             <li class="py-2 px-4 flex items-center"><a href="{{url('admin/reports/listed')}}">Reports</a></li>
         </ul>
     </div>
-    <div class="flex-1 w-11/14">
+    <div class="flex-1 w-9/12">
         <div class="bg-stone-300 sticky top-0 right-0 w-screen h-15 fixed">
         @yield('nav-bar')
         </div>

@@ -4,10 +4,10 @@
     <div class="max-w-screen px-2 py-3 mx-auto">
         <div class="flex items-center">
             <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
-                <li>
+                <li class="flex items-center border-r border-black pr-8 px-4">
                     <a href="/admin/reports/listed" class="text-black font-bold">Listed</a>
                 </li>
-                <li> 
+                <li class="flex items-center">
                     <a href="/admin/reports/reviewed" class="text-black">Reviewed</a>
                 </li>
             </ul>

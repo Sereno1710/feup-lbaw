@@ -4,13 +4,13 @@
     <div class="max-w-screen px-2 py-3 mx-auto">
         <div class="flex items-center">
             <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
-                <li>
+                <li class="flex items-center border-r border-black pr-8 px-4">
                     <a href="/admin/auctions/active" class="text-black">Active</a>
                 </li>
-                <li>
+                <li class="flex items-center border-r border-black pr-8">
                     <a href="/admin/auctions/pending" class="text-black">Pending</a>
                 </li>
-                <li> 
+                <li class="flex items-center"> 
                     <a href="/admin/auctions/others" class="text-black font-bold">Others</a>
                 </li>
             </ul>

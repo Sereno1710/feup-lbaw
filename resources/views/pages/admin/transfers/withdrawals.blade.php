@@ -4,11 +4,11 @@
 
     <div class="max-w-screen px-2 py-3 mx-auto">
         <div class="flex items-center">
-            <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
-                <li>
+            <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm ">
+                <li class="flex items-center border-r border-black pr-8 px-4">
                     <a href="/admin/transfers/withdrawals" class="text-black font-bold">Withdrawals</a>
                 </li>
-                <li> 
+                <li class="flex items-center">
                     <a href="/admin/transfers/completed" class="text-black ">Transfers Completed</a>
                 </li>
             </ul>

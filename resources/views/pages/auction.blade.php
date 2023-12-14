@@ -112,12 +112,15 @@
     </div>
 
     <div>
-        <h3 class="my-4 text-xl font-bold">Comments</h3>
-        @if (Auth::check())
-            <form method="POST" action="{{ url('/auction/' . $auction->id . '/comment/create') }}">
+        @if ($auction->comments->count() > 0 || (Auth::check() && $auction->state === 'active'))
+            <h3 class="mt-4 text-xl font-bold">Comments</h3>
+        @endif
+        @if (Auth::check() && $auction->state === 'active')
+            <form class ="w-2/5 mt-2 flex flex-col items-start" method="POST"
+                action="{{ url('/auction/' . $auction->id . '/comment/create') }}">
                 @csrf
-                <textarea name="message" class="w-full p-2 border rounded mx-2" placeholder="Add a comment" required></textarea>
-                <button type="submit" class="bg-stone-800 text-white p-2 mx-2 mb-4 rounded">Add Comment</button>
+                <textarea name="message" class="w-full p-2 border rounded resize-none" placeholder="Add a comment" required></textarea>
+                <button type="submit" class="bg-stone-800 text-white p-1.5 my-2 rounded text-xs self-end">Comment</button>
             </form>
         @endif
         @if ($auction->comments->count() > 0)
@@ -154,8 +157,8 @@
         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 
         <label class="w-full mt-4 text-l text-left" for="description">Please describe the issue you found</label>
-        <textarea class="w-full p-4 mb-4 border border-stone-400 rounded resize-none" id="description" name="description" rows="6"
-            required></textarea>
+        <textarea class="w-full p-4 mb-4 border border-stone-400 rounded resize-none" id="description" name="description"
+            rows="6" required></textarea>
 
 
         <div class="flex flex-row">
@@ -165,6 +168,7 @@
         </div>
     </form>
 
+    
 
     <script>
         function showReportPopup() {
@@ -177,6 +181,20 @@
         function cancelReport() {
             document.getElementById('overlay').classList.add('hidden');
             deleteConfirmation = document.getElementById('reportAuction');
+            deleteConfirmation.classList.remove('flex');
+            deleteConfirmation.classList.add('hidden');
+        }
+
+        function showDeletePopup() {
+            document.getElementById('overlay').classList.remove('hidden');
+            deleteConfirmation = document.getElementById('deleteConfirmation');
+            deleteConfirmation.classList.remove('hidden');
+            deleteConfirmation.classList.add('flex');
+        }
+
+        function cancelDelete() {
+            document.getElementById('overlay').classList.add('hidden');
+            deleteConfirmation = document.getElementById('deleteConfirmation');
             deleteConfirmation.classList.remove('flex');
             deleteConfirmation.classList.add('hidden');
         }

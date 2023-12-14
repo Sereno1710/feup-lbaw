@@ -12,6 +12,7 @@ use App\Models\Auction;
 use App\Models\MetaInfo;
 use App\Models\AuctionMetaInfoValue;
 use App\Models\follows;
+use App\Models\Report; 
 
 class AuctionController extends Controller
 {
@@ -112,7 +113,7 @@ class AuctionController extends Controller
         }
     }
 
-    public function auctionBid(Request $request, $auctionId)
+    public function bidOnAuction(Request $request, $auctionId)
     {
         Auth::check();
         $validatedData = $request->validate([
@@ -198,6 +199,34 @@ class AuctionController extends Controller
             ->delete();
 
         return response()->json(['message' => 'Auction unfollowed successfully']);
+    }
+
+    public function reportAuction(Request $request, $auctionId)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|integer',
+            'description' => 'required|string',
+        ]);
+
+        if ($request->user_id != Auth::user()->id) {
+            return redirect()->back()->with('message', "Please do not report as someone else. Try again.");
+        }
+
+        $existingReport = Report::where('user_id', $validatedData['user_id'])
+            ->where('auction_id', $auctionId)
+            ->first();
+
+        if ($existingReport) {
+            return redirect()->back()->with('message', "You have already reported this auction.");
+        }
+
+        Report::create([
+            'user_id' => $validatedData['user_id'],
+            'auction_id' => $auctionId,
+            'description' => $validatedData['description'],
+        ]);
+
+        return redirect()->back()->with('message', "Thank you for your contribution.");
     }
 
     public function search(Request $request)

@@ -1,11 +1,3 @@
-function showFullReportIcon() {
-  document.getElementById('reportIcon').src = "{{ asset('images/icons/full_warning.png') }}";
-}
-
-function showEmptyReportIcon() {
-  document.getElementById('reportIcon').src = "{{ asset('images/icons/empty_warning.png') }}";
-}
-
 document.addEventListener("DOMContentLoaded", function () {
   const auctionEndTimeElements = document.querySelectorAll(".auction-end-time");
   const auctionRemainingTimeElements = document.querySelectorAll(

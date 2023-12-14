@@ -8,13 +8,23 @@
         <span class="mx-2"> > </span>
         <span class="text-stone-500">{{ $auction->name }}</span>
     </div>
-    <div class=" m-2 p-4 flex flex-col items-center rounded-lg text-stone-800 bg-white shadow-lg">
+
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
+
+
+
+    <div class=" m-2 p-4 flex flex-col items-center rounded-lg text-stone-600 bg-white shadow-lg">
+        @if (session('message'))
+            <div class="w-full p-3 mb-1 text-stone-800 bg-stone-300 rounded-lg">
+                {{ session('message') }}
+            </div>
+        @endif
         <div class="w-full px-4 py-1 flex flex-row items-end justify-between border-b-2 border-stone-400">
             <div class="flex flex-row items-end">
                 <h2 class="text-3xl">{{ $auction->name }}</h2>
                 <p class="text-sm mx-5"> STATUS: {{ $auction->state }}</p>
             </div>
-            @if (Auth::check())
+            @if (Auth::check() && Auth::user()->id !== $auction->owner_id)
                 <div class="flex flex-row items-end">
                     <div title="Follow" class="mx-1 hover:cursor-pointer">
                         @if (Auth::user()->followedAuctions->contains($auction))
@@ -27,8 +37,8 @@
                                 data-auction-id="{{ $auction->id }}">
                         @endif
                     </div>
-                    <div title="Report" class="mx-1 hover:cursor-pointer">
-                        <img id="report_icon" class="h-[2.5rem]" src="{{ asset('images/icons/warning.png') }}"
+                    <div title="Report" class="mx-1 hover:cursor-pointer" onclick="showReportPopup()">
+                        <img id="report_icon" class="h-[2.5rem]" src="{{ asset('images/icons/full_warning.png') }}"
                             alt="Report Icon">
                     </div>
                 </div>
@@ -38,8 +48,9 @@
             @php
                 $auctionImagePath = $auction->auctionImagePath();
             @endphp
-            <img class="m-4 max-h-64 rounded-lg" src="{{ asset($auctionImagePath) }}" alt="auctionphoto">
-            @if (auth()->check() && $auction->state === 'active')
+            <img class="m-4 max-w-[32rem] max-h-[24rem] rounded-lg object-contain" src="{{ asset($auctionImagePath) }}"
+                alt="auctionphoto">
+            @if (Auth::check() && Auth::user()->id !== $auction->owner_id && $auction->state === 'active')
                 <div class="bg-stone-200 m-2 p-4 flex flex-col rounded-lg">
                     <p><span class="font-bold">Current price:</span>{{ $auction->price }}</p>
                     <form class="flex flex-col" method="POST" action="{{ url('/auction/' . $auction->id . '/bid') }}">
@@ -100,7 +111,7 @@
         </div>
     </div>
 
-    @if ($auction->state === 'approved')
+    @if ($auction->state === 'approved' && Auth::user->id === $auction->owner_id)
         <form class="my-8 mx-auto p-8 max-w-xl flex flex-col text-stone-800 bg-stone-200 shadow-lg" method="POST"
             action="{{ url('/auction/' . $auction->id . '/start') }}" enctype="multipart/form-data">
             @csrf
@@ -113,4 +124,42 @@
             <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Start</button>
         </form>
     @endif
+
+    <form id="reportAuction" method="POST" action="{{ url('/auction/' . $auction->id . '/report') }}"
+        enctype="multipart/form-data"
+        class="hidden min-w-[32rem] flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center">
+        @csrf
+
+        <h2 class="mb-2 font-bold text-2xl text-center">Report Auction</h2>
+
+        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+
+        <label class="w-full mt-4 text-left" for="description">Description</label>
+        <textarea class="w-full p-4 mb-4 border border-stone-400 rounded" id="description" name="description" rows="5"
+            required></textarea>
+
+
+        <div class="flex flex-row">
+            <button class="m-2 p-2 text-white bg-stone-800 rounded" type="sumbit">Submit Report</button>
+            <button class="m-2 p-2 text-white bg-stone-500 rounded" type="button"
+                onclick="cancelReport()">Cancel</button>
+        </div>
+    </form>
+
+
+    <script>
+        function showReportPopup() {
+            document.getElementById('overlay').classList.remove('hidden');
+            deleteConfirmation = document.getElementById('reportAuction');
+            deleteConfirmation.classList.remove('hidden');
+            deleteConfirmation.classList.add('flex');
+        }
+
+        function cancelReport() {
+            document.getElementById('overlay').classList.add('hidden');
+            deleteConfirmation = document.getElementById('reportAuction');
+            deleteConfirmation.classList.remove('flex');
+            deleteConfirmation.classList.add('hidden');
+        }
+    </script>
 @endsection

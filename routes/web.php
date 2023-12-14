@@ -1,9 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\CardController;
-use App\Http\Controllers\ItemController;
-
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
@@ -66,8 +63,11 @@ Route::controller(AuctionController::class)->group(function () {
     Route::post('/auction/follow', 'followAuction')->name('auction.follow');
     Route::post('/auction/unfollow', 'unfollowAuction')->name('auction.unfollow');
     Route::get('/auction/{id}', 'showAuction');
-    Route::post('/auction/{id}/bid', 'auctionBid');
+    Route::post('/auction/{id}/bid', 'bidOnAuction');
     Route::post('/auction/{id}/start', 'startAuction');
+    Route::post('/auction/{id}/report', 'reportAuction')->name('auction.report');
+    Route::post('/auction/{id}/comment/create', 'createComment')->name('auction.comment.create');
+    Route::post('/auction/{auction_id}/comment/{comment_id}/delete', 'reportAuction')->name('auction.comment.delete');
 });
 
 // Admin
@@ -89,19 +89,6 @@ Route::post('/admin/auctions/reject', [AdminController::class, 'rejectAuction'])
 Route::post('/admin/auctions/pause', [AdminController::class, 'pauseAuction'])->name('admin.auctions.pauseAuction');
 Route::post('/admin/auctions/resume', [AdminController::class, 'resumeAuction'])->name('admin.auctions.resumeAuction');
 Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'])->name('admin.auctions.disableAuction');
-
-// API
-Route::controller(CardController::class)->group(function () {
-    Route::put('/api/cards', 'create');
-    Route::delete('/api/cards/{card_id}', 'delete');
-});
-
-Route::controller(ItemController::class)->group(function () {
-    Route::put('/api/cards/{card_id}', 'create');
-    Route::post('/api/item/{id}', 'update');
-    Route::delete('/api/item/{id}', 'delete');
-});
-
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {

@@ -16,7 +16,7 @@ class UserController extends Controller
         $followedAuctions = $user->followedAuctions;
         $ownedAuctions = $user->ownAuction;
 
-        return view('pages.profile', compact('user', 'followedAuctions', 'ownedAuctions'));
+        return view('pages.profile', ['user' => $user]);
     }
 
     public function edit()

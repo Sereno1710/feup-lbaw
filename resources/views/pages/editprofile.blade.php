@@ -101,7 +101,7 @@
         <div class="flex flex-row">
             <button class="m-2 p-2 text-white bg-red-500 rounded" type="sumbit">Yes, I
                 want to delete my account</button>
-            <button class="m-2 p-2 text-white bg-blue-500 rounded" type="button"
+            <button class="m-2 p-2 text-stone-500 bg-white border-stone-500 border rounded" type="button"
                 onclick="cancelDelete()">Cancel</button>
         </div>
     </form>

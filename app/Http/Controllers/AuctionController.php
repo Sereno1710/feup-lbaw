@@ -13,6 +13,7 @@ use App\Models\MetaInfo;
 use App\Models\AuctionMetaInfoValue;
 use App\Models\follows;
 use App\Models\Report; 
+use App\Models\Comment; 
 
 class AuctionController extends Controller
 {
@@ -199,6 +200,33 @@ class AuctionController extends Controller
             ->delete();
 
         return response()->json(['message' => 'Auction unfollowed successfully']);
+    }
+
+    public function commentOnAuction(Request $request, $auctionId)
+    {
+        $validatedData = $request->validate([
+            'message' => 'required|string',
+        ]);
+        Comment::create([
+            'user_id' => Auth::user()->id,
+            'auction_id' => $auctionId,
+            'message' => $validatedData['message'],
+            'time' => now(),
+        ]);
+
+        return redirect()->back()->with('message', "Comment successfully added."); 
+    }
+
+    public function deleteCommentOnAuction($auctionId, $commentId)
+    {
+        $comment = Comment::findOrFail($commentId);
+
+        if (Auth::user()->id !== $comment->user->id) {
+            return redirect()->back()->with('message', 'Unauthorized to delete this comment.');
+        }
+
+        $comment->delete();
+        return redirect()->back()->with('message', 'Comment deleted successfully!');
     }
 
     public function reportAuction(Request $request, $auctionId)

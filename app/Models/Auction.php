@@ -25,7 +25,7 @@ class Auction extends Model
 
     public function comments()
     {
-        return $this->hasMany(Bid::class, 'auction_id');
+        return $this->hasMany(Comment::class, 'auction_id')->orderBy('time', 'desc');
     }
 
     public function tags() 

@@ -111,6 +111,25 @@
         </div>
     </div>
 
+    <div>
+        <h3 class="my-4 text-xl font-bold">Comments</h3>
+        @if (Auth::check())
+            <form method="POST" action="{{ url('/auction/' . $auction->id . '/comment/create') }}">
+                @csrf
+                <textarea name="message" class="w-full p-2 border rounded mx-2" placeholder="Add a comment" required></textarea>
+                <button type="submit" class="bg-stone-800 text-white p-2 mx-2 mb-4 rounded">Add Comment</button>
+            </form>
+        @endif
+        @if ($auction->comments->count() > 0)
+            @foreach ($auction->comments as $comment)
+                <div class="mb-2">
+                    @include('partials.comment', ['comment' => $comment])
+                </div>
+            @endforeach
+        @endif
+    </div>
+
+
     @if ($auction->state === 'approved' && Auth::user->id === $auction->owner_id)
         <form class="my-8 mx-auto p-8 max-w-xl flex flex-col text-stone-800 bg-stone-200 shadow-lg" method="POST"
             action="{{ url('/auction/' . $auction->id . '/start') }}" enctype="multipart/form-data">
@@ -130,18 +149,18 @@
         class="hidden min-w-[32rem] flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center">
         @csrf
 
-        <h2 class="mb-2 font-bold text-2xl text-center">Report Auction</h2>
+        <h2 class="mb-2 font-bold text-3xl text-center">Report Auction</h2>
 
         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 
-        <label class="w-full mt-4 text-left" for="description">Description</label>
-        <textarea class="w-full p-4 mb-4 border border-stone-400 rounded" id="description" name="description" rows="5"
+        <label class="w-full mt-4 text-l text-left" for="description">Please describe the issue you found</label>
+        <textarea class="w-full p-4 mb-4 border border-stone-400 rounded resize-none" id="description" name="description" rows="6"
             required></textarea>
 
 
         <div class="flex flex-row">
-            <button class="m-2 p-2 text-white bg-stone-800 rounded" type="sumbit">Submit Report</button>
-            <button class="m-2 p-2 text-white bg-stone-500 rounded" type="button"
+            <button class="mx-2 p-3 text-white bg-stone-800 rounded" type="sumbit">Submit Report</button>
+            <button class="mx-2 p-3 text-stone-500 bg-white border-stone-500 border rounded" type="button"
                 onclick="cancelReport()">Cancel</button>
         </div>
     </form>

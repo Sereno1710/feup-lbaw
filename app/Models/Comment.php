@@ -13,7 +13,7 @@ class Comment extends Model
     protected $fillable = ['user_id', 'auction_id', 'message', 'time'];
 
     public function user() {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo(User::Class);
     }
 
     public function auction() {

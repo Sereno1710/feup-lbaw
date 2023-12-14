@@ -54,7 +54,7 @@ Route::get('/contacts', [HomeController::class, 'contacts'])->name('contacts');
 Route::get('/terms-of-use', [HomeController::class, 'termsOfUse'])->name('termsOfUse');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacyPolicy');
 
-//Auction
+// Auction
 Route::controller(AuctionController::class)->group(function () {
     Route::get('/auctions', 'showActiveAuctions');
     Route::get('/auction/submit', 'showAuctionForm');
@@ -66,8 +66,8 @@ Route::controller(AuctionController::class)->group(function () {
     Route::post('/auction/{id}/bid', 'bidOnAuction');
     Route::post('/auction/{id}/start', 'startAuction');
     Route::post('/auction/{id}/report', 'reportAuction')->name('auction.report');
-    Route::post('/auction/{id}/comment/create', 'createComment')->name('auction.comment.create');
-    Route::post('/auction/{auction_id}/comment/{comment_id}/delete', 'reportAuction')->name('auction.comment.delete');
+    Route::post('/auction/{id}/comment/create', 'commentOnAuction')->name('auction.comment.create');
+    Route::post('/auction/{auction}/comment/{comment}/delete', 'deleteCommentOnAuction')->name('auction.comment.delete');
 });
 
 // Admin

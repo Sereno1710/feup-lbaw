@@ -34,7 +34,7 @@
                         <tbody>
                         @foreach ($listed as $report)
                         <tr id="report_row_{{ $report->user_id}}_{{ $report->auction_id}}">
-                            <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/users/' . $report->user_id) }}">{{ $report->username }}</a></td>
+                            <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/user/' . $report->user_id) }}">{{ $report->username }}</a></td>
                             <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/auction/' . $report->auction_id) }}" >{{ $report->name }}</a></td>
                             <td class="py-2 px-4 border border-slate-300">{{ $report->description }}</td>
                             <td class="py-2 px-4 border boder-slate-300">

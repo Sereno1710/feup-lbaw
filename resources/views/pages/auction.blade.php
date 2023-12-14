@@ -66,17 +66,22 @@
                     </form>
                 </div>
             @else
-                @if (Auth::check() && $auction->auctionWinner && !$auction->auctionWinner->rating && Auth::user()->id === $auction->auctionWinner->user_id)
-                <div class="bg-stone-200 m-2 p-4 flex flex-col rounded-lg">
-                    <form class="flex flex-col" method="POST" action="{{ url('/auction/' . $auction->id . '/rate') }}">
-                        @csrf
-                        <div class="mb-2">
-                            <label for="rating" class="text-stone-700 mx-1">Rate the seller (1-5)</label>
-                            <input type="number" name="rating" id="sellerRating" min="1" max="5" class="mx-1 p-2 border rounded-md outline-none" required>
-                        </div>
-                        <button class="p-2 bg-stone-800 text-white rounded-md" type="submit">Submit Rating</button>
-                    </form>
-                </div>
+                @if (Auth::check() &&
+                        $auction->auctionWinner &&
+                        !$auction->auctionWinner->rating &&
+                        Auth::user()->id === $auction->auctionWinner->user_id)
+                    <div class="bg-stone-200 m-2 p-4 flex flex-col rounded-lg">
+                        <form class="flex flex-col" method="POST"
+                            action="{{ url('/auction/' . $auction->id . '/rate') }}">
+                            @csrf
+                            <div class="mb-2">
+                                <label for="rating" class="text-stone-700 mx-1">Rate the seller (1-5)</label>
+                                <input type="number" name="rating" id="sellerRating" min="1" max="5"
+                                    class="mx-1 p-2 border rounded-md outline-none" required>
+                            </div>
+                            <button class="p-2 bg-stone-800 text-white rounded-md" type="submit">Submit Rating</button>
+                        </form>
+                    </div>
                 @endif
             @endif
         </div>
@@ -159,27 +164,28 @@
             <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Start</button>
         </form>
     @endif
+    @if (Auth::check())
+        <form id="reportAuction" method="POST" action="{{ url('/auction/' . $auction->id . '/report') }}"
+            enctype="multipart/form-data"
+            class="hidden min-w-[32rem] flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center">
+            @csrf
 
-    <form id="reportAuction" method="POST" action="{{ url('/auction/' . $auction->id . '/report') }}"
-        enctype="multipart/form-data"
-        class="hidden min-w-[32rem] flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center">
-        @csrf
+            <h2 class="mb-2 font-bold text-3xl text-center">Report Auction</h2>
 
-        <h2 class="mb-2 font-bold text-3xl text-center">Report Auction</h2>
+            <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 
-        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
-
-        <label class="w-full mt-4 text-l text-left" for="description">Please describe the issue you found</label>
-        <textarea class="w-full p-4 mb-4 border border-stone-400 rounded resize-none" id="description" name="description"
-            rows="6" required></textarea>
+            <label class="w-full mt-4 text-l text-left" for="description">Please describe the issue you found</label>
+            <textarea class="w-full p-4 mb-4 border border-stone-400 rounded resize-none" id="description" name="description"
+                rows="6" required></textarea>
 
 
-        <div class="flex flex-row">
-            <button class="mx-2 p-3 text-white bg-stone-800 rounded" type="sumbit">Submit Report</button>
-            <button class="mx-2 p-3 text-stone-500 bg-white border-stone-500 border rounded" type="button"
-                onclick="cancelReport()">Cancel</button>
-        </div>
-    </form>
+            <div class="flex flex-row">
+                <button class="mx-2 p-3 text-white bg-stone-800 rounded" type="sumbit">Submit Report</button>
+                <button class="mx-2 p-3 text-stone-500 bg-white border-stone-500 border rounded" type="button"
+                    onclick="cancelReport()">Cancel</button>
+            </div>
+        </form>
+    @endif
 
 
 

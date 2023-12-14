@@ -19,7 +19,7 @@
     <div class="mx-2 flex flex-col overflow-x-auto m-8">
         <h1 class="text-4xl font-bold">Reviewed Reports</h1>
         <br>
-        <div class="mx-6 mx-8">
+        <div class="mx-6 ">
             <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                 <div class="overflow-x-auto">
                     <table class="min-w-full border-separate" id="report_table">
@@ -34,7 +34,7 @@
                         <tbody>
                         @foreach ($listed as $report)
                         <tr id="report_row_{{ $report->user_id}}_{{ $report->auction_id}}">
-                            <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/users/' . $report->user_id) }}">{{ $report->username }}</a></td>
+                            <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/user/' . $report->user_id) }}">{{ $report->username }}</a></td>
                             <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/auction/' . $report->auction_id) }}" >{{ $report->name }}</a></td>
                             <td class="py-2 px-4 border border-slate-300">{{ $report->description }}</td>
                             <td class="py-2 px-4 border boder-slate-300">

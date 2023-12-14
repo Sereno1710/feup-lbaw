@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<script src="{{ asset('js/search_filters.js') }}" defer></script>
 <div class="container mx-auto my-8">
     <h1 class="text-3xl font-bold mb-6">Search Results</h1>
 
@@ -29,5 +28,8 @@
     </div>
     @endif
 </div>
+<script>
+    var searchResults = @json($results);
+</script>
 {{ $results->appends(['input' => $input])->links() }}
 @endsection

@@ -10,6 +10,7 @@ use Carbon\Carbon;
     @vite('resources/js/app.js')
     @vite('resources/js/auction.js')
     @vite('resources/js/dropdown.js')
+    @vite('resources/js/search_filters.js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
@@ -19,7 +20,8 @@ use Carbon\Carbon;
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
             <div class="flex justify-between items-center">
                 <form class="p-1 bg-stone-200 rounded-lg" action="/search" method="GET">
-                    <input class="bg-stone-200 outline-none" type="text" name="input" placeholder="Search auctions and users">
+                    <input class="bg-stone-200 outline-none" type="text" name="input"
+                        placeholder="Search auctions and users">
                     <button type="submit">🔎</button>
                 </form>
                 @if (Auth::check() && (Auth::user()->isAdmin() or Auth::user()->isSystemManager()))
@@ -41,7 +43,8 @@ use Carbon\Carbon;
 
                         <div class="notification-content">
                             <div class="notification-header">
-                                <h3 class="text-lg font-bold">Notifications</h3> </div>
+                                <h3 class="text-lg font-bold">Notifications</h3>
+                            </div>
                             <div class="notification-list">
                                 <ul>
                                     @php
@@ -60,8 +63,10 @@ use Carbon\Carbon;
 
                                         @if ($auction && !in_array($auction->id, $displayedAuctions))
                                         Someone just made a higher bid in <a
-                                            href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{
-                                            $auction->name }}</a> <p class="text-gray-600 text-sm">{{ $formattedDate }}</p>
+                                            href="{{ url('/auction/' . $auction->id) }}"
+                                            class="underline hover:text-gray-600">{{
+                                            $auction->name }}</a>
+                                        <p class="text-gray-600 text-sm">{{ $formattedDate }}</p>
                                         @php
                                         $displayedAuctions[] = $auction->id;
                                         @endphp
@@ -76,10 +81,10 @@ use Carbon\Carbon;
                         @endif
                     </div>
                     @php
-                        $profileImagePath = Auth::user()->profileImagePath();
+                    $profileImagePath = Auth::user()->profileImagePath();
                     @endphp
                     <button class="m-2 dropdown-button" id="profileBtn">
-                    <img class="w-[3rem] h-[3rem] rounded-full object-cover" src="{{ asset($profileImagePath) }}"> 
+                        <img class="w-[3rem] h-[3rem] rounded-full object-cover" src="{{ asset($profileImagePath) }}">
                     </button>
                     <div class="dropdown-content hidden bg-stone-900 absolute mt-2 p-4 border rounded max-h-30 max-w-20 overflow-y-auto rounded-lg"
                         id="profileDropdown">
@@ -91,7 +96,8 @@ use Carbon\Carbon;
                                         <a href="{{ url('/profile') }}" class="hover:text-gray-400">Profile</a>
                                     </li>
                                     <li class="border-b py-2 text-white">
-                                        <a href="{{ url('/balance') }}" class="hover:text-gray-400">{{Auth::user()->balance}}</a>
+                                        <a href="{{ url('/balance') }}"
+                                            class="hover:text-gray-400">{{Auth::user()->balance}}</a>
                                     </li>
                                     <li class="py-2 text-white">
                                         <a href="{{ url('/logout') }}" class="hover:text-gray-400">Log out</a>

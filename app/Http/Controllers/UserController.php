@@ -115,7 +115,7 @@ class UserController extends Controller
         
         $user = Auth::user();
 
-        User::where(['id' => $user->id])->update(['is_anonymizing' => true]);
+        User::where(['id' => $user->id])->update(['state' => 'disabled']);
 
         Auth::logout();
         $request->session()->invalidate();

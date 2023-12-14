@@ -77,19 +77,26 @@ Route::get('/admin/users', [AdminController::class, 'getUsers'])->name('admin.us
 Route::post('/admin/users/demote', [AdminController::class, 'demote'])->name('admin.demote');
 Route::post('/admin/users/promote', [AdminController::class, 'promote'])->name('admin.promote');
 Route::post('/admin/users/disable', [AdminController::class, 'disable'])->name('admin.disable');
-Route::get('/admin/transfers/deposits', [AdminController::class, 'getTransfers'])->name('admin.transfers.deposits');
+Route::post('/admin/users/ban', [AdminController::class, 'ban'])->name('admin.ban');
+Route::post('/admin/users/unban', [AdminController::class, 'unban'])->name('admin.unban');
+
 Route::get('/admin/transfers/withdrawals', [AdminController::class, 'getTransfers'])->name('admin.transfers.withdrawals');
 Route::get('/admin/transfers/completed', [AdminController::class, 'getTransfers'])->name('admin.transfers.completed');
 Route::post('/admin/transfers/approve', [AdminController::class, 'approve'])->name('admin.approve');
 Route::post('/admin/transfers/reject', [AdminController::class, 'reject'])->name('admin.reject');
-Route::get('/admin/auctions/active', [AdminController::class, 'getAuctions'])->name('admin.auctions.active');
+
 Route::get('/admin/auctions/pending', [AdminController::class, 'getAuctions'])->name('admin.auctions.pending');
+Route::get('/admin/auctions/active', [AdminController::class, 'getAuctions'])->name('admin.auctions.active');
 Route::get('/admin/auctions/others', [AdminController::class, 'getAuctions'])->name('admin.auctions.others');
-Route::post('/admin/auctions/approve', [AdminController::class, 'approveAuction'])->name('admin.auctions.approveAuction');
-Route::post('/admin/auctions/reject', [AdminController::class, 'rejectAuction'])->name('admin.auctions.rejectAuction');
-Route::post('/admin/auctions/pause', [AdminController::class, 'pauseAuction'])->name('admin.auctions.pauseAuction');
-Route::post('/admin/auctions/resume', [AdminController::class, 'resumeAuction'])->name('admin.auctions.resumeAuction');
-Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'])->name('admin.auctions.disableAuction');
+Route::post('/admin/auctions/approve', [AdminController::class, 'approveAuction'])->name('admin.approveAuction');
+Route::post('/admin/auctions/reject', [AdminController::class, 'rejectAuction'])->name('admin.rejectAuction');
+Route::post('/admin/auctions/pause', [AdminController::class, 'pauseAuction'])->name('admin.pauseAuction');
+Route::post('/admin/auctions/resume', [AdminController::class, 'resumeAuction'])->name('admin.resumeAuction');
+Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'])->name('admin.disableAuction');
+
+Route::get('admin/reports/listed', [AdminController::class, 'getReports'])->name('admin.getlisted');
+Route::get('admin/reports/reviewed', [AdminController::class, 'getReports'])->name('admin.getreviewed');
+Route::post('admin/reports/update', [AdminController::class, 'reviewReport'])->name('admin.reviewReport');
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {

@@ -48,7 +48,7 @@
             @php
                 $auctionImagePath = $auction->auctionImagePath();
             @endphp
-            <img class="m-4 max-w-[32rem] max-h-[24rem] rounded-lg object-contain" src="{{ asset($auctionImagePath) }}"
+            <img class="m-4 max-w-[24rem] max-h-[16rem] rounded-lg object-contain" src="{{ asset($auctionImagePath) }}"
                 alt="auctionphoto">
             @if (Auth::check() && Auth::user()->id !== $auction->owner_id && $auction->state === 'active')
                 <div class="bg-stone-200 m-2 p-4 flex flex-col rounded-lg">

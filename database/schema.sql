@@ -240,7 +240,7 @@ CREATE TABLE Notification (
   receiver_id INT REFERENCES users(id) ON UPDATE CASCADE,
   bid_id INT REFERENCES Bid(id) ON UPDATE CASCADE,
   auction_id INT REFERENCES Auction(id) ON UPDATE CASCADE,
-  comment_id INT REFERENCES Comment(id) ON UPDATE CASCADE
+  comment_id INT REFERENCES Comment(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 /*

@@ -13,6 +13,7 @@ class Report extends Model
 
     public $timestamps = false;
     protected $table='report';
+    public $incrementing = false;
     protected $fillable = ['user_id', 'auction_id', 'description', 'time','state'];
     
     public function user() {

@@ -16,7 +16,7 @@ class UserController extends Controller
         $followedAuctions = $user->followedAuctions;
         $ownedAuctions = $user->ownAuction;
 
-        return view('pages.profile', compact('user', 'followedAuctions', 'ownedAuctions'));
+        return view('pages.profile', ['user' => $user]);
     }
 
     public function edit()
@@ -115,7 +115,7 @@ class UserController extends Controller
         
         $user = Auth::user();
 
-        User::where(['id' => $user->id])->update(['is_anonymizing' => true]);
+        User::where(['id' => $user->id])->update(['state' => 'disabled']);
 
         Auth::logout();
         $request->session()->invalidate();

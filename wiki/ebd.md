@@ -871,31 +871,23 @@ BEGIN TRANSACTION;
 
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
+UPDATE users
+SET balance = balance + LastBid.amount
+FROM (
+    SELECT user_id, amount
+    FROM bid
+    WHERE auction_id = :auction_id
+    ORDER BY amount DESC
+    LIMIT 1
+) AS LastBid
+WHERE users.id = LastBid.user_id;
+
 INSERT INTO Bid(user_id, auction_id, amount, time)
   VALUES ($user_id, $auction_id, $amount, $time);
 
 UPDATE users SET balance = balance - $amount WHERE id = $user_id;
 
-UPDATE users SET balance= balance + (SELECT amount
-FROM (  SELECT user_id, amount 
-        FROM Bid
-        WHERE auction_id = $auction_id
-        ORDER BY amount DESC
-        LIMIT 2)
-AS Last2Bids
-ORDER BY amount ASC
-LIMIT 1) WHERE id = (SELECT user_id
-FROM (  SELECT user_id, amount 
-        FROM Bid
-        WHERE auction_id = $auction_id
-        ORDER BY amount DESC
-        LIMIT 2)
-AS Last2Bids
-ORDER BY amount ASC
-LIMIT 1);
-
 UPDATE Auction SET price = $amount WHERE id = $user_id;
-
 
 END TRANSACTION;
 ```
@@ -2072,6 +2064,11 @@ Changes made to the first submission:
 
 - José Santos (Editor)
 
+### 10/12/2023
+
+1. Fixed Transaction 1 to match laravel code
+- Daniel Gago (Editor)
+
 ### 12/12/2023
 
 1. Removed is_anonymizing from users table
@@ -2089,7 +2086,7 @@ Changes made to the first submission:
 ***
 GROUP0202, 25/10/2023
 
-* Daniel Gago, up202108791@edu.fe.up.pt
+* Daniel Gago, up202108791@edu.fe.up.pt (Editor)
 * Eduardo Oliveira, up202108843@edu.fe.up.pt 
-* José Santos, up202108729@edu.fe.up.pt (Editor)
+* José Santos, up202108729@edu.fe.up.pt
 * Máximo Pereira, up202108887@edu.fe.up.pt

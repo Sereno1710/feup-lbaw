@@ -2,6 +2,6 @@
     @php
         $profileImagePath = $bid->user->profileImagePath();
     @endphp
-    <img class="rounded-full mr-2" src="{{ asset($profileImagePath) }}">
+    <img class="w-[3rem] h-[3rem] rounded-full mr-2 object-cover" src="{{ asset($profileImagePath) }}">
     <p> {{ $bid->user->name }} has bid {{ $bid->amount }}</p>
 </div>

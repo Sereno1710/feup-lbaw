@@ -23,9 +23,19 @@ class Auction extends Model
         return $this->hasMany(Bid::class, 'auction_id');
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'auction_id')->orderBy('time', 'desc');
+    }
+
     public function tags() 
     {
         return $this->belongstoMany(MetaInfoValue::class, 'auctionmetainfovalue', 'auction_id', 'meta_info_value_id');
+    }
+
+    public function auctionWinner()
+    {
+        return $this->hasOne(AuctionWinner::class, 'auction_id');
     }
 
     public static function activeAuctions() 

@@ -12,22 +12,15 @@ use Illuminate\View\View;
 
 class LoginController extends Controller
 {
-
-    /**
-     * Display a login form.
-     */
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect('/cards');
+            return redirect('/home');
         } else {
             return view('auth.login');
         }
     }
 
-    /**
-     * Handle an authentication attempt.
-     */
     public function authenticate(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
@@ -45,10 +38,7 @@ class LoginController extends Controller
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
     }
-
-    /**
-     * Log out the user from application.
-     */
+    
     public function logout(Request $request)
     {
         Auth::logout();

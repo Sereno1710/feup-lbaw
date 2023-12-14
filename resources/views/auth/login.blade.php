@@ -13,7 +13,8 @@
     @endif
 
     <label class="mt-2 mb-1" for="password">Password:</label>
-    <input class="p-2 mb-2 border border-stone-400 rounded" id="password" type="password" name="password" required>
+    <input class="p-2 border border-stone-400 rounded" id="password" type="password" name="password" required>
+    <section class="mb-2"> Forgot your password? Reset it <a class="underline" href="{{ route('password.recover') }}">here</a>.</section>
     @if ($errors->has('password'))
         <span class="error">
             {{ $errors->first('password') }}
@@ -34,7 +35,7 @@
         </p>
     @endif
     <section class="m-2"> Don't have an account? Sign up <a class="underline" href="{{ route('register') }}">here</a>. </section> 
-    <section class="m-2"> Forgot your password? Reset it <a class="underline" href="{{ route('password.recover') }}">here</a>.
+    
     </section>
 </form>
 @endsection

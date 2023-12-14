@@ -1,9 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\CardController;
-use App\Http\Controllers\ItemController;
-
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
@@ -57,15 +54,21 @@ Route::get('/contacts', [HomeController::class, 'contacts'])->name('contacts');
 Route::get('/terms-of-use', [HomeController::class, 'termsOfUse'])->name('termsOfUse');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacyPolicy');
 
-//Auction
+// Auction
 Route::controller(AuctionController::class)->group(function () {
     Route::get('/auctions', 'showActiveAuctions');
     Route::get('/auction/submit', 'showAuctionForm');
     Route::get('/auction/search','search')->name('auction.search');
     Route::post('/auction/create', 'createAuction')->name('auction.create');
+    Route::post('/auction/follow', 'followAuction')->name('auction.follow');
+    Route::post('/auction/unfollow', 'unfollowAuction')->name('auction.unfollow');
     Route::get('/auction/{id}', 'showAuction');
-    Route::post('/auction/{id}/bid', 'auctionBid');
+    Route::post('/auction/{id}/bid', 'bidOnAuction');
     Route::post('/auction/{id}/start', 'startAuction');
+    Route::post('/auction/{id}/rate', 'rateAuction');
+    Route::post('/auction/{id}/report', 'reportAuction')->name('auction.report');
+    Route::post('/auction/{id}/comment/create', 'commentOnAuction')->name('auction.comment.create');
+    Route::post('/auction/{auction}/comment/{comment}/delete', 'deleteCommentOnAuction')->name('auction.comment.delete');
 });
 
 // Admin
@@ -94,22 +97,6 @@ Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'
 Route::get('admin/reports/listed', [AdminController::class, 'getReports'])->name('admin.getlisted');
 Route::get('admin/reports/reviewed', [AdminController::class, 'getReports'])->name('admin.getreviewed');
 Route::post('admin/reports/update', [AdminController::class, 'reviewReport'])->name('admin.reviewReport');
-
-
-
-
-// API
-Route::controller(CardController::class)->group(function () {
-    Route::put('/api/cards', 'create');
-    Route::delete('/api/cards/{card_id}', 'delete');
-});
-
-Route::controller(ItemController::class)->group(function () {
-    Route::put('/api/cards/{card_id}', 'create');
-    Route::post('/api/item/{id}', 'update');
-    Route::delete('/api/item/{id}', 'delete');
-});
-
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {

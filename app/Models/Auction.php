@@ -33,6 +33,11 @@ class Auction extends Model
         return $this->belongstoMany(MetaInfoValue::class, 'auctionmetainfovalue', 'auction_id', 'meta_info_value_id');
     }
 
+    public function auctionWinner()
+    {
+        return $this->hasOne(AuctionWinner::class, 'auction_id');
+    }
+
     public static function activeAuctions() 
     {
         return Auction::where('state', 'active');

@@ -65,6 +65,19 @@
                         @endif
                     </form>
                 </div>
+            @else
+                @if (Auth::check() && $auction->auctionWinner && !$auction->auctionWinner->rating && Auth::user()->id === $auction->auctionWinner->user_id)
+                <div class="bg-stone-200 m-2 p-4 flex flex-col rounded-lg">
+                    <form class="flex flex-col" method="POST" action="{{ url('/auction/' . $auction->id . '/rate') }}">
+                        @csrf
+                        <div class="mb-2">
+                            <label for="rating" class="text-stone-700 mx-1">Rate the seller (1-5)</label>
+                            <input type="number" name="rating" id="sellerRating" min="1" max="5" class="mx-1 p-2 border rounded-md outline-none" required>
+                        </div>
+                        <button class="p-2 bg-stone-800 text-white rounded-md" type="submit">Submit Rating</button>
+                    </form>
+                </div>
+                @endif
             @endif
         </div>
         <div class="w-full flex flex-row items-start justify-between">
@@ -168,7 +181,7 @@
         </div>
     </form>
 
-    
+
 
     <script>
         function showReportPopup() {
@@ -195,20 +208,6 @@
         function cancelDelete() {
             document.getElementById('overlay').classList.add('hidden');
             deleteConfirmation = document.getElementById('deleteConfirmation');
-            deleteConfirmation.classList.remove('flex');
-            deleteConfirmation.classList.add('hidden');
-        }
-
-        function showBidHistoryPopup() {
-            document.getElementById('overlay').classList.remove('hidden');
-            deleteConfirmation = document.getElementById('biddingHistory');
-            deleteConfirmation.classList.remove('hidden');
-            deleteConfirmation.classList.add('flex');
-        }
-
-        function exitBidHistory() {
-            document.getElementById('overlay').classList.add('hidden');
-            deleteConfirmation = document.getElementById('biddingHistory');
             deleteConfirmation.classList.remove('flex');
             deleteConfirmation.classList.add('hidden');
         }

@@ -65,6 +65,7 @@ Route::controller(AuctionController::class)->group(function () {
     Route::get('/auction/{id}', 'showAuction');
     Route::post('/auction/{id}/bid', 'bidOnAuction');
     Route::post('/auction/{id}/start', 'startAuction');
+    Route::post('/auction/{id}/rate', 'rateAuction');
     Route::post('/auction/{id}/report', 'reportAuction')->name('auction.report');
     Route::post('/auction/{id}/comment/create', 'commentOnAuction')->name('auction.comment.create');
     Route::post('/auction/{auction}/comment/{comment}/delete', 'deleteCommentOnAuction')->name('auction.comment.delete');

@@ -14,6 +14,7 @@ use App\Models\AuctionMetaInfoValue;
 use App\Models\follows;
 use App\Models\Report; 
 use App\Models\Comment; 
+use App\Models\AuctionWinner;
 
 class AuctionController extends Controller
 {
@@ -255,6 +256,28 @@ class AuctionController extends Controller
         ]);
 
         return redirect()->back()->with('message', "Thank you for your contribution.");
+    }
+
+    public function rateAuction(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'rating' => 'required|integer|between:1,5',
+        ]);
+
+        $auction = Auction::find($id);
+
+        if (Auth::user()->id !== $auction->auctionWinner->user_id) {
+            return redirect()->back()->with('message', "You cannot rate this auction.");
+        }
+
+        $auctionWinner = AuctionWinner::where('auction_id', $id)->first();
+        $auctionWinner::where('user_id', Auth::user()->id)
+                ->where('auction_id', $id)
+                ->update([
+                    'rating' => $validatedData['rating']
+                ]);
+
+        return redirect()->back()->with('message', "Thanks for submitting a rating.");
     }
 
     public function search(Request $request)

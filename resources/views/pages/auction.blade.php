@@ -133,7 +133,7 @@
     </div>
 
 
-    @if ($auction->state === 'approved' && Auth::user->id === $auction->owner_id)
+    @if ($auction->state === 'approved' && Auth::user()->id === $auction->owner_id)
         <form class="my-8 mx-auto p-8 max-w-xl flex flex-col text-stone-800 bg-stone-200 shadow-lg" method="POST"
             action="{{ url('/auction/' . $auction->id . '/start') }}" enctype="multipart/form-data">
             @csrf
@@ -195,6 +195,20 @@
         function cancelDelete() {
             document.getElementById('overlay').classList.add('hidden');
             deleteConfirmation = document.getElementById('deleteConfirmation');
+            deleteConfirmation.classList.remove('flex');
+            deleteConfirmation.classList.add('hidden');
+        }
+
+        function showBidHistoryPopup() {
+            document.getElementById('overlay').classList.remove('hidden');
+            deleteConfirmation = document.getElementById('biddingHistory');
+            deleteConfirmation.classList.remove('hidden');
+            deleteConfirmation.classList.add('flex');
+        }
+
+        function exitBidHistory() {
+            document.getElementById('overlay').classList.add('hidden');
+            deleteConfirmation = document.getElementById('biddingHistory');
             deleteConfirmation.classList.remove('flex');
             deleteConfirmation.classList.add('hidden');
         }

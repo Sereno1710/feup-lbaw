@@ -53,7 +53,7 @@ class AuctionController extends Controller
 
         if ($auction->state === 'approved') {
             $days = $request->input('days');
-            $endTime = now()->addDays($days);
+            $endTime = now()->addMinutes($days);
 
             $auction->update([
                 'state' => 'active',
@@ -108,7 +108,7 @@ class AuctionController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Auction submitted successfully.');
+            return redirect('/auction/' . $auction->id);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error ocurred. Try again later.');
         }

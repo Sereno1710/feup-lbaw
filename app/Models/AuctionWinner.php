@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class AuctionWinner extends Model
 {
-    use HasFactory;
-    protected $table = 'auctionWinner';
+    protected $table = 'auctionwinner';
+    public $incrementing = false;
     public $timestamps  = false;
 
     protected $fillable = [
-        'user_id','auction_id','amount', 'rating'
+        'user_id','auction_id', 'rating'
     ];
 
     public function user() {

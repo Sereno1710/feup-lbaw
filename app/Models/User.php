@@ -34,7 +34,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Auction::class, 'owner_id')
             ->where(function ($query) {
-                $query->where('state', 'active')->orWhere('state', 'paused');
+                $query->where('state', 'active')->orWhere('state', 'paused')->orWhere('state', 'finished');
             })
             ->orderBy('state', 'asc');
     }

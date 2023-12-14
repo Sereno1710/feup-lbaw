@@ -2,12 +2,6 @@
 
 @section('content')
 
-<div>
-    <a href="{{ url('/home') }}" class="text-blue-500 hover:underline">Home</a>
-    <span class="mx-2"> > </span>
-    <span class="text-stone-500">Recover Password</span>
-</div>
-
 <form class="m-auto p-8 max-w-xl flex flex-col text-stone-800 bg-white shadow-lg" method="POST"
     action="{{ route('password.sendmail') }}">
     {{ csrf_field() }}

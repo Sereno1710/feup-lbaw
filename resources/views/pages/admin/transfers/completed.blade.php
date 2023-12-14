@@ -1,19 +1,13 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('nav-bar')
-    <br>
-    <br>
-    <br>
     <div class="max-w-screen px-2 py-3 mx-auto">
         <div class="flex items-center">
             <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
-                <li>
-                    <a href="/admin/transfers/deposits" class="text-black">Deposits</a>
-                </li>
-                <li>
+                <li class="flex items-center border-r border-black pr-8 px-4">
                     <a href="/admin/transfers/withdrawals" class="text-black">Withdrawals</a>
                 </li>
-                <li> 
+                <li class="flex items-center">
                     <a href="/admin/transfers/completed" class="text-black font-bold">Transfers Completed</a>
                 </li>
             </ul>
@@ -22,11 +16,7 @@
 @endsection
 
 @section('content')
-    <br>
-    <br>
-    <br>
-    <br>
-    <div class="mx-2 flex flex-col overflow-x-auto">
+    <div class="mx-2 flex flex-col overflow-x-auto m-8">
         <h1 class="text-4xl font-bold">Transfers Completed</h1>
         <br>
         <div class="mx-6 mx-8">
@@ -52,6 +42,9 @@
                         @endforeach
                         </tbody>
                     </table>
+                </div>
+                <div>
+                    {{ $others->links() }}
                 </div>
             </div>
         </div>

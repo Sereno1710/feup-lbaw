@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use App\Models\Admin;
+use App\Models\Auction;
+use App\Models\Bid;
 
 class User extends Authenticatable
 {
@@ -24,13 +26,32 @@ class User extends Authenticatable
         return count(Admin::where('user_id', $this->id)->get()) > 0;
     }
 
+    public function isBanned()
+    {
+        return $this->state == 'banned';
+    }
+
+    public function isSystemManager()
+    {
+        return count(SystemManager::where('user_id', $this->id)->get()) > 0;
+    }
+
     public function ownAuction() {
-      return $this->hasMany('App\Models\Auction', 'owner_id')->orderBy('initial_time', 'desc');
+      return $this->hasMany(Auction::class, 'owner_id')->orderBy('state', 'asc');
+    }
+
+    public function ownPublicAuction()
+    {
+        return $this->hasMany(Auction::class, 'owner_id')
+            ->where(function ($query) {
+                $query->where('state', 'active')->orWhere('state', 'paused')->orWhere('state', 'finished');
+            })
+            ->orderBy('state', 'asc');
     }
 
     public function ownBids()
     {
-        return $this->hasMany('App\Models\Bid', 'user_id')->orderBy('id', 'desc');
+        return $this->hasMany(Bid::class, 'user_id')->orderBy('time', 'desc');
     }
 
     public function followedAuctions() {
@@ -44,8 +65,9 @@ class User extends Authenticatable
 
     public static function active()
     {
-        return User::where('is_anonymizing', '!=', 'true')->orderBy('id', 'asc')->paginate(10);
+        return User::where('state', '!=', 'disabled')->orderBy('id', 'asc')->paginate(10);
     }
+
     public function profileImagePath()
     {
         $files = glob("images/profile/".$this->id.".jpg", GLOB_BRACE);

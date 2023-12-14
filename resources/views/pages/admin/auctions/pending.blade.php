@@ -1,19 +1,16 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('nav-bar')
-    <br>
-    <br>
-    <br>
     <div class="max-w-screen px-2 py-3 mx-auto">
         <div class="flex items-center">
             <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
-                <li>
+                <li class="flex items-center border-r border-black pr-8 px-4">
                     <a href="/admin/auctions/active" class="text-black">Active</a>
                 </li>
-                <li>
+                <li class="flex items-center border-r border-black pr-8">
                     <a href="/admin/auctions/pending" class="text-black font-bold">Pending</a>
                 </li>
-                <li> 
+                <li class="flex items-center"> 
                     <a href="/admin/auctions/others" class="text-black ">Others</a>
                 </li>
             </ul>
@@ -22,17 +19,13 @@
 @endsection
 
 @section('content')
-    <br>
-    <br>
-    <br>
-    <br>
-    <div class="mx-2 flex flex-col overflow-x-auto">
+    <div class="mx-2 flex flex-col overflow-x-auto m-8">
         <h1 class="text-4xl font-bold">Pending Auctions</h1>
         <br>
         <div class="mx-6 mx-8">
             <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full border-seperate">
+                    <table class="min-w-full border-seperate" id="auctions_table">
                         <thead>
                             <tr>
                                 <th class="py-2 px-4 border border-slate-300">ID</th> 
@@ -46,32 +39,25 @@
                         </thead>
                         <tbody>
                         @foreach ($pending as $auction)
-                        <tr>
+                        <tr id="auction_row_{{$auction->id}}">
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->id }}</td>
-                            <td class="py-2 px-4 border border-slate-300">{{$auction->username }}</td>
-                            <td class="py-2 px-4 border border-slate-300">{{ $auction->name }}</td>
+                            <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/user/' . $auction->owner_id) }}">{{$auction->username }}</a></td>
+                            <td class="py-2 px-4 border border-slate-300"><a href="{{ url('/auction/' . $auction->id) }}">{{ $auction->name }}</a></td>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->initial_price }}</td>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->price }}</td>
                             <td class="py-2 px-4 border border-slate-300">{{ $auction->state }}</td>
                             <td class="py-2 px-4 border border-slate-300 flex flex-row">
-                                <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.auctions.approveAuction') }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('POST')
-                                    <input type="hidden" name="id" value="{{ $auction->id }}">
-                                    <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Approve</button> 
-                                </form>
-                                <form class="m-auto max-w-xl text-stone-800" method="POST" action="{{ route('admin.auctions.rejectAuction') }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('POST')
-                                    <input type="hidden" name="id" value="{{ $auction->id }}">
-                                    <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Reject</button> 
-                                </form>
+                            <button auction_id="{{ $auction->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded approve-btn" type="button">Approve</button>
+                            <button auction_id="{{ $auction->id }}" class="mx-2 p-2 text-white bg-stone-800 rounded reject-btn" type="button">Reject</button>
                             </td>
                         </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>  
+                <div>
+                    {{ $pending->links() }}
+                </div>
             </div>
         </div>
     </div>

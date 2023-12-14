@@ -6,11 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-
+use App\Events\AuctionBid;
 use App\Models\Bid;
 use App\Models\Auction;
 use App\Models\MetaInfo;
 use App\Models\AuctionMetaInfoValue;
+use App\Models\follows;
+use App\Models\Report; 
+use App\Models\Comment; 
+use App\Models\AuctionWinner;
 
 class AuctionController extends Controller
 {
@@ -21,6 +25,7 @@ class AuctionController extends Controller
 
         return view('pages.auction', ['auction' => $auction, 'bids' => $bids]);
     }
+    
     public function showActiveAuctions()
     {
         $activeAuctions = $activeAuctions = Auction::activeAuctions()->get();
@@ -49,7 +54,7 @@ class AuctionController extends Controller
 
         if ($auction->state === 'approved') {
             $days = $request->input('days');
-            $endTime = now()->addDays($days);
+            $endTime = now()->addMinutes($days);
 
             $auction->update([
                 'state' => 'active',
@@ -104,13 +109,13 @@ class AuctionController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Bid submitted successfully.');
+            return redirect('/auction/' . $auction->id);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error ocurred. Try again later.');
         }
     }
 
-    public function auctionBid(Request $request, $auctionId)
+    public function bidOnAuction(Request $request, $auctionId)
     {
         Auth::check();
         $validatedData = $request->validate([
@@ -119,6 +124,8 @@ class AuctionController extends Controller
     
         try {
             DB::beginTransaction();
+
+            DB::statement('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
             
             DB::table('users')
                 ->where('id', function ($query) use ($auctionId) {
@@ -128,7 +135,7 @@ class AuctionController extends Controller
                 })
                 ->update(['balance' => DB::raw('balance + (SELECT amount FROM (SELECT user_id, amount FROM bid WHERE auction_id = :auction_id ORDER BY amount DESC LIMIT 1) AS LastBid)')]);
 
-
+                
             $bid = new Bid([
                 'user_id' => Auth::user()->id,
                 'auction_id' => $auctionId,
@@ -164,8 +171,113 @@ class AuctionController extends Controller
                 }
             }
 
-            return redirect()->back()->with('error', 'Error submitting bid.');
+            return redirect()->back()->with('error', $e->getMessage());
         }
+    }
+
+    public function followAuction(Request $request)
+    {
+        $userId = $request->user_id;
+        if ($request->user_id != Auth::user()->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        follows::create([
+            'user_id' => $request->user_id,
+            'auction_id' => $request->auction_id,
+        ]);
+
+        return response()->json(['message' => 'Auction followed successfully']);
+    }
+
+    public function unfollowAuction(Request $request)
+    {
+        if ($request->user_id != Auth::user()->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        follows::where('user_id', $request->user_id)
+            ->where('auction_id', $request->auction_id)
+            ->delete();
+
+        return response()->json(['message' => 'Auction unfollowed successfully']);
+    }
+
+    public function commentOnAuction(Request $request, $auctionId)
+    {
+        $validatedData = $request->validate([
+            'message' => 'required|string',
+        ]);
+        Comment::create([
+            'user_id' => Auth::user()->id,
+            'auction_id' => $auctionId,
+            'message' => $validatedData['message'],
+            'time' => now(),
+        ]);
+
+        return redirect()->back()->with('message', "Comment successfully added."); 
+    }
+
+    public function deleteCommentOnAuction($auctionId, $commentId)
+    {
+        $comment = Comment::findOrFail($commentId);
+
+        if (Auth::user()->id !== $comment->user->id) {
+            return redirect()->back()->with('message', 'Unauthorized to delete this comment.');
+        }
+
+        $comment->delete();
+        return redirect()->back()->with('message', 'Comment deleted successfully.');
+    }
+
+    public function reportAuction(Request $request, $auctionId)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|integer',
+            'description' => 'required|string',
+        ]);
+
+        if ($request->user_id != Auth::user()->id) {
+            return redirect()->back()->with('message', "Please do not report as someone else. Try again.");
+        }
+
+        $existingReport = Report::where('user_id', $validatedData['user_id'])
+            ->where('auction_id', $auctionId)
+            ->first();
+
+        if ($existingReport) {
+            return redirect()->back()->with('message', "You have already reported this auction.");
+        }
+
+        Report::create([
+            'user_id' => $validatedData['user_id'],
+            'auction_id' => $auctionId,
+            'description' => $validatedData['description'],
+        ]);
+
+        return redirect()->back()->with('message', "Thank you for your contribution.");
+    }
+
+    public function rateAuction(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'rating' => 'required|integer|between:1,5',
+        ]);
+
+        $auction = Auction::find($id);
+
+        if (Auth::user()->id !== $auction->auctionWinner->user_id) {
+            return redirect()->back()->with('message', "You cannot rate this auction.");
+        }
+
+        $auctionWinner = AuctionWinner::where('auction_id', $id)->first();
+        $auctionWinner::where('user_id', Auth::user()->id)
+                ->where('auction_id', $id)
+                ->update([
+                    'rating' => $validatedData['rating']
+                ]);
+
+        return redirect()->back()->with('message', "Thanks for submitting a rating.");
     }
 
     public function search(Request $request)

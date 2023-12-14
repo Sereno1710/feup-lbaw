@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class follows extends Model
 {
     public $timestamps = false;
-    protected $table='bid';
+    protected $table='follows';
+    public $incrementing = false;
     protected $fillable = ['user_id', 'auction_id'];
 
     public function user()

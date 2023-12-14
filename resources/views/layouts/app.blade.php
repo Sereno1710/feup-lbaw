@@ -23,7 +23,7 @@ use Carbon\Carbon;
                     <button type="submit">🔎</button>
                 </form>
                 @if (Auth::check() && Auth::user()->isAdmin())
-                <a href="{{ url('/admin') }}" class="ml-4">Admin</a>
+                <a href="{{ url('/admin/users') }}" class="ml-4">Admin</a>
                 @endif
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())

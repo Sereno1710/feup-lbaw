@@ -24,6 +24,16 @@ class User extends Authenticatable
         return count(Admin::where('user_id', $this->id)->get()) > 0;
     }
 
+    public function isBanned()
+    {
+        return $this->state == 'banned';
+    }
+
+    public function isSystemManager()
+    {
+        return count(SystemManager::where('user_id', $this->id)->get()) > 0;
+    }
+
     public function ownAuction() {
       return $this->hasMany('App\Models\Auction', 'owner_id')->orderBy('initial_time', 'desc');
     }
@@ -44,8 +54,9 @@ class User extends Authenticatable
 
     public static function active()
     {
-        return User::where('is_anonymizing', '!=', 'true')->orderBy('id', 'asc')->paginate(10);
+        return User::where('state', '!=', 'disabled')->orderBy('id', 'asc')->paginate(10);
     }
+
     public function profileImagePath()
     {
         $files = glob("images/profile/".$this->id.".jpg", GLOB_BRACE);

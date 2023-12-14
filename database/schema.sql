@@ -26,6 +26,7 @@ DROP TYPE IF EXISTS category_type;
 DROP TYPE IF EXISTS auction_state;
 DROP TYPE IF EXISTS transfer_state;
 DROP TYPE IF EXISTS report_state;
+DROP TYPE IF EXISTS user_state;
 
 DROP FUNCTION IF EXISTS user_fullsearch_update;
 DROP FUNCTION IF EXISTS auction_search_update;
@@ -81,8 +82,7 @@ CREATE TYPE auction_state AS ENUM (
     'finished',
     'paused',
     'approved',
-    'denied',
-    'disabled'
+    'denied'
 );
 
 
@@ -96,6 +96,12 @@ CREATE TYPE report_state AS ENUM (
     'listed',
     'reviewed',
     'unrelated'
+);
+
+CREATE TYPE user_state AS ENUM (
+    'active',
+    'disabled',
+    'banned'
 );
 /*
 
@@ -118,9 +124,9 @@ CREATE TABLE users (
   zip_code VARCHAR(10) DEFAULT NULL,
   country VARCHAR(255) DEFAULT NULL,
   rating FLOAT CHECK (rating >= 0 AND rating <= 5) DEFAULT NULL,
+  state user_state DEFAULT 'active',
   remember_token VARCHAR(256) DEFAULT NULL
 );
-  ALTER TABLE users ADD COLUMN is_anonymizing BOOLEAN DEFAULT false;
 -- SystemManager table
 CREATE TABLE SystemManager (
   user_id INT REFERENCES users(id) ON UPDATE CASCADE,
@@ -328,10 +334,10 @@ CREATE OR REPLACE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF NEW.is_anonymizing THEN
+  IF NEW.state = 'disabled' THEN
     NEW.username := 'anonymous' || OLD.id;
     NEW.name := 'Anonymous';
-    NEW.email := 'anonymous' || OLD.id || '@anonymous.com';
+    NEW.email := 'anonymous' || OLD.id || '@soundsello.com';
     NEW.password := 'anonymous';
     NEW.date_of_birth := '1900-01-01';
     NEW.balance := 0.00;
@@ -341,6 +347,7 @@ BEGIN
     NEW.country := NULL;
     NEW.rating := NULL;
     NEW.remember_token := NULL;
+    NEW.biography := NULL;
   END IF;
   RETURN NEW;
 END;
@@ -384,6 +391,7 @@ DECLARE
   i_price MONEY;
   user_balance MONEY;
   current_state auction_state;
+  user_state user_state;
 BEGIN
   SELECT user_id, amount INTO highest_bidder, current_highest_bid
   FROM Bid
@@ -393,12 +401,12 @@ BEGIN
   SELECT initial_price, state INTO i_price, current_state
   FROM Auction
   WHERE id = NEW.auction_id;
-  SELECT balance INTO user_balance
+  SELECT balance,state INTO user_balance,user_state
   FROM users
   WHERE id = NEW.user_id;
 
 
-  IF current_State <> 'active' THEN
+  IF current_State <> 'active' AND user_state <> 'banned' AND user_state <> 'disabled'THEN
     RAISE EXCEPTION 'You may only bid in active auctions.';
   ELSIF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
     RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';

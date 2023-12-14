@@ -39,7 +39,7 @@ This section contains the relational schema that resulted from the UML Class Dia
 
 | Relation reference | Relation Compact Notation                                                                                                                                                                                                                                                                 |
 |--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| R01                | users (id **PK**,name **NN** ,username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country, rating **CK** rating >= 0 && rating <= 5  **DF N**, is_anonymizing **DF** false,**NN** image)                                                 |
+| R01                | users (id **PK**,name **NN** ,username **NN UK**, email **NN UK**, password **NN**, balance **NN DF 0**, date_of_birth **NN**,street **NN**, city **NN**, zip_code **NN**, country, rating **CK** rating >= 0 && rating <= 5  **DF N**,**NN** image, state **DF** 'active', remember_token **DF** NULL)                                                 |
 | R02                | SystemManager (id -> users(id) **PK**)                                                                                                                                                                                                                    |
 | R03                | Admin (id -> users(id) **PK**)              |                                               
 | R04                | moneys (id **PK**,**FK** user_id(id) **PK**, amount **CK** (amount > 0), type **NN**, state **CK** transfer_state)                          |
@@ -77,6 +77,7 @@ Specification of aditional domains:
 | category_type | ENUM ('strings', 'woodwinds', 'bass', 'percussion') |
 | transfer_state | ENUM ('pending', 'approved', 'denied') |
 | report_state | ENUM ('listed', 'reviewed', 'unrelated')|
+| user_state | ENUM ('active', 'disabled', 'banned') |
 
 
 ### 3. Schema validation
@@ -87,13 +88,13 @@ Function dependencies identified as well as if it is in BCNF.
 |-----------------------------|----------------------------------------------------------------------------------------------------------------|
 | **Keys**                    | { id }, { email }, { username }, { id, email }, { id, username}, { email, username}, { id, email, username }   |
 | **Functional Dependencies** |                                                                                                                |
-| FD0101                      | id → { username,name, email, password, balance, date_of_birth, street, city, zip_code, country, image,is_anonymizing, rating }     |
+| FD0101                      | id → { username,name, email, password, balance, date_of_birth, street, city, zip_code, country, image,state,remember_token, rating }     |
 | FD0102                      | email → { id, username,name, password, balance, date_of_birth, street, city, zip_code, country, image, rating }     |
-| FD0103                      | username → { id,name, email, password, balance, date_of_birth, street, city, zip_code, country, image, is_anonymizing, rating }     |
-| FD0104                      | { email, username } → { id, name,password, balance, date_of_birth, street, city, zip_code, country, image,is_anonymizing, rating } |
-| FD0105                      | { id, email } → { username, name,password, balance, date_of_birth, street, city, zip_code, country, image,is_anonymizing, rating } |
-| FD0106                      | {id, username} → { name,email, password, balance, date_of_birth, street, city, zip_code, country, image, is_anonymizing, rating }   |
-| FD107                       | { id, email, username } → {name, password, balance, date_of_birth, street, city, zip_code, country, image,is_anonymizing, rating}  |
+| FD0103                      | username → { id,name, email, password, balance, date_of_birth, street, city, zip_code, country, image, state,remember_token, rating }     |
+| FD0104                      | { email, username } → { id, name,password, balance, date_of_birth, street, city, zip_code, country, image,state,remember_token, rating } |
+| FD0105                      | { id, email } → { username, name,password, balance, date_of_birth, street, city, zip_code, country, image,state,remember_token, rating } |
+| FD0106                      | {id, username} → { name,email, password, balance, date_of_birth, street, city, zip_code, country, image, state,remember_token, rating }   |
+| FD107                       | { id, email, username } → {name, password, balance, date_of_birth, street, city, zip_code, country, image,state,remember_token, rating}  |
 | **NORMAL FORM** | BCNF because in each of these functional dependencies, the left-hand side is a superkey, since it uniquely determines the attributes on the right-hand side. Each functional dependency satisfies the requirement for BCNF, and the table has no partial dependencies, therefore, it is indeed in BCNF. |
 
 | **TABLE RO2**               | SystemManager                                                 |
@@ -364,10 +365,10 @@ CREATE OR REPLACE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF NEW.is_anonymizing THEN
+  IF NEW.state = 'disabled' THEN
     NEW.username := 'anonymous' || OLD.id;
     NEW.name := 'Anonymous';
-    NEW.email := 'anonymous' || OLD.id || '@anonymous.com';
+    NEW.email := 'anonymous' || OLD.id || '@soundsello.com';
     NEW.password := 'anonymous';
     NEW.date_of_birth := '1900-01-01';
     NEW.balance := 0.00;
@@ -376,7 +377,8 @@ BEGIN
     NEW.zip_code := NULL;
     NEW.country := NULL;
     NEW.rating := NULL;
-    NEW.image := NULL;
+    NEW.remember_token := NULL;
+    NEW.biography := NULL;
   END IF;
   RETURN NEW;
 END;
@@ -430,6 +432,7 @@ DECLARE
   i_price MONEY;
   user_balance MONEY;
   current_state auction_state;
+  user_state user_state;
 BEGIN
   SELECT user_id, amount INTO highest_bidder, current_highest_bid
   FROM Bid
@@ -439,12 +442,12 @@ BEGIN
   SELECT initial_price, state INTO i_price, current_state
   FROM Auction
   WHERE id = NEW.auction_id;
-  SELECT balance INTO user_balance
+  SELECT balance,state INTO user_balance,user_state
   FROM users
   WHERE id = NEW.user_id;
 
 
-  IF current_State <> 'active' THEN
+  IF current_State <> 'active' AND user_state <> 'banned' AND user_state <> 'disabled'THEN
     RAISE EXCEPTION 'You may only bid in active auctions.';
   ELSIF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
     RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
@@ -967,6 +970,7 @@ DROP TYPE IF EXISTS category_type;
 DROP TYPE IF EXISTS auction_state;
 DROP TYPE IF EXISTS transfer_state;
 DROP TYPE IF EXISTS report_state;
+DROP TYPE IF EXISTS user_state;
 
 DROP FUNCTION IF EXISTS user_fullsearch_update;
 DROP FUNCTION IF EXISTS auction_search_update;
@@ -1038,6 +1042,12 @@ CREATE TYPE report_state AS ENUM (
     'reviewed',
     'unrelated'
 );
+
+CREATE TYPE user_state AS ENUM (
+    'active',
+    'disabled',
+    'banned'
+);
 /*
 
 TABLES
@@ -1059,9 +1069,9 @@ CREATE TABLE users (
   zip_code VARCHAR(10) DEFAULT NULL,
   country VARCHAR(255) DEFAULT NULL,
   rating FLOAT CHECK (rating >= 0 AND rating <= 5) DEFAULT NULL,
-  image BYTEA
+  state user_state DEFAULT 'active',
+  remember_token VARCHAR(256) DEFAULT NULL
 );
-  ALTER TABLE users ADD COLUMN is_anonymizing BOOLEAN DEFAULT false;
 -- SystemManager table
 CREATE TABLE SystemManager (
   user_id INT REFERENCES users(id) ON UPDATE CASCADE,
@@ -1265,10 +1275,10 @@ CREATE OR REPLACE FUNCTION anonymize_user_data()
 RETURNS TRIGGER AS 
 $$
 BEGIN
-  IF NEW.is_anonymizing THEN
+  IF NEW.state = 'disabled' THEN
     NEW.username := 'anonymous' || OLD.id;
     NEW.name := 'Anonymous';
-    NEW.email := 'anonymous' || OLD.id || '@anonymous.com';
+    NEW.email := 'anonymous' || OLD.id || '@soundsello.com';
     NEW.password := 'anonymous';
     NEW.date_of_birth := '1900-01-01';
     NEW.balance := 0.00;
@@ -1277,7 +1287,8 @@ BEGIN
     NEW.zip_code := NULL;
     NEW.country := NULL;
     NEW.rating := NULL;
-    NEW.image := NULL;
+    NEW.remember_token := NULL;
+    NEW.biography := NULL;
   END IF;
   RETURN NEW;
 END;
@@ -1321,6 +1332,7 @@ DECLARE
   i_price MONEY;
   user_balance MONEY;
   current_state auction_state;
+  user_state user_state;
 BEGIN
   SELECT user_id, amount INTO highest_bidder, current_highest_bid
   FROM Bid
@@ -1330,12 +1342,12 @@ BEGIN
   SELECT initial_price, state INTO i_price, current_state
   FROM Auction
   WHERE id = NEW.auction_id;
-  SELECT balance INTO user_balance
+  SELECT balance,state INTO user_balance,user_state
   FROM users
   WHERE id = NEW.user_id;
 
 
-  IF current_State <> 'active' THEN
+  IF current_State <> 'active' AND user_state <> 'banned' AND user_state <> 'disabled'THEN
     RAISE EXCEPTION 'You may only bid in active auctions.';
   ELSIF NEW.amount <= current_highest_bid OR NEW.amount < i_price THEN
     RAISE EXCEPTION 'Your bid must be higher than the current highest bid.';
@@ -1671,6 +1683,7 @@ CREATE TRIGGER transfer_approved
 AFTER UPDATE ON moneys
 FOR EACH ROW
 EXECUTE FUNCTION transfer_approved();
+
 
 
 
@@ -2056,6 +2069,20 @@ Changes made to the first submission:
 6. Added name and is_anonymizing to users table
 7. Added report_state to reports
 8. Fix anonymaze_user_data() trigger
+
+- José Santos (Editor)
+
+### 12/12/2023
+
+1. Removed is_anonymizing from users table
+2. Added user_state to UML,SQL,Relational Schema
+3. Fixed triggers associated with user_state
+
+- José Santos (Editor)
+
+### 13/12/2023
+
+1. Changed anonymize trigger, email not NULL now 
 
 - José Santos (Editor)
 

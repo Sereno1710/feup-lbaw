@@ -2,7 +2,7 @@
     $profileImagePath = $comment->user->profileImagePath();
 @endphp
 
-<div class="mb-4 p-4 bg-stone-100 rounded-lg">
+<div class="mb-4 p-4 bg-stone-100 rounded-lg shadow-sm">
     <div class="flex flex-col items-start justify-between">
         <div class="w-full flex flex-row items-start justify-between">
             <div class="flex items-center">

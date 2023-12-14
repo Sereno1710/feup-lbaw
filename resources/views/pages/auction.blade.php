@@ -129,11 +129,11 @@
             <h3 class="mt-4 text-xl font-bold">Comments</h3>
         @endif
         @if (Auth::check() && $auction->state === 'active')
-            <form class ="w-2/5 mt-2 flex flex-col items-start" method="POST"
+            <form class ="w-2/5 my-2 p-2 flex flex-col items-start border" method="POST"
                 action="{{ url('/auction/' . $auction->id . '/comment/create') }}">
                 @csrf
                 <textarea name="message" class="w-full p-2 border rounded resize-none" placeholder="Add a comment" required></textarea>
-                <button type="submit" class="bg-stone-800 text-white p-1.5 my-2 rounded text-xs self-end">Comment</button>
+                <button type="submit" class="bg-stone-800 text-white p-1.5 mt-2 rounded text-xs self-end">Comment</button>
             </form>
         @endif
         @if ($auction->comments->count() > 0)

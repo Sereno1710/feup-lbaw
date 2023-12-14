@@ -227,7 +227,7 @@ class AuctionController extends Controller
         }
 
         $comment->delete();
-        return redirect()->back()->with('message', 'Comment deleted successfully!');
+        return redirect()->back()->with('message', 'Comment deleted successfully.');
     }
 
     public function reportAuction(Request $request, $auctionId)

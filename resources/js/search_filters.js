@@ -1,18 +1,26 @@
 function addEventListeners () {
   let buttons = document.getElementById('filters')
-  var resultsArray = JSON.parse(searchResults)
+  console.log(searchResults)
+  var auctions = document.querySelectorAll('.auction')
+  var users = document.querySelectorAll('.user')
+  var results = [...auctions, ...users]
+  console.log(auctions)
+  console.log(users)
+  console.log(results)
 
-  if (resultsArray && buttons) {
+  if (results && buttons) {
     buttons.addEventListener('click', function (event) {
       let button = event.target
       if (button.classList.contains('all')) {
-        showAll(resultsArray)
+        showAll(results)
+        changeColours(button)
       } else if (button.classList.contains('auctions')) {
-        showAuctions(resultsArray)
+        showAuctions(results)
+        changeColours(button)
       } else if (button.classList.contains('users')) {
-        showUsers(resultsArray)
+        showUsers(results)
+        changeColours(button)
       }
-      changeColours(button)
     })
   }
 }
@@ -46,50 +54,28 @@ function changeColours (button) {
   )
 }
 
-function encodeForAjax (data) {
-  if (data == null) return null
-  return Object.keys(data)
-    .map(function (k) {
-      return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
-    })
-    .join('&')
-}
-
-function sendAjaxRequest (method, url, data, handler) {
-  let request = new XMLHttpRequest()
-
-  request.open(method, url, true)
-  request.setRequestHeader(
-    'X-CSRF-TOKEN',
-    document.querySelector('meta[name="csrf-token"]').content
-  )
-  request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
-  request.addEventListener('load', handler)
-  request.send(encodeForAjax(data))
-}
-
-function showAll (resultsArray) {
-  resultsArray.forEach(result => {
-    result.style.display = 'block'
+function showAll (searchResults) {
+  searchResults.forEach(result => {
+    result.classList.remove('hidden')
   })
 }
 
-function showAuctions (resultsArray) {
-  resultsArray.forEach(result => {
-    if (result.type === 'auction') {
-      result.style.display = 'block'
+function showAuctions (searchResults) {
+  searchResults.forEach(result => {
+    if (result.classList.contains('auction')) {
+      result.classList.remove('hidden')
     } else {
-      result.style.display = 'none'
+      result.classList.add('hidden')
     }
   })
 }
 
-function showUsers (resultsArray) {
-  resultsArray.forEach(result => {
-    if (result.type === 'user') {
-      result.style.display = 'block'
+function showUsers (searchResults) {
+  searchResults.forEach(result => {
+    if (result.classList.contains('user')) {
+      result.classList.remove('hidden')
     } else {
-      result.style.display = 'none'
+      result.classList.add('hidden')
     }
   })
 }

@@ -93,7 +93,11 @@ class HomeController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('pages.search', ['results' => $results, 'input' => $input]);
+        if ($request->ajax()) {
+            return response()->json(['results' => $results, 'input' => $input]);
+        } else {
+            return view('pages.search', ['results' => $results, 'input' => $input]);
+        }
     }
 
     public function aboutUs()

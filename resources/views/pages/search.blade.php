@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@vite('resources/js/search_filters.js')
 
 @section('content')
 <div class="container mx-auto my-8">
@@ -6,11 +7,14 @@
 
     <div class="flex space-x-4" id="filters">
         <button
-            class="button all bg-black border-black text-white hover:bg-gray-600 font-bold py-2 px-4 rounded-full border">All</button>
+            class="button all bg-white border-black text-black hover:bg-gray-200 font-bold py-2 px-4 rounded-full border"
+            id="allButton">All</button>
         <button
-            class="button auctions bg-white border-black text-black hover:bg-gray-200 font-bold py-2 px-4 rounded-full border">Auctions</button>
+            class="button auctions bg-white border-black text-black hover:bg-gray-200 font-bold py-2 px-4 rounded-full border"
+            id="auctionsButton">Auctions</button>
         <button
-            class="button users bg-white border-black text-black hover:bg-gray-200 font-bold py-2 px-4 rounded-full border">Users</button>
+            class="button users bg-white border-black text-black hover:bg-gray-200 font-bold py-2 px-4 rounded-full border"
+            id="usersButton">Users</button>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" id="results">
@@ -31,7 +35,8 @@
         @endif
     </div>
 </div>
+{{ $results->appends(['input' => $input])->links() }}
 <script>
     var searchResults = @json($results)
 </script>
-{{ $results->appends(['input' => $input])->links() }}
+@endsection

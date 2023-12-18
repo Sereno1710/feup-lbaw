@@ -23,11 +23,16 @@ class HomeController extends Controller
     public function search(Request $request)
     {
         $input = $request->input('input');
+        $selectedCategories = (array) $request->input('categories', []);
+
+        //dd($selectedCategories);
 
         if (empty($input)) {
-            $auctionsQuery = Auction::whereRaw("tsvectors @@ to_tsquery('english', '*')")
-                ->orderByRaw("ts_rank(tsvectors, to_tsquery('*')) DESC")
-                ->get();
+            $auctionsQuery1 = Auction::all();
+
+            if (!empty($selectedCategories)) {
+                $auctionsQuery = $auctionsQuery1->whereIn('category', $selectedCategories);
+            }
 
             $usersQuery = User::whereRaw("tsvectors @@ to_tsquery('english', '*')")
                 ->orderByRaw("ts_rank(tsvectors, to_tsquery('*')) DESC")
@@ -51,7 +56,13 @@ class HomeController extends Controller
                     $q->orWhereRaw("tsvectors @@ to_tsquery('english', ?)", [$value . ':*'])
                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$value . ':*']);
                 }
-            })->get();
+            });
+
+            if (!empty($selectedCategories)) {
+                $auctionsQuery3 = $auctionsQuery2->whereIn('category', $selectedCategories)->get();
+            } else {
+                $auctionsQuery3 = $auctionsQuery2->get();
+            }
 
             $usersQuery2 = User::where(function ($q) use ($searchValues) {
                 foreach ($searchValues as $value) {
@@ -60,7 +71,7 @@ class HomeController extends Controller
                 }
             })->get();
 
-            $auctionsQuery = $auctionsQuery1->merge($auctionsQuery2);
+            $auctionsQuery = $auctionsQuery1->merge($auctionsQuery3);
             $usersQuery = $usersQuery1->merge($usersQuery2);
         }
 
@@ -89,11 +100,7 @@ class HomeController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        if ($request->ajax()) {
-            return response()->json(['results' => $results, 'input' => $input]);
-        } else {
-            return view('pages.search', ['results' => $results, 'input' => $input]);
-        }
+        return view('pages.search', ['results' => $results, 'input' => $input]);
     }
 
     public function aboutUs()

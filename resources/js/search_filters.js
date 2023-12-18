@@ -1,12 +1,9 @@
 function addEventListeners () {
   let buttons = document.getElementById('filters')
-  console.log(searchResults)
+
   var auctions = document.querySelectorAll('.auction')
   var users = document.querySelectorAll('.user')
   var results = [...auctions, ...users]
-  console.log(auctions)
-  console.log(users)
-  console.log(results)
 
   if (results && buttons) {
     buttons.addEventListener('click', function (event) {
@@ -44,7 +41,6 @@ function addEventListeners () {
 
 function changeColours (buttonId) {
   let button = document.getElementById(buttonId)
-  console.log(button)
   document.querySelectorAll('.button').forEach(btn => {
     btn.classList.remove(
       'bg-black',

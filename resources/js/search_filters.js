@@ -12,20 +12,39 @@ function addEventListeners () {
     buttons.addEventListener('click', function (event) {
       let button = event.target
       if (button.classList.contains('all')) {
+        localStorage.setItem('selectedButton', 'allButton')
+        changeColours(localStorage.getItem('selectedButton'))
         showAll(results)
-        changeColours(button)
       } else if (button.classList.contains('auctions')) {
+        localStorage.setItem('selectedButton', 'auctionsButton')
+        changeColours(localStorage.getItem('selectedButton'))
         showAuctions(results)
-        changeColours(button)
       } else if (button.classList.contains('users')) {
+        localStorage.setItem('selectedButton', 'usersButton')
+        changeColours(localStorage.getItem('selectedButton'))
         showUsers(results)
-        changeColours(button)
       }
     })
+
+    if (localStorage.getItem('selectedButton') == null) {
+      localStorage.setItem('selectedButton', 'allButton')
+    }
+
+    if (localStorage.getItem('selectedButton') === 'allButton') {
+      showAll(results)
+    } else if (localStorage.getItem('selectedButton') === 'auctionsButton') {
+      showAuctions(results)
+    } else if (localStorage.getItem('selectedButton') === 'usersButton') {
+      showUsers(results)
+    }
+
+    changeColours(localStorage.getItem('selectedButton'))
   }
 }
 
-function changeColours (button) {
+function changeColours (buttonId) {
+  let button = document.getElementById(buttonId)
+  console.log(button)
   document.querySelectorAll('.button').forEach(btn => {
     btn.classList.remove(
       'bg-black',

@@ -10,7 +10,7 @@ use Carbon\Carbon;
     @vite('resources/js/app.js')
     @vite('resources/js/auction.js')
     @vite('resources/js/dropdown.js')
-    @vite('resources/js/search_filters.js')
+    <!--@vite('resources/js/categories.js')-->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
@@ -19,11 +19,33 @@ use Carbon\Carbon;
         <nav class="items-center m-auto flex justify-between ">
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
             <div class="flex justify-between items-center">
-                <form class="p-1 bg-stone-200 rounded-lg" action="/search" method="GET">
-                    <input class="bg-stone-200 outline-none" type="text" name="input"
-                        placeholder="Search auctions and users">
-                    <button type="submit">🔎</button>
-                </form>
+                <div class="relative inline-block">
+                    <form class="p-1 bg-stone-200 rounded-lg" action="/search" method="GET">
+                        <input class="bg-stone-200 outline-none px-4 py-2" type="text" name="input"
+                            placeholder="Search auctions and users" id="searchBar">
+
+                        <span class="dropdown-button cursor-pointer mr-2">&#9660;</span>
+
+                        <div class="absolute mt-2 p-2 bg-gray-100 border rounded border-gray-300 rounded shadow-md hidden"
+                            id="categoriesDropdown">
+                            <label for="category1" class="flex items-center">
+                                <input type="checkbox" id="category1" name="categories[]" value="strings" class="mr-2"
+                                    checked>Strings</label>
+                            <label for="category2" class="flex items-center">
+                                <input type="checkbox" id="category2" name="categories[]" value="woodwinds" class="mr-2"
+                                    checked>Woodwinds</label>
+                            <label for="category3" class="flex items-center">
+                                <input type="checkbox" id="category3" name="categories[]" value="brass" class="mr-2"
+                                    checked>Brass</label>
+                            <label for="category4" class="flex items-center">
+                                <input type="checkbox" id="category4" name="categories[]" value="percussion"
+                                    class="mr-2" checked>Percussion</label>
+                        </div>
+
+                        <button type="submit">🔎</button>
+                    </form>
+                </div>
+
                 @if (Auth::check() && (Auth::user()->isAdmin() or Auth::user()->isSystemManager()))
                 <a href="{{ url('/admin/users') }}" class="ml-4">Admin</a>
                 @endif

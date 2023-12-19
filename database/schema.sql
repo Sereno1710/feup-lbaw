@@ -116,7 +116,7 @@ CREATE TABLE users (
   username VARCHAR(255) NOT NULL UNIQUE,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
+  password VARCHAR(255),
   balance MONEY NOT NULL DEFAULT 0,
   date_of_birth DATE NOT NULL,
   biography VARCHAR(255) DEFAULT NULL,
@@ -126,7 +126,8 @@ CREATE TABLE users (
   country VARCHAR(255) DEFAULT NULL,
   rating FLOAT CHECK (rating >= 0 AND rating <= 5) DEFAULT NULL,
   state user_state DEFAULT 'active',
-  remember_token VARCHAR(256) DEFAULT NULL
+  remember_token VARCHAR(256) DEFAULT NULL,
+  google_id VARCHAR
 );
 -- SystemManager table
 CREATE TABLE SystemManager (
@@ -667,9 +668,9 @@ RETURNS TRIGGER AS
 $$
 BEGIN
   INSERT INTO Notification (notification_type, date, receiver_id)
-  VALUES ('user_downgrade', NOW(), NEW.user_id);
+  VALUES ('user_downgrade', NOW(), OLD.user_id);
 
-  RETURN NEW;
+  RETURN OLD;
 END;
 $$ 
 LANGUAGE plpgsql;

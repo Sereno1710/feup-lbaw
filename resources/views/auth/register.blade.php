@@ -45,6 +45,17 @@
     <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">
         Register
     </button>
-    <section class="m-2"> Already have an account? <a class="underline" href="{{ route('login') }}">Click here</a> to log in. </section> 
+    <section class="m-2"> Already have an account? <a class="underline" href="{{ route('login') }}">Click here</a> to log in. </section>
+    
+    <section class="my-4 flex items-center">
+        <div class="border-t border-stone-400 flex-grow"></div>
+        <span class="mx-4 text-stone-800">or sign up with</span>
+        <div class="border-t border-stone-400 flex-grow"></div>
+    </section>
+
+    <a href="{{ route('login.google') }}" class="p-2 text-white bg-blue-300 rounded flex items-center justify-center hover:bg-blue-700">
+        <img class="mr-2" src="{{ asset('images/icons/googleicon.png') }}" alt="Google Icon" width="20" height="20">
+        Google
+    </a>
 </form>
 @endsection

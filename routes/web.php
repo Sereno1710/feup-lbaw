@@ -104,6 +104,8 @@ Route::controller(LoginController::class)->group(function () {
     Route::post('/login', 'authenticate');
     Route::get('/logout', 'logout')->name('logout');
     Route::get('/recoverpassword', 'indexRecoverPassword')->name('password.recover');
+    Route::get('/login/google', 'redirectToGoogle')->name('login.google');
+    Route::get('/login/google/callback', 'handleGoogleCallback');
 });
 
 Route::controller(RegisterController::class)->group(function () {

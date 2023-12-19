@@ -81,7 +81,42 @@ use Carbon\Carbon;
                                                     <a href="{{ url('/user/' . $user->id) }}" class="underline hover:text-gray-600">{{ $user->name }}</a> has posted a comment in <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
                                                 @endif
                                         @elseif ($notification->notification_type == 'user_upgrade')
+                                            @php
+                                                $user = \App\Models\User::where('id', $notification->receiver_id)->first();
+                                            @endphp
+                                                Your account has been promoted! <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
                                         @elseif ($notification->notification_type == 'user_downgrade')
+                                            @php
+                                                $user = \App\Models\User::where('id', $notification->receiver_id)->first();
+                                            @endphp
+                                                Your account has been demoted! <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
+                                        @elseif ($notification->notification_type == 'auction_paused')
+                                            @php
+                                                $auction = \App\Models\Auction::where('id', $notification->auction_id)->first();
+                                            @endphp
+                                                <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> has been paused <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
+                                        @elseif ($notification->notification_type == 'auction_resumed')
+                                            @php
+                                                $auction = \App\Models\Auction::where('id', $notification->auction_id)->first();
+                                            @endphp
+                                                <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> has resumed <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
+                                        @elseif ($notification->notification_type == 'auction_approved')
+                                            @php
+                                                $auction = \App\Models\Auction::where('id', $notification->auction_id)->first();
+                                            @endphp
+                                                Your <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> auction request has been approved! You can start it now! <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
+                                        @elseif ($notification->notification_type == 'auction_denied')
+                                            @php
+                                                $auction = \App\Models\Auction::where('id', $notification->auction_id)->first();
+                                            @endphp
+                                                The <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> auction request has been declined! <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
+                                        @elseif ($notification->notification_type == 'auction_finished')
+                                            @php
+                                                $auction = \App\Models\Auction::where('id', $notification->auction_id)->first();
+                                            @endphp
+                                                <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> has ended <p class="text-gray-600 text-sm">{{ $formattedDate }}</span>
+                                        @else
+                                            @continue
                                         @endif
                                     </li>
                                     @endforeach

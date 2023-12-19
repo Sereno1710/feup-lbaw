@@ -1,8 +1,11 @@
+import Swal from 'sweetalert2'
+
 function addUserEventListeners() {
   let usersTable = document.getElementById("users_table");
   if (usersTable) {
     usersTable.addEventListener("click", function (event) {
       let userId = event.target.getAttribute("user_id");
+      let userName = event.target.getAttribute("user_name");
 
       if (event.target.classList.contains("promote-btn")) {
         promoteUser(userId);
@@ -12,6 +15,8 @@ function addUserEventListeners() {
         banUser(userId);
       } else if (event.target.classList.contains("unban-btn")) {
         unbanUser(userId);
+      } else if (event.target.classList.contains("popup-btn")) {
+        showDeletePopup(userId, userName);
       }
     });
   }
@@ -24,6 +29,8 @@ function addPopupEventListeners() {
       let userId = event.target.getAttribute("user_id");
       if (event.target.classList.contains("disable-btn")) {
         disableUser(userId);
+      } else if (event.target.classList.contains("cancel-btn")) {
+        cancelDelete();
       }
     });
   }
@@ -270,29 +277,25 @@ function removeUser(userId) {
 
   if (userRow) {
     userRow.remove();
-    confirmDelete();
   } else {
     console.error("User row not found:", userId);
   }
 }
 
-function confirmDelete() {
-  document.getElementById('delete').removeAttribute('user_id');
-  document.getElementById('over').classList.add('hidden');
-  document.getElementById('disableUser').classList.add('hidden');
-  
-}
-
-function showDeletePopup(userId) {
-  userIdToDelete = userId;  
-  document.getElementById('over').classList.remove('hidden');
-  document.getElementById('disableUser').classList.remove('hidden');
-  document.getElementById('delete').setAttribute('user_id', userIdToDelete);
-}
-
-function cancelDelete() {
-  document.getElementById('over').classList.add('hidden');
-  document.getElementById('disableUser').classList.add('hidden');
+function showDeletePopup(userId, userName) {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to recover " + userName + " account!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      disableUser(userId);
+    }
+  });
 }
 
 function pauseAuctionJs(auctionId) {

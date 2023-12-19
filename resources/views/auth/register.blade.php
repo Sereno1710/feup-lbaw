@@ -41,6 +41,11 @@
 
     <label class="mt-2 mb-1" for="date_of_birth">Date of Birth</label>
     <input class="p-2 mb-2 border border-stone-400 rounded" id="date_of_birth" type="date" name="date_of_birth" value="{{ old('date_of_birth') }}" required>
+    @if ($errors->has('date_of_birth'))
+        <span class="error">
+            {{ $errors->first('date_of_birth') }}
+        </span>
+    @endif
 
     <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">
         Register

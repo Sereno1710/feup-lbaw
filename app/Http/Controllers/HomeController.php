@@ -25,8 +25,6 @@ class HomeController extends Controller
         $input = $request->input('input');
         $selectedCategories = (array) $request->input('categories', []);
 
-        //dd($selectedCategories);
-
         if (empty($input)) {
             $auctionsQuery1 = Auction::all();
 

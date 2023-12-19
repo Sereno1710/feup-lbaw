@@ -30,9 +30,6 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/search', 'search')->name('search');
 });
 
-// Users
-Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
-
 // Profile
 Route::get('/profile', [UserController::class, 'show'])->name('profile');
 Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
@@ -58,7 +55,6 @@ Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('p
 Route::controller(AuctionController::class)->group(function () {
     Route::get('/auctions', 'showActiveAuctions');
     Route::get('/auction/submit', 'showAuctionForm');
-    Route::get('/auction/search','search')->name('auction.search');
     Route::post('/auction/create', 'createAuction')->name('auction.create');
     Route::post('/auction/follow', 'followAuction')->name('auction.follow');
     Route::post('/auction/unfollow', 'unfollowAuction')->name('auction.unfollow');

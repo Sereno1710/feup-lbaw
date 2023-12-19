@@ -47,7 +47,7 @@ class UserController extends Controller
             'zip_code' => 'nullable|string|max:10',
             'country' => 'nullable|string|max:255',
         ]);
-        
+
         if ($request->input('email') !== $user->email && User::where('email', $request->input('email'))->exists()) {
             return redirect()->back()->with('error', 'Email is already in use.');
         }
@@ -88,18 +88,6 @@ class UserController extends Controller
         return redirect('/profile')->with('success', 'Profile updated successfully!');
     }
 
-    public function search(Request $request)
-    {
-        $keyword = $request->input('keyword');
-
-        $usersQuery = User::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
-            ->orderByRaw("ts_rank(tsvectors, to_tsquery(?)) DESC", [$keyword]);
-
-        $users = $usersQuery->simplePaginate(9, ['*'], 'page', $request->input('page'));
-
-        return view('pages.users.search', ['users' => $users, 'keyword' => $keyword]);
-    }
-
     public function showProfile($userId)
     {
         $user = User::findOrFail($userId);
@@ -108,11 +96,12 @@ class UserController extends Controller
         if ($userId == Auth::id()) {
             return redirect('/profile');
         }
-        return view('pages/profile', ['user' => $user, 'followedAuctions' => $followedAuctions, 'ownedAuctions' => $ownedAuctions ]);
+        return view('pages/profile', ['user' => $user, 'followedAuctions' => $followedAuctions, 'ownedAuctions' => $ownedAuctions]);
     }
 
-    public function delete(Request $request){
-        
+    public function delete(Request $request)
+    {
+
         $user = Auth::user();
 
         User::where(['id' => $user->id])->update(['state' => 'disabled']);

@@ -18,10 +18,33 @@ use Carbon\Carbon;
         <nav class="items-center m-auto flex justify-between ">
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
             <div class="flex justify-between items-center">
-                <form class="p-1 bg-stone-200 rounded-lg" action="/search" method="GET">
-                    <input class="bg-stone-200 outline-none" type="text" name="input" placeholder="Search auctions and users">
-                    <button type="submit">🔎</button>
-                </form>
+                <div class="relative inline-block">
+                    <form class="p-1 bg-stone-200 rounded-lg" action="/search" method="GET">
+                        <input class="bg-stone-200 outline-none px-4 py-2" type="text" name="input"
+                            placeholder="Search auctions and users" id="searchBar">
+
+                        <span class="dropdown-button cursor-pointer mr-2">&#9660;</span>
+
+                        <div class="absolute mt-2 p-2 bg-gray-100 border rounded border-gray-300 rounded shadow-md hidden"
+                            id="categoriesDropdown">
+                            <label for="category1" class="flex items-center">
+                                <input type="checkbox" id="category1" name="categories[]" value="strings" class="mr-2"
+                                    checked>Strings</label>
+                            <label for="category2" class="flex items-center">
+                                <input type="checkbox" id="category2" name="categories[]" value="woodwinds" class="mr-2"
+                                    checked>Woodwinds</label>
+                            <label for="category3" class="flex items-center">
+                                <input type="checkbox" id="category3" name="categories[]" value="brass" class="mr-2"
+                                    checked>Brass</label>
+                            <label for="category4" class="flex items-center">
+                                <input type="checkbox" id="category4" name="categories[]" value="percussion"
+                                    class="mr-2" checked>Percussion</label>
+                        </div>
+
+                        <button type="submit">🔎</button>
+                    </form>
+                </div>
+
                 @if (Auth::check() && (Auth::user()->isAdmin() or Auth::user()->isSystemManager()))
                 <a href="{{ url('/admin/users') }}" class="ml-4">Admin</a>
                 @endif
@@ -41,7 +64,8 @@ use Carbon\Carbon;
 
                         <div class="notification-content">
                             <div class="notification-header">
-                                <h3 class="text-lg font-bold">Notifications</h3> </div>
+                                <h3 class="text-lg font-bold">Notifications</h3>
+                            </div>
                             <div class="notification-list">
                                 <ul>
                                     @php
@@ -60,8 +84,10 @@ use Carbon\Carbon;
 
                                         @if ($auction && !in_array($auction->id, $displayedAuctions))
                                         Someone just made a higher bid in <a
-                                            href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{
-                                            $auction->name }}</a> <p class="text-gray-600 text-sm">{{ $formattedDate }}</p>
+                                            href="{{ url('/auction/' . $auction->id) }}"
+                                            class="underline hover:text-gray-600">{{
+                                            $auction->name }}</a>
+                                        <p class="text-gray-600 text-sm">{{ $formattedDate }}</p>
                                         @php
                                         $displayedAuctions[] = $auction->id;
                                         @endphp
@@ -76,10 +102,10 @@ use Carbon\Carbon;
                         @endif
                     </div>
                     @php
-                        $profileImagePath = Auth::user()->profileImagePath();
+                    $profileImagePath = Auth::user()->profileImagePath();
                     @endphp
                     <button class="m-2 dropdown-button" id="profileBtn">
-                    <img class="w-[3rem] h-[3rem] rounded-full object-cover" src="{{ asset($profileImagePath) }}"> 
+                        <img class="w-[3rem] h-[3rem] rounded-full object-cover" src="{{ asset($profileImagePath) }}">
                     </button>
                     <div class="dropdown-content hidden bg-stone-900 absolute mt-2 p-4 border rounded max-h-30 max-w-20 overflow-y-auto rounded-lg"
                         id="profileDropdown">
@@ -91,7 +117,8 @@ use Carbon\Carbon;
                                         <a href="{{ url('/profile') }}" class="hover:text-gray-400">Profile</a>
                                     </li>
                                     <li class="border-b py-2 text-white">
-                                        <a href="{{ url('/balance') }}" class="hover:text-gray-400">{{Auth::user()->balance}}</a>
+                                        <a href="{{ url('/balance') }}"
+                                            class="hover:text-gray-400">{{Auth::user()->balance}}</a>
                                     </li>
                                     <li class="py-2 text-white">
                                         <a href="{{ url('/logout') }}" class="hover:text-gray-400">Log out</a>

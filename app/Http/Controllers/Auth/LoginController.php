@@ -73,16 +73,19 @@ class LoginController extends Controller
                 'email' => $google_user->getEmail(),
                 'username' => Str::random(12),
                 'google_id' => $google_user->getId(),
-                'date_of_birth' => '2000-01-01',
+                'date_of_birth' => '1800-01-01',
             ]);
 
             Auth::login($new_user);
 
+            return redirect()->intended('dateofbirth');
+
         } else {
             Auth::login($user);
         }
-
-        // After login, redirect to homepage
+        if ($user->date_of_birth == '1800-01-01'){
+            return redirect()->intended('dateofbirth');
+        }
         return redirect()->intended('home');
     }
 }

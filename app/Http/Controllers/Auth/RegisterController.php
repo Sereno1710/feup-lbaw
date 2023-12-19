@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 use App\Models\User;
+use Carbon\Carbon;
+
 
 class RegisterController extends Controller
 {
@@ -22,6 +24,41 @@ class RegisterController extends Controller
         return view('auth.register');
     }
 
+    public function showDateOfBirth() : View
+    {
+        return view('auth.dateofbirth');
+    }
+
+    public function updateDateOfBirth(Request $request)
+    {
+        $request->validate([
+            'date_of_birth' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $dateOfBirth = Carbon::parse($value);
+                    $minAge = Carbon::now()->subYears(18);
+                    if ($dateOfBirth->gt($minAge)) {
+                        $fail("You must be at least 18 years old to use the website!");
+                    }
+                
+                    $maxAge = Carbon::now()->subYears(120);
+                    if ($dateOfBirth->lt($maxAge)) {
+                        $fail("Invalid date of birth!");
+                    }
+                },
+            ],
+        ]);
+
+        $user = Auth::user();
+        $user->update([
+            'date_of_birth' => $request->date_of_birth,
+        ]);
+
+        return redirect()->route('home')
+            ->withSuccess('You have successfully registered & logged in!');
+    }
+
     /**
      * Register a new user.
      */
@@ -31,8 +68,23 @@ class RegisterController extends Controller
             'username' => 'required|string|max:250|unique:users',
             'name' => 'required|string|max:250',
             'email' => 'required|email|max:250|unique:users',
-            'password' => 'required|confirmed',
-            'date_of_birth' => 'required|date',
+            'password' => 'required|confirmed|min:6',
+            'date_of_birth' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $dateOfBirth = Carbon::parse($value);
+                    $minAge = Carbon::now()->subYears(18);
+                    if ($dateOfBirth->gt($minAge)) {
+                        $fail("You must be at least 18 years old to use the website!");
+                    }
+                
+                    $maxAge = Carbon::now()->subYears(120);
+                    if ($dateOfBirth->lt($maxAge)) {
+                        $fail("Invalid date of birth!");
+                    }
+                },
+            ],
         ]);
 
 
@@ -54,10 +106,6 @@ class RegisterController extends Controller
         } catch (\Exception $e) {
             return back()->withError($e->getMessage());
         }
-
-
-
-
 
         $credentials = $request->only('email', 'password');
         Auth::attempt($credentials);

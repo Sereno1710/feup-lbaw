@@ -36,6 +36,17 @@
     @endif
     <section class="m-2"> Don't have an account? Sign up <a class="underline" href="{{ route('register') }}">here</a>. </section> 
     
+    <section class="my-4 flex items-center">
+        <div class="border-t border-stone-400 flex-grow"></div>
+        <span class="mx-4 text-stone-800">or login with</span>
+        <div class="border-t border-stone-400 flex-grow"></div>
+    </section>
+
+    <a href="{{ route('login.google') }}" class="p-2 text-white bg-blue-300 rounded flex items-center justify-center hover:bg-blue-700">
+        <img class="mr-2" src="{{ asset('images/icons/googleicon.png') }}" alt="Google Icon" width="20" height="20">
+        Google
+    </a>
+
     </section>
 </form>
 @endsection

@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Support\Str;
 
-$description=Str::limit($auction->description, 30);
+$description=Str::limit($auction->description, 26);
 ?>
 
 <a href="{{ url('/auction/' . $auction->id) }}">
@@ -9,9 +9,10 @@ $description=Str::limit($auction->description, 30);
         <h4 class="font-bold text-xl">{{ $auction->name }}</h4>
         <p class="text-gray-500">Category: {{ $auction->category }}</p>
         @php
-            $auctionImagePath = $auction->auctionImagePath();
+        $auctionImagePath = $auction->auctionImagePath();
         @endphp
-        <img class="h-[12rem] w-[12rem] object-contain rounded-lg" src="{{ asset($auctionImagePath) }}" alt="Auction Image 1">
+        <img class="h-[12rem] w-[12rem] object-contain rounded-lg" src="{{ asset($auctionImagePath) }}"
+            alt="Auction Image 1">
         <p>{{ $description }}</p>
         <p class="font-bold">Current Bid: {{ $auction->price }}</p>
         <p><span class="auction-remaining-time"></span></p>

@@ -37,7 +37,4 @@
     @endif
 </div>
 {{ $results->appends(['input' => $input])->links() }}
-<script>
-    var searchResults = @json($results)
-</script>
 @endsection

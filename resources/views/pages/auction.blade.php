@@ -85,7 +85,7 @@
                 @endif
             @endif
         </div>
-        <div class="w-full flex flex-row items-start justify-between">
+        <div class="mb-4 w-full flex flex-row items-start justify-between">
 
             <table class="table-fixed w-full text-left ">
                 <tr class="border-b border-stone-300">
@@ -93,7 +93,10 @@
                         <h3 class="mx-2 my-1">Auction Description</h3>
                     </th>
                     <th>
-                        <h3 class="mx-2 my-1">Bidding History</h3>
+                        <div class="flex flex-row justify-between items-end">
+                            <h3 class="mx-2 my-1">Bidding History</h3>
+                            <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">View full history</button>
+                        </div>
                     </th>
                 </tr>
                 <tr>
@@ -114,7 +117,7 @@
                     <td>
                         <div class="m-2 flex flex-col">
                             @foreach ($bids as $bid)
-                                @include('partials.bid', ['bid' => $bid])
+                                @include('partials.bidpreview', ['bid' => $bid])
                             @endforeach
                             <p>Auction started at {{ $auction->initial_price }} euros.</p>
                         </div>
@@ -187,6 +190,19 @@
         </form>
     @endif
 
+    <div id="bidsPopup"
+        class="hidden fixed flex-col top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center w-[40rem]">
+        <h2 class="mb-2 font-bold text-3xl text-center self-start">Bidding History</h2>
+        <div class="w-full px-2 flex flex-col max-h-[42vh] overflow-y-auto items-center">
+            @foreach ($auction->bids as $bid)
+                @include('partials.bidpublic', ['bid' => $bid])
+            @endforeach
+        </div>
+
+        <button class="mt-2 mx-2 px-3 py-2 text-stone-500 bg-white border-stone-500 border rounded"
+            onclick="closeBidsPopup()">Close</button>
+    </div>
+
 
 
     <script>
@@ -216,6 +232,20 @@
             deleteConfirmation = document.getElementById('deleteConfirmation');
             deleteConfirmation.classList.remove('flex');
             deleteConfirmation.classList.add('hidden');
+        }
+
+        function showBidsPopup() {
+            document.getElementById('overlay').classList.remove('hidden');
+            bidsPopup = document.getElementById('bidsPopup');
+            bidsPopup.classList.remove('hidden');
+            bidsPopup.classList.add('flex');
+        }
+
+        function closeBidsPopup() {
+            document.getElementById('overlay').classList.add('hidden');
+            bidsPopup = document.getElementById('bidsPopup');
+            bidsPopup.classList.remove('flex');
+            bidsPopup.classList.add('hidden');
         }
     </script>
 @endsection

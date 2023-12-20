@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MetaInfo;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -24,6 +25,7 @@ class HomeController extends Controller
     {
         $input = $request->input('input');
         $selectedCategories = (array) $request->input('categories', []);
+        $metaInfos = (array) $request->input('metaInfos', []);
 
         if (empty($input)) {
             $auctionsQuery1 = Auction::all()->where('state', 'active');

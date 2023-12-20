@@ -1,5 +1,4 @@
 @extends('layouts.app')
-@vite('resources/js/search_filters.js')
 
 @section('content')
 <div class="container mx-auto my-8">

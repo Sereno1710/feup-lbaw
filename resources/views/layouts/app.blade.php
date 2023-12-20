@@ -10,6 +10,7 @@ use Carbon\Carbon;
     @vite('resources/js/app.js')
     @vite('resources/js/auction.js')
     @vite('resources/js/dropdown.js')
+    @vite('resources/js/search_filters.js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
@@ -20,27 +21,51 @@ use Carbon\Carbon;
             <div class="flex justify-between items-center">
                 <div class="relative inline-block">
                     <form class="p-1 bg-stone-200 rounded-lg" action="/search" method="GET">
-                        <input class="bg-stone-200 outline-none px-4 py-2" type="text" name="input"
+                        <input class="bg-stone-200 outline-none px-2 py-2" type="text" name="input"
                             placeholder="Search auctions and users" id="searchBar">
 
                         <span class="dropdown-button cursor-pointer mr-2">&#9660;</span>
 
-                        <div class="absolute mt-2 p-2 bg-gray-100 border rounded border-gray-300 rounded shadow-md hidden"
+                        <div class="absolute w-[40rem] left-[-100%] mt-2 p-2 bg-gray-100 overflow-y-auto max-h-72 border rounded border-gray-300 rounded shadow-md hidden"
                             id="categoriesDropdown">
-                            <label for="category1" class="flex items-center">
-                                <input type="checkbox" id="category1" name="categories[]" value="strings" class="mr-2"
-                                    checked>Strings</label>
-                            <label for="category2" class="flex items-center">
-                                <input type="checkbox" id="category2" name="categories[]" value="woodwinds" class="mr-2"
-                                    checked>Woodwinds</label>
-                            <label for="category3" class="flex items-center">
-                                <input type="checkbox" id="category3" name="categories[]" value="brass" class="mr-2"
-                                    checked>Brass</label>
-                            <label for="category4" class="flex items-center">
-                                <input type="checkbox" id="category4" name="categories[]" value="percussion"
-                                    class="mr-2" checked>Percussion</label>
-                        </div>
+                            <h3 class="text-lg font-bold">Categories</h3>
+                            <div class="flex flex-wrap items-center space-x-4">
+                                <label for="strings" class="flex items-center">
+                                    <input type="checkbox" id="strings" name="categories[]" value="strings" class="mr-1"
+                                        checked>Strings</label>
+                                <label for="woodwinds" class="flex items-center">
+                                    <input type="checkbox" id="woodwinds" name="categories[]" value="woodwinds"
+                                        class="mr-1" checked>Woodwinds</label>
+                                <label for="brass" class="flex items-center">
+                                    <input type="checkbox" id="brass" name="categories[]" value="brass" class="mr-1"
+                                        checked>Brass</label>
+                                <label for="percussion" class="flex items-center">
+                                    <input type="checkbox" id="percussion" name="categories[]" value="percussion"
+                                        class="mr-1" checked>Percussion</label>
+                            </div>
 
+                            <div class="flex flex-wrap space-x-4 mt-6">
+                                @foreach ($metaInfos as $metaInfo)
+                                <input name="metaInfos[]" value="{{ $metaInfo->name }}" class="hidden">
+                                <div class="flex flex-col space-y-2">
+                                    <h4 class="h4 text-lg font-bold" id="{{ $metaInfo->name }}Dropdown">{{
+                                        $metaInfo->name
+                                        }}<span
+                                            class="dropdown-button-metaInfo cursor-pointer text-sm ml-1">&#9660;</span>
+                                    </h4>
+
+                                    <div class="values hidden">
+                                        @foreach ($metaInfo->values as $value)
+                                        <label for="{{ $value->value }}" class="flex items-center">
+                                            <input type="checkbox" id="{{ $value->value }}"
+                                                name="metaInfos{{ $metaInfo->name }}[]" value="{{ $value->value }}"
+                                                class="mr-2" checked>{{ $value->value }}</label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
                         <button type="submit">🔎</button>
                     </form>
                 </div>

@@ -52,16 +52,29 @@ use Carbon\Carbon;
                 @if (Auth::check())
                 <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
                 <div class="user-info ml-4">
-                    <button class="notification-icon dropdown-button" id="notificationBtn">🔔</button>
+                    @php
+                        $unviewedNotificationsCount = \App\Models\Notification::where('receiver_id', Auth::user()->id)
+                                ->where('viewed', false)
+                                ->count();
+                    @endphp
+                    <button class="notification-icon dropdown-button relative" id="notificationBtn">
+                        @if ($unviewedNotificationsCount > 0)
+                            🔔 <span class="notification-badge bg-red-500 text-white text-xs font-bold rounded-full p-1 absolute top-3 left-3">
+                                {{ $unviewedNotificationsCount }}
+                            </span>
+                        @else 
+                            🔔
+                        @endif
+                    </button>
+                    
                     <div class="dropdown-content hidden bg-gray-100 absolute right-0 mt-2 p-4 border rounded max-h-40 overflow-y-auto"
                         id="notificationDropdown">
                         @if (Auth::check())
                         @php
-                        $notifications = \App\Models\Notification::where('receiver_id', Auth::user()->id)
-                        ->orderBy('date', 'desc')
-                        ->get();
+                            $notifications = \App\Models\Notification::where('receiver_id', Auth::user()->id)
+                                ->orderBy('date', 'desc')
+                                ->get();
                         @endphp
-
                         <div class="notification-content">
                             <div class="notification-header border-b-2 border-black">
                                 <h3 class="text-lg font-bold">Notifications</h3>
@@ -156,6 +169,11 @@ use Carbon\Carbon;
                                             </div>
                                     </li>
                                     @endforeach
+                                    @if ($unviewedNotificationsCount == 0)
+                                        <div class="no-notifications mt-2">
+                                            You currently have zero notifications.
+                                        </div>
+                                    @endif
                                 </ul>
                             </div>
                         </div>

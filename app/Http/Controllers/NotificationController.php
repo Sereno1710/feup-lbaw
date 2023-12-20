@@ -28,6 +28,9 @@ class NotificationController extends Controller
             ->where('id', $id)
             ->update(['flag' => false]);
 
+        DB::table('notification')
+            ->where('id', $id)
+            ->update(['viewed' => true]);
 
         return redirect()->back();
     }

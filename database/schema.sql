@@ -238,6 +238,7 @@ CREATE TABLE Notification (
   notification_type notification_type NOT NULL,
   date TIMESTAMP NOT NULL CHECK (date <= NOW()),
   viewed BOOLEAN DEFAULT false,
+  flag BOOLEAN DEFAULT true,
   receiver_id INT REFERENCES users(id) ON UPDATE CASCADE,
   bid_id INT REFERENCES Bid(id) ON UPDATE CASCADE,
   auction_id INT REFERENCES Auction(id) ON UPDATE CASCADE,

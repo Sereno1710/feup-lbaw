@@ -11,6 +11,7 @@ use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,3 +114,7 @@ Route::controller(RegisterController::class)->group(function () {
 
 // Email
 Route::post('/recoverpassword/send', [MailController::class, 'send'])->name('password.sendmail');
+
+// Notification
+Route::post('/notification/{id}/view', [NotificationController::class,'viewNotification'])->name('notification.view');
+Route::post('/notification/{id}/delete', [NotificationController::class,'deleteNotificationFromFeed'])->name('notification.delete');

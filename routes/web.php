@@ -100,11 +100,15 @@ Route::controller(LoginController::class)->group(function () {
     Route::post('/login', 'authenticate');
     Route::get('/logout', 'logout')->name('logout');
     Route::get('/recoverpassword', 'indexRecoverPassword')->name('password.recover');
+    Route::get('/login/google', 'redirectToGoogle')->name('login.google');
+    Route::get('/login/google/callback', 'handleGoogleCallback');
 });
 
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
+    Route::get('/dateofbirth', 'showDateOfBirth')->name('show.dateofbirth')->middleware('can:accessDateOfBirth,App\Models\User');;
+    Route::post('/dateofbirth', 'updateDateOfBirth')->name('update.dateofbirth');
 });
 
 // Email

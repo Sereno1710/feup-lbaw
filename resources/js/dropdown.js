@@ -24,7 +24,22 @@ function activateDropdowns () {
 
     notificationDropdown.style.right = `${rightPosition}px`
   }
+
+  /* METAINFO DROPDOWN */
+  const metaInfoBtns = document.querySelectorAll('.dropdown-button-metaInfo')
+
+  if (metaInfoBtns != null) {
+    for (const btn of metaInfoBtns) {
+      btn.addEventListener('click', function () {
+        const content = this.closest('.h4').nextElementSibling
+        if (!content.classList.contains('hidden')) {
+          content.classList.add('hidden')
+        } else {
+          content.classList.remove('hidden')
+        }
+      })
+    }
+  }
 }
 
 activateDropdowns()
-

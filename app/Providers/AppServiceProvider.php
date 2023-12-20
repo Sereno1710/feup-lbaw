@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
+use App\Models\MetaInfo;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if(env('FORCE_HTTPS',false)) {
+        if (env('FORCE_HTTPS', false)) {
             error_log('configuring https');
 
             $app_url = config("app.url");
@@ -28,5 +30,9 @@ class AppServiceProvider extends ServiceProvider
             $schema = explode(':', $app_url)[0];
             URL::forceScheme($schema);
         }
+        View::composer('layouts.app', function ($view) {
+            $metaInfos = MetaInfo::all();
+            $view->with('metaInfos', $metaInfos);
+        });
     }
 }

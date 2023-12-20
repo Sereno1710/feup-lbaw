@@ -9,7 +9,7 @@
         <span class="text-stone-500">{{ $auction->name }}</span>
     </div>
 
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden" onclick="closeAllPopUps()"></div>
 
 
 
@@ -95,7 +95,8 @@
                     <th>
                         <div class="flex flex-row justify-between items-end">
                             <h3 class="mx-2 my-1">Bidding History</h3>
-                            <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">View full history</button>
+                            <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">View full
+                                history</button>
                         </div>
                     </th>
                 </tr>
@@ -173,7 +174,7 @@
             class="hidden min-w-[32rem] flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center">
             @csrf
 
-            <h2 class="mb-2 font-bold text-3xl text-center">Report Auction</h2>
+            <h2 class="font-bold text-3xl text-center self-start">Report Auction</h2>
 
             <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 
@@ -183,8 +184,8 @@
 
 
             <div class="flex flex-row">
-                <button class="mx-2 p-3 text-white bg-stone-800 rounded" type="sumbit">Submit Report</button>
-                <button class="mx-2 p-3 text-stone-500 bg-white border-stone-500 border rounded" type="button"
+                <button class="mx-2 px-3 py-2 text-white bg-stone-800 rounded" type="sumbit">Submit Report</button>
+                <button class="mx-2 px-3 py-2 text-stone-500 bg-white border-stone-500 border rounded" type="button"
                     onclick="cancelReport()">Cancel</button>
             </div>
         </form>
@@ -208,16 +209,18 @@
     <script>
         function showReportPopup() {
             document.getElementById('overlay').classList.remove('hidden');
-            deleteConfirmation = document.getElementById('reportAuction');
-            deleteConfirmation.classList.remove('hidden');
-            deleteConfirmation.classList.add('flex');
+            reportAuction = document.getElementById('reportAuction');
+            reportAuction.classList.remove('hidden');
+            reportAuction.classList.add('flex');
         }
 
         function cancelReport() {
-            document.getElementById('overlay').classList.add('hidden');
-            deleteConfirmation = document.getElementById('reportAuction');
-            deleteConfirmation.classList.remove('flex');
-            deleteConfirmation.classList.add('hidden');
+            reportAuction = document.getElementById('reportAuction');
+            if (reportAuction.classList.contains('flex')) {
+                document.getElementById('overlay').classList.add('hidden');
+                reportAuction.classList.remove('flex');
+                reportAuction.classList.add('hidden');
+            }
         }
 
         function showDeletePopup() {
@@ -228,10 +231,12 @@
         }
 
         function cancelDelete() {
-            document.getElementById('overlay').classList.add('hidden');
             deleteConfirmation = document.getElementById('deleteConfirmation');
-            deleteConfirmation.classList.remove('flex');
-            deleteConfirmation.classList.add('hidden');
+            if (deleteConfirmation.classList.contains('flex')) {
+                document.getElementById('overlay').classList.add('hidden');
+                deleteConfirmation.classList.remove('flex');
+                deleteConfirmation.classList.add('hidden');
+            }
         }
 
         function showBidsPopup() {
@@ -242,10 +247,18 @@
         }
 
         function closeBidsPopup() {
-            document.getElementById('overlay').classList.add('hidden');
             bidsPopup = document.getElementById('bidsPopup');
-            bidsPopup.classList.remove('flex');
-            bidsPopup.classList.add('hidden');
+            if (bidsPopup.classList.contains('flex')) {
+                document.getElementById('overlay').classList.add('hidden');
+                bidsPopup.classList.remove('flex');
+                bidsPopup.classList.add('hidden');
+            }
+        }
+
+        function closeAllPopUps() {
+            cancelReport()
+            cancelDelete()
+            closeBidsPopup()
         }
     </script>
 @endsection

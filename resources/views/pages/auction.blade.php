@@ -220,21 +220,6 @@
 
 
     <script>
-        function showReportPopup() {
-            document.getElementById('overlay').classList.remove('hidden');
-            reportAuction = document.getElementById('reportAuction');
-            reportAuction.classList.remove('hidden');
-            reportAuction.classList.add('flex');
-        }
-
-        function cancelReport() {
-            reportAuction = document.getElementById('reportAuction');
-            if (reportAuction && reportAuction.classList.contains('flex')) {
-                document.getElementById('overlay').classList.add('hidden');
-                reportAuction.classList.remove('flex');
-                reportAuction.classList.add('hidden');
-            }
-        }
 
         function showDeletePopup() {
             document.getElementById('overlay').classList.remove('hidden');

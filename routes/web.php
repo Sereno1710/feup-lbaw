@@ -32,9 +32,9 @@ Route::controller(HomeController::class)->group(function () {
 });
 
 // Profile
-Route::get('/profile', [UserController::class, 'redirectToProfile'])->name('profile')->middleware('auth');
+Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit')->middleware('auth');
 Route::get('/profile/{type}', [UserController::class, 'show'])->middleware('auth');
-Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit')->middleware('auth');;
+Route::get('/profile', [UserController::class, 'redirectToProfile'])->name('profile')->middleware('auth');
 Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::get('/user/{userId}', [UserController::class, 'showProfile'])->name('profile.show');
 Route::post('/profile/delete', [UserController::class, 'delete'])->name('profile.delete');

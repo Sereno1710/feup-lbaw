@@ -58,12 +58,12 @@
                             <span class="mr-4 py-2 px-4 bg-stone-500 text-white rounded opacity-50 cursor-not-allowed">
                                 Followed
                             </span>
-                            <a href="{{ route('profile', ['type' => 'owned']) }}"
+                            <a href="{{ url('/profile/owned') }}"
                                 class="py-2 px-4 bg-stone-500 text-white rounded transition duration-300">
                                 Owned
                             </a>
                         @elseif($type === 'Owned')
-                            <a href="{{ route('profile', ['type' => 'followed']) }}"
+                            <a href="{{ url('/profile/followed') }}"
                                 class="mr-4 py-2 px-4 bg-stone-500 text-white rounded transition duration-300">
                                 Followed
                             </a>
@@ -86,7 +86,7 @@
 
     @if (Auth::check() && Auth::user()->id == $user->id)
         <div id="bidsPopup"
-            class="hidden fixed flex-col top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center w-[40rem]">
+            class="hidden fixed flex-col top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center w-[40rem] z-10">
             <h2 class="mb-2 font-bold text-3xl text-center self-start">Bidding History</h2>
             <div class="w-full px-2 flex flex-col max-h-[42vh] overflow-y-auto items-center">
                 @foreach ($user->ownBids as $bid)

@@ -8,7 +8,8 @@ export default defineConfig({
         'resources/css/app.css',
         'resources/js/app.js',
         'resources/js/auction.js',
-        'resources/js/search_filters.js'
+        'resources/js/search_filters.js',
+        'resources/js/dropdown.js'
       ],
       refresh: true
     })

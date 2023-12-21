@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuctionMetaInfoValue;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -24,13 +25,38 @@ class HomeController extends Controller
     {
         $input = $request->input('input');
         $selectedCategories = (array) $request->input('categories', []);
+        $metaInfoNames = (array) $request->input('metaInfos', []);
+        $metaInfo = [];
+
+        foreach ($metaInfoNames as $metaInfoName) {
+            $metaInfo[$metaInfoName] = $request->input('metaInfo' . $metaInfoName, []);
+        }
 
         if (empty($input)) {
-            $auctionsQuery1 = Auction::all()->where('state', 'active');
+            $auctionsQuery = Auction::select('auction.*')->where('state', 'active');
 
-            if (!empty($selectedCategories)) {
-                $auctionsQuery = $auctionsQuery1->whereIn('category', $selectedCategories);
+            if (!empty($metaInfo)) {
+                $auctionsQuery = $auctionsQuery->join('auctionmetainfovalue', 'auction.id', '=', 'auctionmetainfovalue.auction_id')
+                    ->join('metainfovalue', 'auctionmetainfovalue.meta_info_value_id', '=', 'metainfovalue.id')
+                    ->join('metainfo', 'metainfovalue.meta_info_name', '=', 'metainfo.name');
             }
+            if (!empty($selectedCategories)) {
+                $auctionsQuery = $auctionsQuery->whereIn('category', $selectedCategories);
+            }
+
+            $auctionsQuery = $auctionsQuery
+                ->where(function ($query) use ($metaInfo, &$otherSelected) {
+                    foreach ($metaInfo as $metaInfoName => $selectedValues) {
+                        if (!empty($selectedValues)) {
+                            $query->orWhere(function ($innerQuery) use ($metaInfoName, $selectedValues) {
+                                $innerQuery->where('metainfo.name', $metaInfoName)
+                                    ->whereIn('metainfovalue.value', $selectedValues);
+                            });
+                        }
+                    }
+                });
+
+            $auctionsQuery = $auctionsQuery->get();
 
             $usersQuery = User::whereRaw("tsvectors @@ to_tsquery('english', '*')")
                 ->orderByRaw("ts_rank(tsvectors, to_tsquery('*')) DESC")
@@ -39,7 +65,7 @@ class HomeController extends Controller
             // split on 1+ whitespace & ignore empty (eg. trailing space)
             $searchValues = preg_split('/\s+/', $input, -1, PREG_SPLIT_NO_EMPTY);
 
-            $auctionsQuery1 = Auction::where('name', 'like', $input)
+            $auctionsQuery1 = Auction::select('auction.*')->where('name', 'like', $input)
                 ->orWhere('category', 'like', $input)
                 ->orWhere('description', 'like', $input)
                 ->where('state', 'active')
@@ -51,18 +77,35 @@ class HomeController extends Controller
                 ->where('username', '!=', 'anonymous')
                 ->get();
 
-            $auctionsQuery2 = Auction::where(function ($q) use ($searchValues) {
+            $auctionsQuery2 = Auction::select('auction.*')->where(function ($q) use ($searchValues) {
                 foreach ($searchValues as $value) {
                     $q->orWhereRaw("tsvectors @@ to_tsquery('english', ?)", [$value . ':*'])
                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$value . ':*']);
                 }
             })->where('state', 'active');
 
-            if (!empty($selectedCategories)) {
-                $auctionsQuery3 = $auctionsQuery2->whereIn('category', $selectedCategories)->get();
-            } else {
-                $auctionsQuery3 = $auctionsQuery2->get();
+            if (!empty($metaInfo)) {
+                $auctionsQuery2 = $auctionsQuery2->join('auctionmetainfovalue', 'auction.id', '=', 'auctionmetainfovalue.auction_id')
+                    ->join('metainfovalue', 'auctionmetainfovalue.meta_info_value_id', '=', 'metainfovalue.id')
+                    ->join('metainfo', 'metainfovalue.meta_info_name', '=', 'metainfo.name');
             }
+            if (!empty($selectedCategories)) {
+                $auctionsQuery2 = $auctionsQuery2->whereIn('category', $selectedCategories);
+            }
+
+            $auctionsQuery2 = $auctionsQuery2
+                ->where(function ($query) use ($metaInfo, &$otherSelected) {
+                    foreach ($metaInfo as $metaInfoName => $selectedValues) {
+                        if (!empty($selectedValues)) {
+                            $query->orWhere(function ($innerQuery) use ($metaInfoName, $selectedValues) {
+                                $innerQuery->where('metainfo.name', $metaInfoName)
+                                    ->whereIn('metainfovalue.value', $selectedValues);
+                            });
+                        }
+                    }
+                });
+
+            $auctionsQuery2 = $auctionsQuery2->get();
 
             $usersQuery2 = User::where(function ($q) use ($searchValues) {
                 foreach ($searchValues as $value) {
@@ -72,7 +115,7 @@ class HomeController extends Controller
             })->where('username', '!=', 'anonymous')
                 ->get();
 
-            $auctionsQuery = $auctionsQuery1->merge($auctionsQuery3);
+            $auctionsQuery = $auctionsQuery1->merge($auctionsQuery2);
             $usersQuery = $usersQuery1->merge($usersQuery2);
         }
 

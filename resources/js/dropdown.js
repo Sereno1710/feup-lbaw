@@ -1,6 +1,7 @@
 function activateDropdowns () {
   /* GENERAL DROPDOWN */
   const dropdownButtons = document.querySelectorAll('.dropdown-button')
+  console.log(dropdownButtons)
 
   if (dropdownButtons !== null) {
     for (const dropdownButton of dropdownButtons) {
@@ -24,7 +25,28 @@ function activateDropdowns () {
 
     notificationDropdown.style.right = `${rightPosition}px`
   }
+
+  /* SEARCH FILTERS DROPDOWNS */
+  document.addEventListener('DOMContentLoaded', function () {
+    const metaInfoContainers = document.querySelectorAll('.meta-info-container')
+
+    metaInfoContainers.forEach(container => {
+      const dropdown = container.querySelector('.dropdown-button-filter')
+      const values = container.querySelector('.values')
+      const inputField = container.querySelector('.meta-info-input')
+      inputField.disabled = true
+
+      dropdown.addEventListener('click', () => {
+        if (!values.classList.contains('hidden')) {
+          values.classList.add('hidden')
+          inputField.disabled = true
+        } else {
+          values.classList.remove('hidden')
+          inputField.disabled = false
+        }
+      })
+    })
+  })
 }
 
 activateDropdowns()
-

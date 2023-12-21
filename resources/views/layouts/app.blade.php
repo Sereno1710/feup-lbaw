@@ -1,5 +1,7 @@
 <?php
 use Carbon\Carbon;
+
+use App\Models\Notification;
 ?>
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
@@ -31,8 +33,8 @@ use Carbon\Carbon;
                                 <input type="checkbox" id="category1" name="categories[]" value="strings" class="mr-2"
                                     checked>Strings</label>
                             <label for="category2" class="flex items-center">
-                                <input type="checkbox" id="category2" name="categories[]" value="woodwinds" class="mr-2"
-                                    checked>Woodwinds</label>
+                                <input type="checkbox" id="category2" name="categories[]" value="woodwinds"
+                                    class="mr-2" checked>Woodwinds</label>
                             <label for="category3" class="flex items-center">
                                 <input type="checkbox" id="category3" name="categories[]" value="brass" class="mr-2"
                                     checked>Brass</label>
@@ -46,172 +48,94 @@ use Carbon\Carbon;
                 </div>
 
                 @if (Auth::check() && (Auth::user()->isAdmin() or Auth::user()->isSystemManager()))
-                <a href="{{ url('/admin/users') }}" class="ml-4">Admin</a>
+                    <a href="{{ url('/admin/users') }}" class="ml-4">Admin</a>
                 @endif
                 <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
-                <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
-                <div class="user-info ml-4">
-                    @php
-                        $unviewedNotificationsCount = \App\Models\Notification::where('receiver_id', Auth::user()->id)
+                    <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
+                    <div class="user-info ml-4">
+                        @php
+                            $unviewedNotificationsCount = Notification::where('receiver_id', Auth::user()->id)
                                 ->where('viewed', false)
                                 ->count();
-                        $noflagNotificationsCount = \App\Models\Notification::where('receiver_id', Auth::user()->id)
+                            $noflagNotificationsCount = Notification::where('receiver_id', Auth::user()->id)
                                 ->where('flag', true)
                                 ->count();
-                    @endphp
-                    <button class="notification-icon dropdown-button relative" id="notificationBtn">
-                        @if ($unviewedNotificationsCount > 0)
-                            🔔 <span class="notification-badge bg-red-500 text-white text-xs font-bold rounded-full p-1 absolute top-3 left-3">
-                                {{ $unviewedNotificationsCount }}
-                            </span>
-                        @else 
-                            🔔
-                        @endif
-                    </button>
-                    
-                    <div class="dropdown-content hidden bg-gray-100 absolute right-0 mt-2 p-4 border rounded max-h-40 overflow-y-auto"
-                        id="notificationDropdown">
-                        @if (Auth::check())
-                        @php
-                            $notifications = \App\Models\Notification::where('receiver_id', Auth::user()->id)
-                                ->orderBy('date', 'desc')
-                                ->get();
                         @endphp
-                        <div class="notification-content">
-                            <div class="notification-header border-b-2 border-black">
-                                <h3 class="text-lg font-bold">Notifications</h3>
-                            </div>
-                            <div class="notification-list">
-                                <ul>
-                                    @foreach ($notifications as $notification)
-                                    @if ($notification->flag == false)
-                                        @continue
-                                    @endif
-                                    <li
-                                        class="border-b border-black py-2 {{ $notification->viewed ? 'bg-gray-300' : 'text-black' }}">
-                                        @if ($notification->flag)
-                                            @php
-                                                $bid = \App\Models\Bid::where('id', $notification->bid_id)->first();
-                                                $auction = $bid ? $bid->auction : null;
-                                                $formattedDate = \Carbon\Carbon::parse($notification->date)->format('F j, Y g:i
-                                                A');
-                                            @endphp
-                                            @if ($auction && $notification->notification_type == 'auction_bid')
-                                                @php
-                                                    $user = \App\Models\User::where('id', $bid->user_id)->first();
-                                                @endphp
-                                                @if ($user->id == Auth::user()->id)
-                                                    Your bid has been successfully placed in <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> 
-                                                @else
-                                                    <a href="{{ url('/user/' . $user->id) }}" class="underline hover:text-gray-600">{{ $user->name }}</a> just made a higher bid in <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> 
+                        <button class="notification-icon dropdown-button relative" id="notificationBtn">
+                            @if ($unviewedNotificationsCount > 0)
+                                🔔 <span
+                                    class="notification-badge bg-red-500 text-white text-xs font-bold rounded-full p-1 absolute top-3 left-3">
+                                    {{ $unviewedNotificationsCount }}
+                                </span>
+                            @else
+                                🔔
+                            @endif
+                        </button>
+
+                        <div class="dropdown-content hidden bg-gray-100 absolute right-0 mt-2 p-4 border rounded max-h-40 overflow-y-auto"
+                            id="notificationDropdown">
+                            @if (Auth::check())
+                                @php
+                                    $notifications = Notification::where('receiver_id', Auth::user()->id)
+                                        ->orderBy('date', 'desc')
+                                        ->get();
+                                @endphp
+                                <div class="notification-content">
+                                    <div class="notification-header border-b-2 border-black">
+                                        <h3 class="text-lg font-bold">Notifications</h3>
+                                    </div>
+                                    <div class="notification-list">
+                                        <ul>
+                                            @foreach ($notifications as $notification)
+                                                @if ($notification->flag == false)
+                                                    @continue
                                                 @endif
-                                            @elseif ($notification->notification_type == 'auction_comment')
-                                                @php
-                                                    $comment = \App\Models\Comment::where('id', $notification->comment_id)->first();
-                                                    $user = \App\Models\User::where('id', $comment->user_id)->first();
-                                                    $auction = \App\Models\Auction::where('id', $comment->auction_id)->first();
-                                                @endphp
-                                                    @if ($user->id == Auth::user()->id)
-                                                        Your comment has been successfully submitted to <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> 
-                                                    @else
-                                                        <a href="{{ url('/user/' . $user->id) }}" class="underline hover:text-gray-600">{{ $user->name }}</a> has posted a comment in <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> 
-                                                    @endif
-                                            @elseif ($notification->notification_type == 'user_upgrade')
-                                                @php
-                                                    $user = \App\Models\User::where('id', $notification->receiver_id)->first();
-                                                @endphp
-                                                    Your account has been promoted! 
-                                            @elseif ($notification->notification_type == 'user_downgrade')
-                                                @php
-                                                    $user = \App\Models\User::where('id', $notification->receiver_id)->first();
-                                                @endphp
-                                                    Your account has been demoted! 
-                                            @elseif ($notification->notification_type == 'auction_paused')
-                                                @php
-                                                    $auction = \App\Models\Auction::where('id', $notification->auction_id)->first();
-                                                @endphp
-                                                    <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> has been paused 
-                                            @elseif ($notification->notification_type == 'auction_resumed')
-                                                @php
-                                                    $auction = \App\Models\Auction::where('id', $notification->auction_id)->first();
-                                                @endphp
-                                                    <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> has resumed 
-                                            @elseif ($notification->notification_type == 'auction_approved')
-                                                @php
-                                                    $auction = \App\Models\Auction::where('id', $notification->auction_id)->first();
-                                                @endphp
-                                                    Your <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> auction request has been approved! You can start it now! 
-                                            @elseif ($notification->notification_type == 'auction_denied')
-                                                @php
-                                                    $auction = \App\Models\Auction::where('id', $notification->auction_id)->first();
-                                                @endphp
-                                                    The <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> auction request has been declined! 
-                                            @elseif ($notification->notification_type == 'auction_finished')
-                                                @php
-                                                    $auction = \App\Models\Auction::where('id', $notification->auction_id)->first();
-                                                @endphp
-                                                    <a href="{{ url('/auction/' . $auction->id) }}" class="underline hover:text-gray-600">{{ $auction->name }}</a> has ended 
-                                            @endif
-                                        @else
-                                            @continue
-                                        @endif
-                                            <div class="notification-buttons inline flex flex-row justify-between mr-2">
-                                                <p class="text-gray-600 text-sm">{{ $formattedDate }} </span>
-                                                <div>
-                                                    <form action="{{ route('notification.view', $notification->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        <button type="submit" class="btn-view">✔️</button>
-                                                    </form>
-
-                                                    <form action="{{ route('notification.delete', $notification->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        <button type="submit" class="btn-delete">❌</button>
-                                                    </form>
+                                                @include('partials.notification', [
+                                                    'notification' => $notification,
+                                                ])
+                                            @endforeach
+                                            @if ($unviewedNotificationsCount == 0 && $noflagNotificationsCount == 0)
+                                                <div class="no-notifications mt-2">
+                                                    You currently have zero notifications.
                                                 </div>
-                                            </div>
-                                    </li>
-                                    @endforeach
-                                    @if ($unviewedNotificationsCount == 0 && $noflagNotificationsCount == 0)
-                                        <div class="no-notifications mt-2">
-                                            You currently have zero notifications.
-                                        </div>
-                                    @endif
-                                </ul>
-                            </div>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
-                        @endif
-                    </div>
-                    @php
-                    $profileImagePath = Auth::user()->profileImagePath();
-                    @endphp
-                    <button class="m-2 dropdown-button" id="profileBtn">
-                        <img class="w-[3rem] h-[3rem] rounded-full object-cover" src="{{ asset($profileImagePath) }}">
-                    </button>
-                    <div class="dropdown-content hidden bg-stone-900 absolute mt-2 p-4 border rounded max-h-30 max-w-20 overflow-y-auto rounded-lg"
-                        id="profileDropdown">
+                        @php
+                            $profileImagePath = Auth::user()->profileImagePath();
+                        @endphp
+                        <button class="m-2 dropdown-button" id="profileBtn">
+                            <img class="w-[3rem] h-[3rem] rounded-full object-cover"
+                                src="{{ asset($profileImagePath) }}">
+                        </button>
+                        <div class="dropdown-content hidden bg-stone-900 absolute mt-2 p-4 border rounded max-h-30 max-w-20 overflow-y-auto rounded-lg"
+                            id="profileDropdown">
 
-                        <div class="profile-content">
-                            <div class="profile-list">
-                                <ul>
-                                    <li class="border-b py-2 text-white">
-                                        <a href="{{ url('/profile') }}" class="hover:text-gray-400">Profile</a>
-                                    </li>
-                                    <li class="border-b py-2 text-white">
-                                        <a href="{{ url('/balance') }}"
-                                            class="hover:text-gray-400">{{Auth::user()->balance}}</a>
-                                    </li>
-                                    <li class="py-2 text-white">
-                                        <a href="{{ url('/logout') }}" class="hover:text-gray-400">Log out</a>
-                                    </li>
-                                </ul>
+                            <div class="profile-content">
+                                <div class="profile-list">
+                                    <ul>
+                                        <li class="border-b py-2 text-white">
+                                            <a href="{{ url('/profile') }}" class="hover:text-gray-400">Profile</a>
+                                        </li>
+                                        <li class="border-b py-2 text-white">
+                                            <a href="{{ url('/balance') }}"
+                                                class="hover:text-gray-400">{{ Auth::user()->balance }}</a>
+                                        </li>
+                                        <li class="py-2 text-white">
+                                            <a href="{{ url('/logout') }}" class="hover:text-gray-400">Log out</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @else
-                <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
-                <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
+                    <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
+                    <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
                 @endif
             </div>
         </nav>
@@ -220,23 +144,21 @@ use Carbon\Carbon;
         </nav>
     </header>
     <main>
-        <section id="content" class="m-32">
+        <section id="content" class="mt-32 mb-4 mx-32">
             @yield('content')
         </section>
     </main>
-    <footer>
-        <div class="fixed bottom-0 w-screen p-8 pt-4 pb-4 bg-stone-800">
-            <div class="flex flex-col justify-between">
-                <ul class="flex flex-row flex-auto text-stone-200 divide-x">
-                    <li class="pr-4"><a href="{{ url('/about-us') }}">About Us</a></li>
-                    <li class="px-4"><a href="{{ url('/faq') }}">FAQ</a></li>
-                    <li class="px-4"><a href="{{ url('/contacts') }}">Contacts</a></li>
-                    <li class="px-4"><a href="{{ url('/terms-of-use') }}">Terms of Use</a></li>
-                    <li class="pl-4"><a href="{{ url('/privacy-policy') }}">Privacy Policy</a></li>
-                </ul>
-                <p class="mt-1 text-sm text-stone-50">Copyright &copy; 2023 SoundSello</p>
-            </div>
-        </div>
+    <footer class="p-8 pt-4 pb-4 bg-stone-800 flex flex-col justify-between">
+        <ul class="flex flex-row text-stone-200 divide-x">
+            <li class="pr-4"><a href="{{ url('/about-us') }}">About Us</a></li>
+            <li class="px-4"><a href="{{ url('/faq') }}">FAQ</a></li>
+            <li class="px-4"><a href="{{ url('/contacts') }}">Contacts</a></li>
+            <li class="px-4"><a href="{{ url('/terms-of-use') }}">Terms of Use</a></li>
+            <li class="pl-4"><a href="{{ url('/privacy-policy') }}">Privacy Policy</a></li>
+        </ul>
+        <p class="mt-1 text-sm text-stone-50">Copyright &copy; 2023 SoundSello</p>
+
     </footer>
 </body>
+
 </html>

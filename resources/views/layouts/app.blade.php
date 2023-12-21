@@ -17,7 +17,7 @@ use App\Models\Notification;
 </head>
 
 <body class="flex flex-col min-h-screen">
-    <header class="fixed top-0 w-screen p-16 pt-4 pb-4 bg-white text-stone-800 shadow-lg z-1000" style="z-index: 1000;">
+    <header class="fixed top-0 w-screen p-16 pt-4 pb-4 bg-white text-stone-800 shadow-lg z-10">
         <nav class="items-center m-auto flex flex-row justify-between ">
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
             <div class="flex justify-between items-center">

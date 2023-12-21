@@ -153,7 +153,7 @@ class AuctionController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Bid submitted successfully.');
+            return redirect()->back()->with('message', 'Bid submitted successfully.');
         } catch (\Exception $e) {
             $errorMessages = [
                 "Your bid must be higher than the current highest bid.",

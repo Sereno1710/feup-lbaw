@@ -11,8 +11,6 @@
 
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden" onclick="closeAllPopUps()"></div>
 
-
-
     <div class=" m-2 p-4 flex flex-col items-center rounded-lg text-stone-600 bg-white shadow-lg">
         @if (session('message'))
             <div class="w-full p-3 mb-1 text-stone-800 bg-stone-300 rounded-lg">

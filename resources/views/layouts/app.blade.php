@@ -75,8 +75,21 @@ use App\Models\Notification;
                         id="notificationDropdown">
                         @if (Auth::check())
                             <div class="notification-content">
-                                <div class="notification-header border-b-2 border-black">
+                                <div class="notifications-title inline flex flex-row justify-between mr-2">
                                     <h3 class="text-lg font-bold">Notifications</h3>
+                                    @if ($noflagNotificationsCount != 0)
+                                    <div>
+                                        <form action="{{ route('notification.viewall') }}" method="POST" class="inline hover:text-gray-500">
+                                            @csrf
+                                            <button type="submit" class="btn-view">Mark all as read</button>
+                                        </form>
+                                        |
+                                        <form action="{{ route('notification.deleteall') }}" method="POST" class="inline hover:text-gray-500">
+                                            @csrf
+                                            <button type="submit" class="btn-delete">Delete all</button>
+                                        </form>
+                                    </div>
+                                    @endif
                                 </div>
                                 <div class="notification-list">
                                     <ul>

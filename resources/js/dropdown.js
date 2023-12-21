@@ -25,21 +25,27 @@ function activateDropdowns () {
     notificationDropdown.style.right = `${rightPosition}px`
   }
 
-  /* METAINFO DROPDOWN */
-  const metaInfoBtns = document.querySelectorAll('.dropdown-button-metaInfo')
+  /* SEARCH FILTERS DROPDOWNS */
+  document.addEventListener('DOMContentLoaded', function () {
+    const metaInfoContainers = document.querySelectorAll('.meta-info-container')
 
-  if (metaInfoBtns != null) {
-    for (const btn of metaInfoBtns) {
-      btn.addEventListener('click', function () {
-        const content = this.closest('.h4').nextElementSibling
-        if (!content.classList.contains('hidden')) {
-          content.classList.add('hidden')
+    metaInfoContainers.forEach(container => {
+      const dropdown = container.querySelector('.dropdown-button-filter')
+      const values = container.querySelector('.values')
+      const inputField = container.querySelector('.meta-info-input')
+      inputField.disabled = true
+
+      dropdown.addEventListener('click', () => {
+        if (!values.classList.contains('hidden')) {
+          values.classList.add('hidden')
+          inputField.disabled = true
         } else {
-          content.classList.remove('hidden')
+          values.classList.remove('hidden')
+          inputField.disabled = false
         }
       })
-    }
-  }
+    })
+  })
 }
 
 activateDropdowns()

@@ -26,7 +26,7 @@ use Carbon\Carbon;
 
                         <span class="dropdown-button cursor-pointer mr-2">&#9660;</span>
 
-                        <div class="absolute w-[40rem] left-[-100%] mt-2 p-2 bg-gray-100 overflow-y-auto max-h-72 border rounded border-gray-300 rounded shadow-md hidden"
+                        <div class="absolute w-[45rem] left-[-100%] mt-2 p-2 bg-gray-100 overflow-y-auto max-h-72 border rounded border-gray-300 rounded shadow-md hidden"
                             id="categoriesDropdown">
                             <h3 class="text-lg font-bold">Categories</h3>
                             <div class="flex flex-wrap items-center space-x-4">
@@ -46,22 +46,22 @@ use Carbon\Carbon;
 
                             <div class="flex flex-wrap space-x-4 mt-6">
                                 @foreach ($metaInfos as $metaInfo)
-                                <input name="metaInfos[]" value="{{ $metaInfo->name }}" class="hidden">
-                                <div class="flex flex-col space-y-2">
-                                    <h4 class="h4 text-lg font-bold" id="{{ $metaInfo->name }}Dropdown">{{
+                                <div class="flex flex-col space-y-2 meta-info-container">
+                                    <h4 class="dropdown-button-filter text-lg font-bold" id="{{ $metaInfo->name }}Dropdown">{{
                                         $metaInfo->name
-                                        }}<span
-                                            class="dropdown-button-metaInfo cursor-pointer text-sm ml-1">&#9660;</span>
+                                        }}<span class="cursor-pointer text-sm ml-1">&#9660;</span>
                                     </h4>
 
                                     <div class="values hidden">
                                         @foreach ($metaInfo->values as $value)
                                         <label for="{{ $value->value }}" class="flex items-center">
                                             <input type="checkbox" id="{{ $value->value }}"
-                                                name="metaInfos{{ $metaInfo->name }}[]" value="{{ $value->value }}"
+                                                name="metaInfo{{ $metaInfo->name }}[]" value="{{ $value->value }}"
                                                 class="mr-2" checked>{{ $value->value }}</label>
                                         @endforeach
                                     </div>
+                                    <input name="metaInfos[]" value="{{ $metaInfo->name }}"
+                                        class="meta-info-input hidden">
                                 </div>
                                 @endforeach
                             </div>

@@ -11,6 +11,7 @@ use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,9 +30,6 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/home', 'index')->name('home');
     Route::get('/search', 'search')->name('search');
 });
-
-// Users
-Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
 // Profile
 Route::get('/profile', [UserController::class, 'show'])->name('profile');
@@ -58,7 +56,6 @@ Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('p
 Route::controller(AuctionController::class)->group(function () {
     Route::get('/auctions', 'showActiveAuctions');
     Route::get('/auction/submit', 'showAuctionForm');
-    Route::get('/auction/search','search')->name('auction.search');
     Route::post('/auction/create', 'createAuction')->name('auction.create');
     Route::post('/auction/follow', 'followAuction')->name('auction.follow');
     Route::post('/auction/unfollow', 'unfollowAuction')->name('auction.unfollow');
@@ -107,12 +104,20 @@ Route::controller(LoginController::class)->group(function () {
     Route::post('/login', 'authenticate');
     Route::get('/logout', 'logout')->name('logout');
     Route::get('/recoverpassword', 'indexRecoverPassword')->name('password.recover');
+    Route::get('/login/google', 'redirectToGoogle')->name('login.google');
+    Route::get('/login/google/callback', 'handleGoogleCallback');
 });
 
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
+    Route::get('/dateofbirth', 'showDateOfBirth')->name('show.dateofbirth')->middleware('can:accessDateOfBirth,App\Models\User');;
+    Route::post('/dateofbirth', 'updateDateOfBirth')->name('update.dateofbirth');
 });
 
 // Email
 Route::post('/recoverpassword/send', [MailController::class, 'send'])->name('password.sendmail');
+
+// Notification
+Route::post('/notification/{id}/view', [NotificationController::class,'viewNotification'])->name('notification.view');
+Route::post('/notification/{id}/delete', [NotificationController::class,'deleteNotificationFromFeed'])->name('notification.delete');

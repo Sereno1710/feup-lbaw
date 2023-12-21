@@ -18,7 +18,7 @@ class User extends Authenticatable
     public $timestamps = false;
     protected $table = 'users';
 
-    protected $fillable = ['username', 'name', 'email', 'password', 'balance', 'date_of_birth', 'biography', 'street', 'city', 'zip_code', 'country', 'rating', 'image', 'tsvectors',];
+    protected $fillable = ['username', 'name', 'email', 'password', 'balance', 'date_of_birth', 'biography', 'street', 'city', 'zip_code', 'country', 'rating', 'image', 'tsvectors','google_id',];
     protected $hidden = ['password', 'remember_token',];
 
     public function isAdmin()

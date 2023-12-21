@@ -10,6 +10,9 @@
             <span class="text-stone-500">{{ $user->name }}</span>
         @endif
     </div>
+
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden" onclick="closeBidsPopup()"></div>
+
     <div class="flex flex-col items-center">
         <div class="flex flex-row items-center">
             <div class="user-avatar">
@@ -23,7 +26,7 @@
                 <img class="h-[12rem] w-[12rem] object-cover rounded-full" src="{{ asset($profileImagePath) }}"
                     alt="Profile Picture">
             </div>
-            <div class="mx-4 flex flex-col">
+            <div class="mx-4 flex flex-col items-start">
                 @if (Auth::check() && Auth::user()->id == $user->id)
                     <p class="text-xl">&#64;{{ Auth::user()->username }}</p>
                     <p class="text-2xl">{{ Auth::user()->name }} <a class="mx-2 text-sm underline"
@@ -33,6 +36,7 @@
                         <p>Rating: {{ Auth::user()->rating }}</p>
                     @endif
                     <p class="text-xl">{{ Auth::user()->biography }}</p>
+                    <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">My bidding history</button>
                 @else
                     <p class="text-xl">&#64;{{ $user->username }}</p>
                     <p class="text-2xl">{{ $user->name }}</p>
@@ -78,6 +82,40 @@
                     </div>
                 @endif
             @endif
-
         </div>
-    @endsection
+
+    </div>
+
+    @if (Auth::check() && Auth::user()->id == $user->id)
+        <div id="bidsPopup"
+            class="hidden fixed flex-col top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center w-[40rem]">
+            <h2 class="mb-2 font-bold text-3xl text-center self-start">Bidding History</h2>
+            <div class="w-full px-2 flex flex-col max-h-[42vh] overflow-y-auto items-center">
+                @foreach ($user->ownBids as $bid)
+                    @include('partials.biduser', ['bid' => $bid])
+                @endforeach
+            </div>
+
+            <button class="mt-2 mx-2 px-3 py-2 text-stone-500 bg-white border-stone-500 border rounded"
+                onclick="closeBidsPopup()">Close</button>
+        </div>
+    @endif
+
+    <script>
+        function showBidsPopup() {
+            document.getElementById('overlay').classList.remove('hidden');
+            bidsPopup = document.getElementById('bidsPopup');
+            bidsPopup.classList.remove('hidden');
+            bidsPopup.classList.add('flex');
+        }
+
+        function closeBidsPopup() {
+            bidsPopup = document.getElementById('bidsPopup');
+            if (bidsPopup.classList.contains('flex')) {
+                document.getElementById('overlay').classList.add('hidden');
+                bidsPopup.classList.remove('flex');
+                bidsPopup.classList.add('hidden');
+            }
+        }
+    </script>
+@endsection

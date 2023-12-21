@@ -14,5 +14,8 @@ class UserPolicy
         return $user->id === auth()->user()->id;
     }
 
-
+    public function accessDateOfBirth(User $user)
+    {
+        return $user->date_of_birth == '1800-01-01';
+    }
 }

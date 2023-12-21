@@ -23,11 +23,14 @@ class HomeController extends Controller
     public function search(Request $request)
     {
         $input = $request->input('input');
+        $selectedCategories = (array) $request->input('categories', []);
 
         if (empty($input)) {
-            $auctionsQuery = Auction::whereRaw("tsvectors @@ to_tsquery('english', '*')")
-                ->orderByRaw("ts_rank(tsvectors, to_tsquery('*')) DESC")
-                ->get();
+            $auctionsQuery1 = Auction::all()->where('state', 'active');
+
+            if (!empty($selectedCategories)) {
+                $auctionsQuery = $auctionsQuery1->whereIn('category', $selectedCategories);
+            }
 
             $usersQuery = User::whereRaw("tsvectors @@ to_tsquery('english', '*')")
                 ->orderByRaw("ts_rank(tsvectors, to_tsquery('*')) DESC")
@@ -53,8 +56,13 @@ class HomeController extends Controller
                     $q->orWhereRaw("tsvectors @@ to_tsquery('english', ?)", [$value . ':*'])
                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('english', ?)) DESC", [$value . ':*']);
                 }
-            })->where('state', 'active')
-                ->get();
+            })->where('state', 'active');
+
+            if (!empty($selectedCategories)) {
+                $auctionsQuery3 = $auctionsQuery2->whereIn('category', $selectedCategories)->get();
+            } else {
+                $auctionsQuery3 = $auctionsQuery2->get();
+            }
 
             $usersQuery2 = User::where(function ($q) use ($searchValues) {
                 foreach ($searchValues as $value) {
@@ -64,7 +72,7 @@ class HomeController extends Controller
             })->where('username', '!=', 'anonymous')
                 ->get();
 
-            $auctionsQuery = $auctionsQuery1->merge($auctionsQuery2);
+            $auctionsQuery = $auctionsQuery1->merge($auctionsQuery3);
             $usersQuery = $usersQuery1->merge($usersQuery2);
         }
 

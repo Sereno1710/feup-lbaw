@@ -12,8 +12,8 @@ use App\Models\Auction;
 use App\Models\MetaInfo;
 use App\Models\AuctionMetaInfoValue;
 use App\Models\follows;
-use App\Models\Report; 
-use App\Models\Comment; 
+use App\Models\Report;
+use App\Models\Comment;
 use App\Models\AuctionWinner;
 
 class AuctionController extends Controller
@@ -25,7 +25,7 @@ class AuctionController extends Controller
 
         return view('pages.auction', ['auction' => $auction, 'bids' => $bids]);
     }
-    
+
     public function showActiveAuctions()
     {
         $activeAuctions = $activeAuctions = Auction::activeAuctions()->get();
@@ -62,9 +62,9 @@ class AuctionController extends Controller
                 'end_time' => $endTime,
             ]);
 
-            
+
         }
-        
+
         return redirect()->back();
     }
 
@@ -84,15 +84,20 @@ class AuctionController extends Controller
         $auctionData['price'] = $validatedData['starting_price'];
         $auctionData['category'] = $validatedData['category'];
         $auctionData['owner_id'] = Auth::user()->id;
-        
+
         try {
             DB::beginTransaction();
 
             $auction = new Auction($auctionData);
             $auction->save();
 
-            if ($request->hasFile('image')) {
-                $request->file('image')->move('images/auction', "{$auction->id}.jpg");
+            if ($request->hasFile('images')) {
+                $images = $request->file('images');
+                $key = 1;
+                foreach ($images as $image) {
+                    $image->move('images/auction', "{$auction->id}_{$key}.jpg");
+                    $key++;
+                }
             }
 
             $metaInfos = $request->input('categories', []);
@@ -121,12 +126,12 @@ class AuctionController extends Controller
         $validatedData = $request->validate([
             'amount' => 'required|numeric|min:1',
         ]);
-    
+
         try {
             DB::beginTransaction();
 
             DB::statement('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
-            
+
             DB::table('users')
                 ->where('id', function ($query) use ($auctionId) {
                     $query->select('user_id')
@@ -135,7 +140,7 @@ class AuctionController extends Controller
                 })
                 ->update(['balance' => DB::raw('balance + (SELECT amount FROM (SELECT user_id, amount FROM bid WHERE auction_id = :auction_id ORDER BY amount DESC LIMIT 1) AS LastBid)')]);
 
-                
+
             $bid = new Bid([
                 'user_id' => Auth::user()->id,
                 'auction_id' => $auctionId,
@@ -147,13 +152,13 @@ class AuctionController extends Controller
             DB::table('users')
                 ->where('id', Auth::user()->id)
                 ->update(['balance' => DB::raw('balance - ' . $validatedData['amount'] . '::MONEY')]);
-    
+
             Auction::where('id', $auctionId)
                 ->update(['price' => DB::raw($validatedData['amount'] . '::MONEY')]);
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Bid submitted successfully.');
+            return redirect()->back()->with('message', 'Bid submitted successfully.');
         } catch (\Exception $e) {
             $errorMessages = [
                 "Your bid must be higher than the current highest bid.",
@@ -215,7 +220,7 @@ class AuctionController extends Controller
             'time' => now(),
         ]);
 
-        return redirect()->back()->with('message', "Comment successfully added."); 
+        return redirect()->back()->with('message', "Comment successfully added.");
     }
 
     public function deleteCommentOnAuction($auctionId, $commentId)
@@ -272,24 +277,11 @@ class AuctionController extends Controller
 
         $auctionWinner = AuctionWinner::where('auction_id', $id)->first();
         $auctionWinner::where('user_id', Auth::user()->id)
-                ->where('auction_id', $id)
-                ->update([
-                    'rating' => $validatedData['rating']
-                ]);
+            ->where('auction_id', $id)
+            ->update([
+                'rating' => $validatedData['rating']
+            ]);
 
         return redirect()->back()->with('message', "Thanks for submitting a rating.");
     }
-
-    public function search(Request $request)
-    {
-        $keyword = $request->input('keyword');
-
-        $auctionsQuery = Auction::whereRaw("tsvectors @@ to_tsquery('english', ?)", [$keyword . ':*'])
-            ->orderByRaw("ts_rank(tsvectors, to_tsquery(?)) DESC", [$keyword]);
-
-        $auctions = $auctionsQuery->simplePaginate(12, ['*'], 'page', $request->input('page'));
-
-        return view('pages.auction.search', ['auctions' => $auctions, 'keyword' => $keyword]);
-    }
-
 }

@@ -68,6 +68,7 @@ use App\Models\Notification;
                                 @endforeach
                             </div>
                         </div>
+
                         <button type="submit">🔎</button>
                     </form>
                 </div>

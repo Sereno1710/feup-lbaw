@@ -9,9 +9,7 @@
         <span class="text-stone-500">{{ $auction->name }}</span>
     </div>
 
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
-
-
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden" onclick="closeAllPopUps()"></div>
 
     <div class=" m-2 p-4 flex flex-col items-center rounded-lg text-stone-600 bg-white shadow-lg">
         @if (session('message'))
@@ -97,7 +95,7 @@
                 @endif
             @endif
         </div>
-        <div class="w-full flex flex-row items-start justify-between">
+        <div class="mb-4 w-full flex flex-row items-start justify-between">
 
             <table class="table-fixed w-full text-left ">
                 <tr class="border-b border-stone-300">
@@ -105,7 +103,11 @@
                         <h3 class="mx-2 my-1">Auction Description</h3>
                     </th>
                     <th>
-                        <h3 class="mx-2 my-1">Bidding History</h3>
+                        <div class="flex flex-row justify-between items-end">
+                            <h3 class="mx-2 my-1">Bidding History</h3>
+                            <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">View full
+                                history</button>
+                        </div>
                     </th>
                 </tr>
                 <tr>
@@ -126,7 +128,7 @@
                     <td>
                         <div class="m-2 flex flex-col">
                             @foreach ($bids as $bid)
-                                @include('partials.bid', ['bid' => $bid])
+                                @include('partials.bidpreview', ['bid' => $bid])
                             @endforeach
                             <p>Auction started at {{ $auction->initial_price }} euros.</p>
                         </div>
@@ -182,7 +184,7 @@
             class="hidden min-w-[32rem] flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center">
             @csrf
 
-            <h2 class="mb-2 font-bold text-3xl text-center">Report Auction</h2>
+            <h2 class="font-bold text-3xl text-center self-start">Report Auction</h2>
 
             <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 
@@ -192,28 +194,43 @@
 
 
             <div class="flex flex-row">
-                <button class="mx-2 p-3 text-white bg-stone-800 rounded" type="sumbit">Submit Report</button>
-                <button class="mx-2 p-3 text-stone-500 bg-white border-stone-500 border rounded" type="button"
+                <button class="mx-2 px-3 py-2 text-white bg-stone-800 rounded" type="sumbit">Submit Report</button>
+                <button class="mx-2 px-3 py-2 text-stone-500 bg-white border-stone-500 border rounded" type="button"
                     onclick="cancelReport()">Cancel</button>
             </div>
         </form>
     @endif
+
+    <div id="bidsPopup"
+        class="hidden fixed flex-col top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center w-[40rem]">
+        <h2 class="mb-2 font-bold text-3xl text-center self-start">Bidding History</h2>
+        <div class="w-full px-2 flex flex-col max-h-[42vh] overflow-y-auto items-center">
+            @foreach ($auction->bids as $bid)
+                @include('partials.bidpublic', ['bid' => $bid])
+            @endforeach
+        </div>
+
+        <button class="mt-2 mx-2 px-3 py-2 text-stone-500 bg-white border-stone-500 border rounded"
+            onclick="closeBidsPopup()">Close</button>
+    </div>
 
 
 
     <script>
         function showReportPopup() {
             document.getElementById('overlay').classList.remove('hidden');
-            deleteConfirmation = document.getElementById('reportAuction');
-            deleteConfirmation.classList.remove('hidden');
-            deleteConfirmation.classList.add('flex');
+            reportAuction = document.getElementById('reportAuction');
+            reportAuction.classList.remove('hidden');
+            reportAuction.classList.add('flex');
         }
 
         function cancelReport() {
-            document.getElementById('overlay').classList.add('hidden');
-            deleteConfirmation = document.getElementById('reportAuction');
-            deleteConfirmation.classList.remove('flex');
-            deleteConfirmation.classList.add('hidden');
+            reportAuction = document.getElementById('reportAuction');
+            if (reportAuction.classList.contains('flex')) {
+                document.getElementById('overlay').classList.add('hidden');
+                reportAuction.classList.remove('flex');
+                reportAuction.classList.add('hidden');
+            }
         }
 
         function showDeletePopup() {
@@ -224,10 +241,34 @@
         }
 
         function cancelDelete() {
-            document.getElementById('overlay').classList.add('hidden');
             deleteConfirmation = document.getElementById('deleteConfirmation');
-            deleteConfirmation.classList.remove('flex');
-            deleteConfirmation.classList.add('hidden');
+            if (deleteConfirmation.classList.contains('flex')) {
+                document.getElementById('overlay').classList.add('hidden');
+                deleteConfirmation.classList.remove('flex');
+                deleteConfirmation.classList.add('hidden');
+            }
+        }
+
+        function showBidsPopup() {
+            document.getElementById('overlay').classList.remove('hidden');
+            bidsPopup = document.getElementById('bidsPopup');
+            bidsPopup.classList.remove('hidden');
+            bidsPopup.classList.add('flex');
+        }
+
+        function closeBidsPopup() {
+            bidsPopup = document.getElementById('bidsPopup');
+            if (bidsPopup.classList.contains('flex')) {
+                document.getElementById('overlay').classList.add('hidden');
+                bidsPopup.classList.remove('flex');
+                bidsPopup.classList.add('hidden');
+            }
+        }
+
+        function closeAllPopUps() {
+            cancelReport()
+            cancelDelete()
+            closeBidsPopup()
         }
     </script>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />

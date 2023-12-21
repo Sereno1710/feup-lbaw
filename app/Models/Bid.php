@@ -9,7 +9,7 @@ class Bid extends Model
 {
     public $timestamps = false;
     protected $table='bid';
-    protected $fillable = ['user_id', 'auction_id', 'amount', 'time', 'state'];
+    protected $fillable = ['user_id', 'auction_id', 'amount', 'time'];
 
     public function user()
     {

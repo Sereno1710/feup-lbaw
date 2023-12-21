@@ -8,7 +8,7 @@ use App\Models\Auction;
 use App\Models\Comment;
 ?>
 
-<li class="border-b border-black py-2 {{ $notification->viewed ? 'bg-gray-300' : 'text-black' }}">
+<li class="notif border-b border-black py-2 {{ $notification->viewed ? 'bg-gray-300' : 'text-black' }}" id="{{$notification->id}}">
     @if ($notification->flag)
         @php
             $bid = Bid::where('id', $notification->bid_id)->first();
@@ -88,11 +88,9 @@ use App\Models\Comment;
     <div class="notification-buttons inline flex flex-row justify-between mr-2">
         <p class="text-gray-600 text-sm">{{ $formattedDate }} </span>
         <div>
-            <form action="{{ route('notification.view', $notification->id) }}" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="btn-view">✔️</button>
-            </form>
-
+            @if(!$notification->viewed)
+                <button type="button" class="btn-view" notification_id="{{$notification->id}}">✔️</button>
+            @endif
             <form action="{{ route('notification.delete', $notification->id) }}" method="POST" class="inline">
                 @csrf
                 <button type="submit" class="btn-delete">❌</button>

@@ -128,6 +128,32 @@ function addAuctionReportEventListener(){
 
 }
 
+function addNotificationsEventListeners() {
+  let notifications = document.getElementById("notifications");
+  if (notifications) {
+    notifications.addEventListener("click", function (event) {
+      if (event.target.classList.contains("btn-viewall")) {
+        readAllNotification();
+      }
+      else if (event.target.classList.contains("btn-deleteall")) { 
+        deleteAllNotification();
+      } 
+    });
+  }
+}
+
+function addNotificationEventListener(){
+  let notification = document.getElementById("notification-ul");
+  if(notification) {
+    notification.addEventListener("click", function (event) {
+      let notificationId = event.target.getAttribute("notification_id");
+      if (event.target.classList.contains("btn-view")){
+        viewNotification(notificationId);
+      }
+    });
+  }
+}
+
 function encodeForAjax(data) {
   if (data == null) return null;
   return Object.keys(data)
@@ -848,8 +874,131 @@ async function openReports(auction_id,user_id) {
       timer: 2500
     });
   }
-  
 }
+
+function deleteAll() {
+  let parentElement = document.querySelector('#notification-ul');
+  if(parentElement){
+  let childElements = parentElement.querySelectorAll('.notif');
+
+  if(childElements){
+  childElements.forEach(child => {
+    child.remove();
+  });}}
+
+  let notificationsli = document.createElement("li");
+  notificationsli.className = "no-notifications mt-2";
+  notificationsli.innerHTML = "You currently have zero notifications.";
+  if (parentElement) {
+      parentElement.appendChild(notificationsli);
+  } else {
+      console.error("Parent element not found.");
+  }
+  let notificationButtons = document.querySelector('#notification-buttons');
+  if(notificationButtons){
+    let viewAllButton = notificationButtons.querySelector('.btn-viewall');
+    if(viewAllButton){
+      viewAllButton.remove();
+    }
+    let deleteAllButton = notificationButtons.querySelector('.btn-deleteall');
+    if(deleteAllButton){
+      deleteAllButton.remove();
+    }
+  }
+
+  let NotificationSign = document.querySelector('.notification-badge');
+  if(NotificationSign){
+    NotificationSign.remove();
+  }
+}
+
+function viewAll() {
+  let parentElement = document.querySelector('#notification-ul');
+  if(parentElement){
+  let childElements = parentElement.querySelectorAll('.notif');
+  if(childElements){
+  childElements.forEach(child => {
+    child.classList.remove('bg-gray-100');
+    child.classList.add('bg-gray-300');
+    let viewButton = document.querySelector('.btn-view');
+    if (viewButton) {
+        viewButton.parentNode.removeChild(viewButton);
+    }
+  });}}
+  let NotificationSign = document.querySelector('.notification-badge');
+  if(NotificationSign){
+    NotificationSign.remove();
+  }
+}
+
+function readAllNotification() {
+
+  sendAjaxRequest(
+    "POST",
+    '/notification/viewall',
+    viewAll()
+  );
+}
+
+
+function deleteAllNotification() {
+
+  sendAjaxRequest(
+    "POST",
+    '/notification/deleteall',
+    deleteAll()
+  );
+}
+
+
+
+function vNotification(notificationId) {
+  let notificationRow = document.getElementById(notificationId);
+  if(notificationRow) {
+    notificationRow.classList.remove('bg-gray-100');
+    let viewButton = document.querySelector('.btn-view');
+    console.log("View Button:", viewButton);
+    if (viewButton) {
+        viewButton.parentNode.removeChild(viewButton);
+    }
+    let NotificationSign = document.querySelector('.notification-badge');
+    if(NotificationSign){
+      let number= parseInt(NotificationSign.innerHTML) - 1;
+      if(number == 0){
+        NotificationSign.remove();
+        let notificationButtons = document.getElementById('.notification-buttons');
+        if(notificationButtons){
+          let viewAllButton = notificationButtons.querySelector('.btn-viewall');
+          if(viewAllButton){
+            viewAllButton.remove();
+          }
+          let deleteAllButton = notificationButtons.querySelector('.btn-deleteall');
+          if(deleteAllButton){
+            deleteAllButton.remove();
+          }
+        }
+      } else {
+        NotificationSign.innerHTML = number;
+      }
+      notificationRow.classList.add('bg-gray-300');
+    }
+  } else {
+    console.error("Notification row not found:", notificationId);
+  }
+}
+
+function viewNotification(notificationId) {
+  let formData = { notification_id: notificationId };
+
+  sendAjaxRequest(
+    "POST",
+    `/notification/${notificationId}/view`,
+    formData,
+    vNotification(notificationId)
+  );
+}
+
+
 addUserEventListeners();
 addTransferEventListeners();
 addAuctionEventListeners();
@@ -858,3 +1007,5 @@ addFollowEventListeners();
 addProfileEventListeners();
 addAuctionBidEventListeners();
 addAuctionReportEventListener();
+addNotificationsEventListeners();
+addNotificationEventListener();

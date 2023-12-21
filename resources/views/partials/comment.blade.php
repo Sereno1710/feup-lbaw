@@ -29,7 +29,7 @@
 <form id="deleteConfirmation" method="POST"
     action="{{ url('/auction/' . $auction->id . '/comment/' . $comment->id . '/delete') }}"
     enctype="multipart/form-data"
-    class="hidden flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg  text-center items-center justify-center">
+    class="hidden flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg  text-center items-center justify-center z-10">
     @csrf
     <p class="text-black-500 mb-4">Are you sure you want to delete this comment? This action cannot be
         reversed.</p>

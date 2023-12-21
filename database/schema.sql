@@ -614,7 +614,7 @@ BEGIN
   INSERT INTO Notification (notification_type, date, receiver_id, comment_id)
   SELECT 'auction_comment', NEW.time, f.user_id, NEW.id
   FROM follows AS f
-  WHERE f.auction_id = NEW.auction_id;
+  WHERE f.auction_id = NEW.auction_id AND f.user_id != NEW.user_id;
 
   RETURN NEW;
 END;
@@ -709,7 +709,7 @@ BEGIN
     INSERT INTO Notification (notification_type, date, receiver_id, auction_id)
     SELECT t, NOW(), f.user_id, NEW.id
     FROM follows AS f
-    WHERE f.auction_id = NEW.id;
+    WHERE f.auction_id = NEW.id AND f.user_id != NEW.user_id;
   END IF;
   RETURN NEW;
 END;

@@ -100,27 +100,18 @@ use App\Models\Notification;
                 <div class="dropdown-content hidden bg-gray-100 absolute top-16 right-0 mt-2 p-4 border rounded max-h-40 overflow-y-auto"
                     id="notificationDropdown">
                     @if (Auth::check())
-                    <div class="notification-content">
+                    <div id="notifications" class="notification-content">
                         <div class="notifications-title inline flex flex-row justify-between border-b border-black">
-                            <h3 class="text-lg font-bold">Notifications</h3>
+                            <h3 class="text-lg font-bold ">Notifications</h3>
                             @if ($noflagNotificationsCount != 0)
-                            <div>
-                                <form action="{{ route('notification.viewall') }}" method="POST"
-                                    class="inline hover:text-gray-500">
-                                    @csrf
-                                    <button type="submit" class="btn-view">Mark all as read</button>
-                                </form>
-                                |
-                                <form action="{{ route('notification.deleteall') }}" method="POST"
-                                    class="inline hover:text-gray-500">
-                                    @csrf
-                                    <button type="submit" class="btn-delete">Delete all</button>
-                                </form>
+                            <div id="notification-buttons">
+                                <button type="button" class="inline hover:text-gray-500 btn-viewall" user_id="{{Auth::user()->id}}">Mark all as read</button>
+                                <button type="button" class="inline hover:text-gray-500 btn-deleteall" user_id="{{Auth::user()->id}}">Delete all</button>
                             </div>
                             @endif
                         </div>
                         <div class="notification-list">
-                            <ul>
+                            <ul id="notification-ul">
                                 @foreach (Auth::user()->notifications as $notification)
                                 @if ($notification->flag == false)
                                 @continue
@@ -130,9 +121,9 @@ use App\Models\Notification;
                                 ])
                                 @endforeach
                                 @if ($unviewedNotificationsCount == 0 && $noflagNotificationsCount == 0)
-                                <div class="no-notifications mt-2">
+                                <li class="no-notifications mt-2">
                                     You currently have zero notifications.
-                                </div>
+                                </li>
                                 @endif
                             </ul>
                         </div>

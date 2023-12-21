@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('content')
@@ -115,10 +116,10 @@
                         <h3 class="mx-2 my-1">Auction Description</h3>
                     </th>
                     <th>
-                        <div class="flex flex-row justify-between items-end">
+                        <div class="flex flex-row justify-between items-end" id="BidsPopUp">
                             <h3 class="mx-2 my-1">Bidding History</h3>
                             @if ($auction->bids->count() > 1)
-                                <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">View full
+                                <button class="text-sm text-stone-500 underline bids-history-btn" auction_id="{{$auction->id}}" type="button">View full
                                     history</button>
                             @endif
                         </div>
@@ -215,18 +216,6 @@
             </div>
         </form>
     @endif
-
-    <div id="bidsPopup"
-        class="hidden fixed flex-col top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center w-[40rem]">
-        <h2 class="mb-2 font-bold text-3xl text-center self-start">Bidding History</h2>
-        <div class="w-full px-2 flex flex-col max-h-[42vh] overflow-y-auto items-center">
-            @foreach ($auction->bids as $bid)
-                @include('partials.bidpublic', ['bid' => $bid])
-            @endforeach
-        </div>
-        <button class="mt-2 mx-2 px-3 py-2 text-stone-500 bg-white border-stone-500 border rounded"
-            onclick="closeBidsPopup()">Close</button>
-    </div>
 
 
 

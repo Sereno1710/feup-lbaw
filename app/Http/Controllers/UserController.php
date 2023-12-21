@@ -111,4 +111,16 @@ class UserController extends Controller
         return redirect()->route('home')
             ->withSuccess('You have deleted your acount successfully!');
     }
+
+    public function profileImagePathJs($request){
+        $user = User::findOrFail($request);
+        $imagePath = $user->profileImagePath();
+        return response()->json(['path' => $imagePath]);
+    }
+
+    public function usernameJs($request){
+        $user = User::findOrFail($request);
+        $name = $user->name;
+        return response()->json(['name' => $name]);
+    }
 }

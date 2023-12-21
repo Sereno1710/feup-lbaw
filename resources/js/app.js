@@ -101,6 +101,19 @@ function addProfileEventListeners() {
   }
 }
 
+function addAuctionBidEventListeners(){
+  let auctionBidTable = document.getElementById("BidsPopUp");
+  if(auctionBidTable) {
+    auctionBidTable.addEventListener("click", function (event) {
+      let auctionId = event.target.getAttribute("auction_id");
+      if (event.target.classList.contains("bids-history-btn")){
+        openBids(auctionId);
+      }
+    });
+  }
+
+}
+
 
 function encodeForAjax(data) {
   if (data == null) return null;
@@ -725,7 +738,63 @@ function updateUserRow(res) {
   });
 }
 
+async function openBids(id) {
+  const response = await fetch(`/auction/${id}/bids`, {
+    method: 'GET', 
+  });
+  if (response.status !== 200) {
+    console.error("Error fetching bidding history");
+    return;
+  }
+  const bidsInfo = await response.json();
+  openBidsPopup(bidsInfo);
+}
 
+
+async function openBidsPopup(bidsInfo) {
+  console.log("Bids Info:", bidsInfo);
+
+  // Function to fetch profile image path
+  const fetchProfileImagePath = async (userId) => {
+    const response = await fetch(`/profile/${userId}/image`);
+    const data = await response.json();
+    return data.path; // Assuming the response has a 'path' property
+  };
+  const fetchUserName= async (userId) => {
+    const response = await fetch(`/profile/${userId}/name`);
+    const data = await response.json();
+    return data.name; // Assuming the response has a 'path' property
+  }
+  // Generate HTML for bidding history
+  const bidsHTML = await Promise.all(bidsInfo.map(async bid => {
+  const profileImagePath = await fetchProfileImagePath(bid.user_id);
+  const name = await fetchUserName(bid.user_id);
+    return `
+      <div class="w-full my-1 p-4 flex flex-row items-center bg-stone-100 rounded-lg shadow-sm">
+          <a class="w-[4rem] h-[3rem] mr-1" href="/user/${bid.user_id}">
+              <img class="w-[3rem] h-[3rem] rounded-full object-cover" src="${profileImagePath}">
+          </a>
+          <div class="w-full flex flex-col items-start">
+            <div class="w-full flex flex-row justify-between items-center">
+              <a href="/user/${bid.user_id}" class="font-bold text-lg">${name}</a>
+              <span class="text-stone-500 text-sm">${bid.time}</span>
+            </div>
+            <p class="text-stone-800 text-sm">Bidded ${bid.amount}</p>
+          </div>
+      </div>
+    `;
+  }));
+
+  Swal.fire({
+    title: 'Bidding History',
+    html: `<div class="w-full px-2 flex flex-col max-h-[42vh] overflow-y-auto items-center">${bidsHTML.join('')}</div>`,
+    showCloseButton: true,
+    showConfirmButton: false,
+    customClass: {
+      container: 'bids-popup-container',
+    },
+  });
+}
 
 addUserEventListeners();
 addTransferEventListeners();
@@ -733,3 +802,4 @@ addAuctionEventListeners();
 addReportEventListeners();
 addFollowEventListeners();
 addProfileEventListeners();
+addAuctionBidEventListeners();

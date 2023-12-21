@@ -302,5 +302,24 @@ class AuctionController extends Controller
 
         return redirect()->back()->with('message', 'Auction disabled successfully.');
     }
+
+    public static function bidFromAuction($auctionId)
+    {
+
+        try {
+            $auction = Auction::findOrFail($auctionId);
+            $bids = $auction->bids()->orderBy('time', 'desc')->get();
+    
+            if (!$bids) {
+                return response()->json(['error' => 'bids not found'], 404);
+            }
+            if(!$auction) {
+                return response()->json(['error' => 'auction not found'], 404);
+            }
+            return response()->json($bids);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve info'], 500);
+        }
+    }
 }
 

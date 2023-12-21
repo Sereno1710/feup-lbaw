@@ -70,10 +70,26 @@ class Auction extends Model
 
     public function auctionImagePath()
     {
-        $files = glob("images/auction/" . $this->id . ".jpg", GLOB_BRACE);
+        $files = glob("images/auction/" . $this->id . "_1.jpg", GLOB_BRACE);
         $default = "/images/auction/default.jpg";
         if (sizeof($files) < 1)
             return $default;
         return "/" . $files[0];
+    }
+
+    public function auctionImagePaths()
+    {
+        $imagePaths = [];
+        $key = 1;
+
+        while (true) {
+            $files = glob("images/auction/{$this->id}_{$key}.jpg", GLOB_BRACE);
+            if (sizeof($files) < 1) {
+                break;
+            }
+            $imagePaths[] = "/" . $files[0];
+            $key++;
+        }
+        return empty($imagePaths) ? ["/images/auction/default.jpg"] : $imagePaths;
     }
 }

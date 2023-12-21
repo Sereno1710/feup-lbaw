@@ -117,4 +117,7 @@ Route::post('/recoverpassword/send', [MailController::class, 'send'])->name('pas
 
 // Notification
 Route::post('/notification/{id}/view', [NotificationController::class,'viewNotification'])->name('notification.view');
+Route::post('/notification/viewall', [NotificationController::class,'viewAllNotifications'])->name('notification.viewall');
 Route::post('/notification/{id}/delete', [NotificationController::class,'deleteNotificationFromFeed'])->name('notification.delete');
+Route::post('/notification/deleteall', [NotificationController::class,'deleteAllNotificationsFromFeed'])->name('notification.deleteall');
+

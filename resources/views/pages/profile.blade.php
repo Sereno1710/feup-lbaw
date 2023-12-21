@@ -36,10 +36,10 @@
                 @endif
                 @if (!($user->biography == null))
                     
-                    <p class="text-sm py-2"> {{ $user->biography }}</p>
+                    <p class="text-sm mt-2"> {{ $user->biography }}</p>
                 @endif
                 @if (Auth::check() && Auth::user()->id == $user->id)
-                    <div>
+                    <div class="mt-2">
                         <a class="mr-2 text-sm text-stone-700 underline" href="{{ route('profile.edit') }}">[edit profile]</a>
                         <button class="text-sm text-stone-700 underline" onclick="showBidsPopup()">[my bidding
                             history]</button>

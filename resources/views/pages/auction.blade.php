@@ -117,8 +117,10 @@
                     <th>
                         <div class="flex flex-row justify-between items-end">
                             <h3 class="mx-2 my-1">Bidding History</h3>
-                            <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">View full
-                                history</button>
+                            @if ($auction->bids->count() > 1)
+                                <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">View full
+                                    history</button>
+                            @endif
                         </div>
                     </th>
                 </tr>
@@ -222,7 +224,6 @@
                 @include('partials.bidpublic', ['bid' => $bid])
             @endforeach
         </div>
-
         <button class="mt-2 mx-2 px-3 py-2 text-stone-500 bg-white border-stone-500 border rounded"
             onclick="closeBidsPopup()">Close</button>
     </div>

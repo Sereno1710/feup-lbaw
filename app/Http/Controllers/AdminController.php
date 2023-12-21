@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin;   
@@ -162,5 +163,38 @@ class AdminController extends Controller
         Report::where(['user_id' => $request->user_id, 'auction_id' => $request->auction_id])->update(['state' => $request->state]);
 
         return redirect('/admin/reports/listed')->with('success', 'Report updated successefully');
+    }
+
+    public function getUserInfo(Request $request, $userId)
+    {
+        try {
+            $user = User::getUserInfo($userId);
+    
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
+    
+            return response()->json($user);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve user info'], 500);
+        }
+    }
+    
+    public function updateUserInfo(Request $request)
+    {
+        $this->authorize('index', Admin::class);
+
+        $user = User::findOrFail($request->id);
+        $password = $request->filled('password') ? Hash::make($request->password) : null;
+        
+        $user->update([
+            'username' => $request->username,
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $password,
+        ]);
+        
+        return redirect('/admin/users')->with('success', 'User updated successfully!');
+        
     }
 }

@@ -92,9 +92,12 @@ Route::post('/admin/auctions/pause', [AdminController::class, 'pauseAuction'])->
 Route::post('/admin/auctions/resume', [AdminController::class, 'resumeAuction'])->name('admin.resumeAuction');
 Route::post('/admin/auctions/disable', [AdminController::class, 'disableAuction'])->name('admin.disableAuction');
 
-Route::get('admin/reports/listed', [AdminController::class, 'getReports'])->name('admin.getlisted');
-Route::get('admin/reports/reviewed', [AdminController::class, 'getReports'])->name('admin.getreviewed');
-Route::post('admin/reports/update', [AdminController::class, 'reviewReport'])->name('admin.reviewReport');
+Route::get('/admin/reports/listed', [AdminController::class, 'getReports'])->name('admin.getlisted');
+Route::get('/admin/reports/reviewed', [AdminController::class, 'getReports'])->name('admin.getreviewed');
+Route::post('/admin/reports/update', [AdminController::class, 'reviewReport'])->name('admin.reviewReport');
+
+Route::get('/admin/users/{id}', [AdminController::class, 'getUserInfo']);
+Route::post('/admin/users/{id}/update', [AdminController::class, 'updateUserInfo']);
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {

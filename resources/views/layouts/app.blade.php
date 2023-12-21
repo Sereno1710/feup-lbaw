@@ -15,7 +15,7 @@ use App\Models\Notification;
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
-<body>
+<body class="flex flex-col min-h-screen">
     <header class="fixed top-0 w-screen p-16 pt-4 pb-4 bg-white text-stone-800 shadow-lg">
         <nav class="items-center m-auto flex justify-between ">
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
@@ -143,7 +143,7 @@ use App\Models\Notification;
             @yield('nav-bar')
         </nav>
     </header>
-    <main>
+    <main class="flex-1">
         <section id="content" class="mt-32 mb-4 mx-32">
             @yield('content')
         </section>

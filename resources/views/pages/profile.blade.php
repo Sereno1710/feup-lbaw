@@ -27,24 +27,23 @@
                     alt="Profile Picture">
             </div>
             <div class="mx-4 flex flex-col items-start">
+
+                <p class="text-2xl">
+                    {{ $user->name }} (&#64;{{ $user->username }})
+                </p>
+                @if (!($user->rating == null))
+                    <p class="text-xl">Rating: {{ $user->rating }}</p>
+                @endif
+                @if (!($user->biography == null))
+                    
+                    <p class="text-sm py-2"> {{ $user->biography }}</p>
+                @endif
                 @if (Auth::check() && Auth::user()->id == $user->id)
-                    <p class="text-xl">&#64;{{ Auth::user()->username }}</p>
-                    <p class="text-2xl">{{ Auth::user()->name }} <a class="mx-2 text-sm underline"
-                            href="{{ route('profile.edit') }}">[edit profile]</a></p>
-                    @if (Auth::user()->rating == null)
-                    @else
-                        <p>Rating: {{ Auth::user()->rating }}</p>
-                    @endif
-                    <p class="text-xl">{{ Auth::user()->biography }}</p>
-                    <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">My bidding history</button>
-                @else
-                    <p class="text-xl">&#64;{{ $user->username }}</p>
-                    <p class="text-2xl">{{ $user->name }}</p>
-                    @if ($user->rating == null)
-                    @else
-                        <p> Rating: {{ $user->rating }}</p>
-                    @endif
-                    <p class="text-xl">{{ $user->biography }}</p>
+                    <div>
+                        <a class="mr-2 text-sm text-stone-700 underline" href="{{ route('profile.edit') }}">[edit profile]</a>
+                        <button class="text-sm text-stone-700 underline" onclick="showBidsPopup()">[my bidding
+                            history]</button>
+                    </div>
                 @endif
             </div>
         </div>

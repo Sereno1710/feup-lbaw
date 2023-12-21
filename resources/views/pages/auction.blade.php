@@ -239,7 +239,7 @@
 
         function cancelReport() {
             reportAuction = document.getElementById('reportAuction');
-            if (reportAuction.classList.contains('flex')) {
+            if (reportAuction && reportAuction.classList.contains('flex')) {
                 document.getElementById('overlay').classList.add('hidden');
                 reportAuction.classList.remove('flex');
                 reportAuction.classList.add('hidden');
@@ -255,7 +255,7 @@
 
         function cancelDelete() {
             deleteConfirmation = document.getElementById('deleteConfirmation');
-            if (deleteConfirmation.classList.contains('flex')) {
+            if (deleteConfirmation && deleteConfirmation.classList.contains('flex')) {
                 document.getElementById('overlay').classList.add('hidden');
                 deleteConfirmation.classList.remove('flex');
                 deleteConfirmation.classList.add('hidden');
@@ -271,7 +271,7 @@
 
         function closeBidsPopup() {
             bidsPopup = document.getElementById('bidsPopup');
-            if (bidsPopup.classList.contains('flex')) {
+            if (bidsPopup && bidsPopup.classList.contains('flex')) {
                 document.getElementById('overlay').classList.add('hidden');
                 bidsPopup.classList.remove('flex');
                 bidsPopup.classList.add('hidden');

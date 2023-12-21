@@ -25,19 +25,19 @@
                     <table class="min-w-full border-separate">
                         <thead>
                             <tr>
-                                <th class="py-2 px-4 border border-slate-300">ID</th> 
-                                <th class="py-2 px-4 border border-slate-300">Username</th>
-                                <th class="py-2 px-4 border border-slate-300">Amount</th>
-                                <th class="py-2 px-4 border border-slate-300">State</th>
+                                <th class="p-2 border-b-2 border-slate-300">ID</th> 
+                                <th class="p-2 border-b-2 border-slate-300">Username</th>
+                                <th class="p-2 border-b-2 border-slate-300">Amount</th>
+                                <th class="p-2 border-b-2 border-slate-300">State</th>
                             </tr>
                         </thead>
                         <tbody>
                         @foreach ($others as $transfer)
                         <tr>
-                            <td class="py-2 px-4 border border-slate-300">{{ $transfer->id }}</td>
-                            <td class="py-2 px-4 border border-slate-300">{{ $transfer->username }}</td>
-                            <td class="py-2 px-4 border border-slate-300">{{ $transfer->amount }}</td>
-                            <td class="py-2 px-4 border border-slate-300">{{ $transfer->state }}</td>
+                            <td class="p-2 border-b-2 border-slate-300">{{ $transfer->id }}</td>
+                            <td class="p-2 border-b-2 border-slate-300">{{ $transfer->username }}</td>
+                            <td class="p-2 border-b-2 border-slate-300">{{ $transfer->amount }}</td>
+                            <td class="p-2 border-b-2 border-slate-300">{{ $transfer->state }}</td>
                         </tr>
                         @endforeach
                         </tbody>

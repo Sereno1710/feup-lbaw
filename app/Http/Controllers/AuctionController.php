@@ -158,7 +158,7 @@ class AuctionController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Bid submitted successfully.');
+            return redirect()->back()->with('message', 'Bid submitted successfully.');
         } catch (\Exception $e) {
             $errorMessages = [
                 "Your bid must be higher than the current highest bid.",
@@ -284,4 +284,23 @@ class AuctionController extends Controller
 
         return redirect()->back()->with('message', "Thanks for submitting a rating.");
     }
+
+    public function disableAuction($auctionId)
+    {
+        $auction = Auction::findOrFail($auctionId);
+
+        if (Auth::user()->id !== $auction->owner_id) {
+            return redirect()->back()->with('message', 'You are not the owner of this auction.');
+        }
+
+        $bidCount = $auction->bids()->count();
+        if ($bidCount > 0) {
+            return redirect()->back()->with('message', 'Cannot disable an auction with bids.');
+        }
+
+        $auction->update(['state' => 'disabled']);
+
+        return redirect()->back()->with('message', 'Auction disabled successfully.');
+    }
 }
+

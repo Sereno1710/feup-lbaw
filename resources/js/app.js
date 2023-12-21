@@ -1,17 +1,24 @@
+import Swal from 'sweetalert2'
+
 function addUserEventListeners() {
   let usersTable = document.getElementById("users_table");
   if (usersTable) {
     usersTable.addEventListener("click", function (event) {
       let userId = event.target.getAttribute("user_id");
-
+      let userName = event.target.getAttribute("user_name");
+      let role= event.target.getAttribute("role");
       if (event.target.classList.contains("promote-btn")) {
-        promoteUser(userId);
+        promoteUser(userId,role);
       } else if (event.target.classList.contains("demote-btn")) {
-        demoteUser(userId);
+        demoteUser(userId,role);
       } else if (event.target.classList.contains("ban-btn")) {
         banUser(userId);
       } else if (event.target.classList.contains("unban-btn")) {
         unbanUser(userId);
+      } else if (event.target.classList.contains("popup-btn")) {
+        showDeletePopup(userId, userName);
+      } else if (event.target.classList.contains("edit-btn")) { 
+        editUser(userId);
       }
     });
   }
@@ -24,6 +31,8 @@ function addPopupEventListeners() {
       let userId = event.target.getAttribute("user_id");
       if (event.target.classList.contains("disable-btn")) {
         disableUser(userId);
+      } else if (event.target.classList.contains("cancel-btn")) {
+        cancelDelete();
       }
     });
   }
@@ -115,16 +124,17 @@ function sendAjaxRequest(method, url, data, handler) {
   request.send(encodeForAjax(data));
 }
 
-function UserToSys(userId) {
+function UserToSys(userId, role) {
   let userRow = document.getElementById("user_row_" + userId);
 
   if (userRow) {
-    let index = Array.from(userRow.parentNode.children).indexOf(userRow);
-
+    let index = Array.from(userRow.parentNode.children).indexOf(userRow);;
+    if(role == true) {
     let disableButton = userRow.querySelector(".popup-btn");
+    disableButton.remove();
+    }
     let promoteButton = userRow.querySelector(".promote-btn");
     let banButton = userRow.querySelector(".ban-btn");
-    disableButton.remove();
     promoteButton.remove();
     banButton.remove();
 
@@ -134,10 +144,11 @@ function UserToSys(userId) {
     usersTable.querySelector("tbody").insertBefore(userRow, usersTable.querySelector("tbody").children[index]);
 
     let demoteButton = document.createElement("button");
-    demoteButton.className = "mx-2 p-2 text-white bg-stone-800 rounded demote-btn";
+    demoteButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded demote-btn";
     demoteButton.type = "button";
     demoteButton.innerText = "Demote";
     demoteButton.setAttribute('user_id', userId);
+    demoteButton.setAttribute('role', role);
 
     let actionsCell = userRow.querySelector(".flex.flex-row");
     actionsCell.appendChild(demoteButton);
@@ -151,39 +162,41 @@ function UserToSys(userId) {
   }
 }
 
-function SysToUser(userId) {
+function SysToUser(userId,role) {
 
   let userRow = document.getElementById("user_row_" + userId);
-
   if (userRow) {
     let index = Array.from(userRow.parentNode.children).indexOf(userRow);
     let demoteButton = userRow.querySelector(".demote-btn");
     demoteButton.remove();
-
     userRow.id = "user_row_" + userId; 
     let usersTable = document.getElementById("users_table");
     usersTable.querySelector("tbody").insertBefore(userRow, usersTable.querySelector("tbody").children[index]);
-
+    let actionsCell = userRow.querySelector(".flex.flex-row");
+    if(role == true) {
     let disableButton = document.createElement("button");
-    disableButton.className = "mx-2 p-2 text-white bg-stone-800 rounded popup-btn";
+    disableButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded popup-btn";
     disableButton.type = "button";
     disableButton.innerText = "Delete";
     disableButton.setAttribute('user_id', userId);
     disableButton.setAttribute('onclick', 'showDeletePopup('+userId+')');
+    actionsCell.appendChild(disableButton);
+    }
     let promoteButton = document.createElement("button");
-    promoteButton.className = "mx-2 p-2 text-white bg-stone-800 rounded promote-btn";
+    promoteButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded promote-btn";
     promoteButton.type = "button";
     promoteButton.innerText = "Promote";
     promoteButton.setAttribute('user_id', userId);
+    promoteButton.setAttribute('role', role);
 
     let banButton = document.createElement("button");
-    banButton.className = "mx-2 p-2 text-white bg-stone-800 rounded ban-btn";
+    banButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded ban-btn";
     banButton.type = "button";
     banButton.innerText = "Ban";
     banButton.setAttribute('user_id', userId);
 
-    let actionsCell = userRow.querySelector(".flex.flex-row");
-    actionsCell.appendChild(disableButton);
+    
+    
     actionsCell.appendChild(promoteButton);
     actionsCell.appendChild(banButton);
 
@@ -209,7 +222,7 @@ function banUserJs(userId) {
     let usersTable = document.getElementById("users_table");
     usersTable.querySelector("tbody").insertBefore(userRow, usersTable.querySelector("tbody").children[index]);
     let unbanButton = document.createElement("button");
-    unbanButton.className = "mx-2 p-2 text-white bg-stone-800 rounded unban-btn";
+    unbanButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded unban-btn";
     unbanButton.type = "button";
     unbanButton.innerText = "Unban";
     unbanButton.setAttribute('user_id', userId);
@@ -235,13 +248,13 @@ function unbanUserjs(userId) {
 
     usersTable.querySelector("tbody").insertBefore(userRow, usersTable.querySelector("tbody").children[index]);
     let banButton = document.createElement("button");
-    banButton.className = "mx-2 p-2 text-white bg-stone-800 rounded ban-btn";
+    banButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded ban-btn";
     banButton.type = "button";
     banButton.innerText = "Ban";
     banButton.setAttribute('user_id', userId);
 
     let promoteButton = document.createElement("button");
-    promoteButton.className = "mx-2 p-2 text-white bg-stone-800 rounded promote-btn";
+    promoteButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded promote-btn";
     promoteButton.type = "button";
     promoteButton.innerText = "Promote";
     promoteButton.setAttribute('user_id', userId);
@@ -270,29 +283,27 @@ function removeUser(userId) {
 
   if (userRow) {
     userRow.remove();
-    confirmDelete();
   } else {
     console.error("User row not found:", userId);
   }
 }
 
-function confirmDelete() {
-  document.getElementById('delete').removeAttribute('user_id');
-  document.getElementById('over').classList.add('hidden');
-  document.getElementById('disableUser').classList.add('hidden');
-  
-}
-
-function showDeletePopup(userId) {
-  userIdToDelete = userId;  
-  document.getElementById('over').classList.remove('hidden');
-  document.getElementById('disableUser').classList.remove('hidden');
-  document.getElementById('delete').setAttribute('user_id', userIdToDelete);
-}
-
-function cancelDelete() {
-  document.getElementById('over').classList.add('hidden');
-  document.getElementById('disableUser').classList.add('hidden');
+function showDeletePopup(userId, userName) {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to recover " + userName + " account!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#000000",
+    cancelButtonColor: "ffffff",
+    cancelButtonBorderColor: "#000000",
+    cancelButtonBackground: "#ffffff",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      disableUser(userId);
+    }
+  });
 }
 
 function pauseAuctionJs(auctionId) {
@@ -304,7 +315,7 @@ function pauseAuctionJs(auctionId) {
     let auctionsTable = document.getElementById("auctions_table");
     auctionsTable.querySelector("tbody").insertBefore(auctionRow, auctionsTable.querySelector("tbody").children[index]);
     let resumeButton = document.createElement("button");
-    resumeButton.className = "mx-2 p-2 text-white bg-stone-800 rounded resume-btn";
+    resumeButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded resume-btn";
     resumeButton.type = "button";
     resumeButton.innerText = "Resume";
     resumeButton.setAttribute('auction_id', auctionId);
@@ -331,7 +342,7 @@ function resAuction(auctionId) {
     let auctionsTable = document.getElementById("auctions_table");
     auctionsTable.querySelector("tbody").insertBefore(auctionRow, auctionsTable.querySelector("tbody").children[index]);
     let pauseButton = document.createElement("button");
-    pauseButton.className = "mx-2 p-2 text-white bg-stone-800 rounded pause-btn";
+    pauseButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded pause-btn";
     pauseButton.type = "button";
     pauseButton.innerText = "Pause";
     pauseButton.setAttribute('auction_id', auctionId);
@@ -396,14 +407,14 @@ function emptyHeart() {
   }
 }
 
-function demoteUser(userId) {
+function demoteUser(userId,role) {
   let formData = { user_id: userId };
 
   sendAjaxRequest(
     "POST",
     "/admin/users/demote",
     formData,
-    SysToUser(userId)
+    SysToUser(userId,role)
   );
 }
 
@@ -419,14 +430,14 @@ function disableUser(userId) {
   
 }
 
-function promoteUser(userId) {
+function promoteUser(userId,role) {
   let formData = { user_id: userId };
 
   sendAjaxRequest(
     "POST",
     "/admin/users/promote",
     formData,
-    UserToSys(userId)
+    UserToSys(userId,role)
   );
 }
 function banUser(userId) {
@@ -560,6 +571,126 @@ function unfollowAuction(userId, auctionId) {
     emptyHeart();
   });
 }
+
+async function editUser(userId) {
+  const response = await fetch(`/admin/users/${userId}`, {
+      method: 'GET', 
+  });
+  if(response.status !== 200) {
+      console.error("Error fetching user info");
+      return;
+  }
+  const userInfo = await response.json();
+  showEditProfilePopup(userInfo);
+}
+
+
+async function showEditProfilePopup(userInfo) {
+  const user = userInfo[0];
+  const { value: formValues } = await Swal.fire({
+      title: 'Edit Profile',
+      html:`<label for="new_username">Username:</label> <br>
+            <input id="new_username" class="swal2-input m-2" value="${user.username}"> <br>
+            <label for="new_name">Name:</label> <br>
+            <input id="new_name" class="swal2-input m-2" value="${user.name}"> <br>
+            <label for="new_email">Email:</label> <br>
+            <input id="new_email" class="swal2-input" value="${user.email}"> <br>
+            <label for="new_password">Password:</label> <br>
+            <input id="new_password" class="swal2-input m-2" value=""> <br>
+
+            <label for="confirm_password">Confirm Password:</label> <br>
+            <input id="confirm_password" class="swal2-input m-2" value="">`, 
+
+
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: "#000000",
+      cancelButtonColor: "ffffff",
+      preConfirm: () => {
+        if(document.getElementById('new_name') === user.name && document.getElementById('new_username') === user.username && document.getElementById('new_email') === user.email && document.getElementById('new_password') === "") {
+          Swal.showValidationMessage('No changes were made');
+        }
+        if(document.getElementById('new_password').value !== document.getElementById('confirm_password').value) {
+          Swal.showValidationMessage('Passwords do not match');
+        } 
+        else if(document.getElementById('new_password').value.length < 8 && document.getElementById('new_password').value != "") {
+          Swal.showValidationMessage('Password must have at least 8 characters');
+        }
+        else if(document.getElementById('new_username').value === "" || document.getElementById('new_name').value === "" || document.getElementById('new_email').value === "") {
+          Swal.showValidationMessage('Username, Name and Email are required');
+        }
+        else return {
+              username: document.getElementById('new_username').value,
+              name: document.getElementById('new_name').value,
+              email: document.getElementById('new_email').value,
+              password: document.getElementById('new_password').value,
+          };
+      }
+  });
+  console.log("Form Values:", formValues);
+
+  if (formValues && user && user.id) {
+    if (formValues.password === "") {
+      formValues.password = null; // or delete formValues.password;
+    }
+    formValues.user_id = user.id;
+    console.log("Updated Form Values:", formValues);
+  
+    sendAjaxRequest(
+      "POST", 
+      `/admin/users/${formValues.user_id}/update`, 
+      formValues, 
+      updateUserRow(formValues)
+    );
+  }
+  
+}
+
+function updateUserRow(res) {
+  const user = res;
+  const userRow = document.getElementById("user_row_" + user.user_id);
+
+  if (!userRow) {
+    console.error("User row not found for ID: " + user.user_id);
+    return;
+  }
+
+  const index = Array.from(userRow.parentNode.children).indexOf(userRow);
+  const usersTable = document.getElementById("users_table");
+
+  if (!usersTable || !usersTable.querySelector("tbody")) {
+    console.error("Users table or tbody not found");
+    return;
+  }
+
+  usersTable.querySelector("tbody").insertBefore(userRow, usersTable.querySelector("tbody").children[index]);
+
+  const username = userRow.querySelector(".username");
+  const name = userRow.querySelector(".name");
+  const email = userRow.querySelector(".email");
+
+  if (username) {
+    username.innerText = user.username;
+  }
+
+  if (name) {
+    name.innerText = user.name;
+  }
+
+  if (email) {
+    email.innerText = user.email;
+  }
+
+  Swal.fire({
+    icon: 'success',
+    title: user.name + ' updated successfully',
+    showConfirmButton: false,
+    timer: 1500
+  });
+}
+
 addUserEventListeners();
 addPopupEventListeners();
 addTransferEventListeners();

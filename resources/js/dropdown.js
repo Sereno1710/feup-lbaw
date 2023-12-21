@@ -1,6 +1,7 @@
 function activateDropdowns () {
   /* GENERAL DROPDOWN */
   const dropdownButtons = document.querySelectorAll('.dropdown-button')
+  console.log(dropdownButtons)
 
   if (dropdownButtons !== null) {
     for (const dropdownButton of dropdownButtons) {

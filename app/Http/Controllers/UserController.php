@@ -13,10 +13,20 @@ class UserController extends Controller
     public function show()
     {
         $user = Auth::user();
-        $followedAuctions = $user->followedAuctions;
-        $ownedAuctions = $user->ownAuction;
 
         return view('pages.profile', ['user' => $user]);
+    }
+
+    public function showProfile($userId)
+    {
+        if ($userId == Auth::id()) {
+            return redirect('/profile');
+        }
+        $user = User::findOrFail($userId);
+        $followedAuctions = $user->followedAuctions;
+        $ownedAuctions = $user->ownAuction;
+        
+        return view('pages/profile', ['user' => $user, 'followedAuctions' => $followedAuctions, 'ownedAuctions' => $ownedAuctions]);
     }
 
     public function edit()
@@ -88,16 +98,7 @@ class UserController extends Controller
         return redirect('/profile')->with('success', 'Profile updated successfully!');
     }
 
-    public function showProfile($userId)
-    {
-        $user = User::findOrFail($userId);
-        $followedAuctions = $user->followedAuctions;
-        $ownedAuctions = $user->ownAuction;
-        if ($userId == Auth::id()) {
-            return redirect('/profile');
-        }
-        return view('pages/profile', ['user' => $user, 'followedAuctions' => $followedAuctions, 'ownedAuctions' => $ownedAuctions]);
-    }
+    
 
     public function delete(Request $request)
     {

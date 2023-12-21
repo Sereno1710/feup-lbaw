@@ -113,7 +113,7 @@ class AuctionController extends Controller
 
             DB::commit();
 
-            return redirect('/auction/' . $auction->id);
+            return redirect('/auction/' . $auction->id)->with('message', 'Your auction has been submitted for approval. You will be notified after it has been reviewed by our team.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error ocurred. Try again later.');
         }

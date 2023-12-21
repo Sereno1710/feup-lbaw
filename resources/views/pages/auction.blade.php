@@ -9,7 +9,7 @@
         <span class="text-stone-500">{{ $auction->name }}</span>
     </div>
 
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden" onclick="closeAllPopUps()"></div>
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-10" onclick="closeAllPopUps()"></div>
 
     <div class=" m-2 p-4 flex flex-col items-center rounded-lg text-stone-600 bg-white shadow-lg">
         @if (session('message'))
@@ -129,7 +129,7 @@
                         <div class="m-2">
                             <p>{{ $auction->description }}</p>
                             <br>
-                            <p>Auction Owner: {{ $auction->owner->name }}</p>
+                            <p>Auction Owner: <a  href="{{ url('/user/' . $auction->owner_id) }}"> {{ $auction->owner->name }} </a> </p>
                             @if (count($auction->tags) > 0)
                                 <div class="my-2 grid grid-cols-3">
                                     @foreach ($auction->tags as $tag)

@@ -9,7 +9,7 @@
         <span class="text-stone-500">Edit Profile</span>
     </div>
 
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-10"></div>
 
     <form class="m-auto p-8 max-w-xl flex flex-col text-stone-800 bg-white shadow-lg" method="POST"
         action="{{ route('profile.update') }}" enctype="multipart/form-data">

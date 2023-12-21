@@ -56,6 +56,6 @@ class StripeController extends Controller
         ]);
         moneys::where(['id' => $newMoneys->id])->update(['state' => 'accepted']);
         
-        return redirect('/home');
+        return redirect('/home')->with('message', 'The deposit was successful');
     }
 }

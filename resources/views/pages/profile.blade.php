@@ -11,7 +11,7 @@
         @endif
     </div>
 
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden" onclick="closeBidsPopup()"></div>
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-10" onclick="closeBidsPopup()"></div>
 
     <div class="flex flex-col items-center">
         <div class="flex flex-row items-center">

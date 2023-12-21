@@ -66,6 +66,7 @@ Route::controller(AuctionController::class)->group(function () {
     Route::post('/auction/{id}/report', 'reportAuction')->name('auction.report');
     Route::post('/auction/{id}/comment/create', 'commentOnAuction')->name('auction.comment.create');
     Route::post('/auction/{auction}/comment/{comment}/delete', 'deleteCommentOnAuction')->name('auction.comment.delete');
+    Route::post('/auction/{id}/disable', 'disableAuction');
 });
 
 // Admin

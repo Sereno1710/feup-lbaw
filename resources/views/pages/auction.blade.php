@@ -22,9 +22,19 @@
                 <h2 class="text-3xl">{{ $auction->name }}</h2>
                 <p class="text-sm mx-5"> STATUS: {{ $auction->state }}</p>
             </div>
+            @if (Auth::check() &&
+                    Auth::user()->id === $auction->owner_id &&
+                    $auction->state === 'active' &&
+                    $auction->bids->count() === 0)
+                <form method="POST" action="{{ url('/auction/' . $auction->id . '/disable') }}">
+                    @csrf
+                    <button type="submit" class="text-white text-sm bg-red-500 p-2 rounded-lg">Disable
+                        Auction</button>
+                </form>
+            @endif
             @if (Auth::check() && Auth::user()->id !== $auction->owner_id)
                 <div class="flex flex-row items-end">
-                    <div title="Follow" class="mx-1 hover:cursor-pointer">
+                    <div title="Follow" class=" hover:cursor-pointer">
                         @if (Auth::user()->followedAuctions->contains($auction))
                             <img id="follow_icon" class="h-[2.5rem]" src="{{ asset('images/icons/full_heart.png') }}"
                                 alt="Full Heart Icon" data-action="unfollow" data-user-id={{ Auth::user()->id }}
@@ -35,31 +45,33 @@
                                 data-auction-id="{{ $auction->id }}">
                         @endif
                     </div>
-                    <div title="Report" class="mx-1 hover:cursor-pointer" onclick="showReportPopup()">
+                    <div title="Report" class="ml-2 hover:cursor-pointer" onclick="showReportPopup()">
                         <img id="report_icon" class="h-[2.5rem]" src="{{ asset('images/icons/full_warning.png') }}"
                             alt="Report Icon">
                     </div>
+
                 </div>
             @endif
         </div>
         <div class="mt-4 w-full flex flex-row items-center justify-evenly">
-        @php
-            $auctionImagePaths = $auction->auctionImagePaths();
-        @endphp
+            @php
+                $auctionImagePaths = $auction->auctionImagePaths();
+            @endphp
 
-        <div class="swiper mySwiper max-w-[24rem] max-h-[16rem]">
-            <div class="swiper-wrapper">
-                @foreach ($auctionImagePaths as $imagePath)
-                    <div class="swiper-slide">
-                        <img src="{{ asset($imagePath) }}" alt="Auction Image" class="m-4 max-w-[24rem] max-h-[16rem] object-contain">
-                    </div>
-                @endforeach
+            <div class="swiper mySwiper max-w-[24rem] max-h-[16rem]">
+                <div class="swiper-wrapper">
+                    @foreach ($auctionImagePaths as $imagePath)
+                        <div class="swiper-slide">
+                            <img src="{{ asset($imagePath) }}" alt="Auction Image"
+                                class="m-4 max-w-[24rem] max-h-[16rem] object-contain">
+                        </div>
+                    @endforeach
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next swiper-button-white"></div>
+                <div class="swiper-button-prev swiper-button-white"></div>
+
             </div>
-            <div class="swiper-pagination"></div>
-            <div class="swiper-button-next swiper-button-white"></div>
-            <div class="swiper-button-prev swiper-button-white"></div>
-
-        </div>
             @if (Auth::check() && Auth::user()->id !== $auction->owner_id && $auction->state === 'active')
                 <div class="bg-stone-200 m-2 p-4 flex flex-col rounded-lg">
                     <p><span class="font-bold">Current price:</span>{{ $auction->price }}</p>
@@ -105,8 +117,10 @@
                     <th>
                         <div class="flex flex-row justify-between items-end">
                             <h3 class="mx-2 my-1">Bidding History</h3>
-                            <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">View full
-                                history</button>
+                            @if ($auction->bids->count() > 1)
+                                <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">View full
+                                    history</button>
+                            @endif
                         </div>
                     </th>
                 </tr>
@@ -152,7 +166,8 @@
                 action="{{ url('/auction/' . $auction->id . '/comment/create') }}">
                 @csrf
                 <textarea name="message" class="w-full p-2 border rounded resize-none" placeholder="Add a comment" required></textarea>
-                <button type="submit" class="bg-stone-800 text-white p-1.5 mt-2 rounded text-xs self-end">Comment</button>
+                <button type="submit"
+                    class="bg-stone-800 text-white p-1.5 mt-2 rounded text-xs self-end">Comment</button>
             </form>
         @endif
         @if ($auction->comments->count() > 0)
@@ -209,7 +224,6 @@
                 @include('partials.bidpublic', ['bid' => $bid])
             @endforeach
         </div>
-
         <button class="mt-2 mx-2 px-3 py-2 text-stone-500 bg-white border-stone-500 border rounded"
             onclick="closeBidsPopup()">Close</button>
     </div>
@@ -226,7 +240,7 @@
 
         function cancelReport() {
             reportAuction = document.getElementById('reportAuction');
-            if (reportAuction.classList.contains('flex')) {
+            if (reportAuction && reportAuction.classList.contains('flex')) {
                 document.getElementById('overlay').classList.add('hidden');
                 reportAuction.classList.remove('flex');
                 reportAuction.classList.add('hidden');
@@ -242,7 +256,7 @@
 
         function cancelDelete() {
             deleteConfirmation = document.getElementById('deleteConfirmation');
-            if (deleteConfirmation.classList.contains('flex')) {
+            if (deleteConfirmation && deleteConfirmation.classList.contains('flex')) {
                 document.getElementById('overlay').classList.add('hidden');
                 deleteConfirmation.classList.remove('flex');
                 deleteConfirmation.classList.add('hidden');
@@ -258,7 +272,7 @@
 
         function closeBidsPopup() {
             bidsPopup = document.getElementById('bidsPopup');
-            if (bidsPopup.classList.contains('flex')) {
+            if (bidsPopup && bidsPopup.classList.contains('flex')) {
                 document.getElementById('overlay').classList.add('hidden');
                 bidsPopup.classList.remove('flex');
                 bidsPopup.classList.add('hidden');
@@ -280,40 +294,42 @@
             margin-left: 10px;
             margin-right: -5px;
         }
-        .swiper-pagination{
+
+        .swiper-pagination {
             margin-left: 15px;
             margin-bottom: -9px;
         }
+
         .swiper-pagination-bullet {
             width: 8px;
             height: 8px;
             display: inline-block;
-            margin: 0 5px; 
-            background-color: #ccc; 
-            border-radius: 50%; 
-            opacity: 0.8; 
+            margin: 0 5px;
+            background-color: #ccc;
+            border-radius: 50%;
+            opacity: 0.8;
             cursor: pointer;
-            transition: background-color 0.3s ease; 
+            transition: background-color 0.3s ease;
         }
 
         .swiper-pagination-bullet-active {
-            background-color: #333; 
-            opacity: 1; 
-        }   
+            background-color: #333;
+            opacity: 1;
+        }
     </style>
     <script>
         var swiper = new Swiper(".mySwiper", {
-          slidesPerView: 1,
-          spaceBetween: 30,
-          loop: true,
-          pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-          },
-          navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-          },
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
         });
     </script>
 @endsection

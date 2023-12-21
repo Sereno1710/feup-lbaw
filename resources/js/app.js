@@ -114,6 +114,19 @@ function addAuctionBidEventListeners(){
 
 }
 
+function addAuctionReportEventListener(){
+  let auctionReportTable = document.getElementById("icons");
+  if(auctionReportTable) {
+    auctionReportTable.addEventListener("click", function (event) {
+      let auctionId = event.target.getAttribute("auction_id");
+      let userId = event.target.getAttribute("user_id");
+      if (event.target.classList.contains("report_icon")){
+        openReports(auctionId,userId);
+      }
+    });
+  }
+
+}
 
 function encodeForAjax(data) {
   if (data == null) return null;
@@ -139,14 +152,13 @@ function sendAjaxRequest(method, url, data, handler) {
 
 function UserToSys(userId, role) {
   let userRow = document.getElementById("user_row_" + userId);
-
   if (userRow) {
     let index = Array.from(userRow.parentNode.children).indexOf(userRow);;
     if(role == true) {
-    let editButton = userRow.querySelector(".edit-btn");
-    editButton.remove();
-    let disableButton = userRow.querySelector(".popup-btn");
-    disableButton.remove();
+      let editButton = userRow.querySelector(".edit-btn");
+      editButton.remove();
+      let disableButton = userRow.querySelector(".popup-btn");
+      disableButton.remove();
     }
     let promoteButton = userRow.querySelector(".promote-btn");
     let banButton = userRow.querySelector(".ban-btn");
@@ -188,20 +200,20 @@ function SysToUser(userId,role) {
     let usersTable = document.getElementById("users_table");
     usersTable.querySelector("tbody").insertBefore(userRow, usersTable.querySelector("tbody").children[index]);
     let actionsCell = userRow.querySelector(".flex.flex-row");
-    if(role == true) {
-    let editButton = document.createElement("button");
-    editButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded edit-btn";
-    editButton.type = "button";
-    editButton.innerText = "Edit";
-    editButton.setAttribute('user_id', userId);
-    actionsCell.appendChild(editButton);
-    let disableButton = document.createElement("button");
-    disableButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded popup-btn";
-    disableButton.type = "button";
-    disableButton.innerText = "Delete";
-    disableButton.setAttribute('user_id', userId);
-    disableButton.setAttribute('onclick', 'showDeletePopup('+userId+')');
-    actionsCell.appendChild(disableButton);
+    if(role) {
+      let editButton = document.createElement("button");
+      editButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded edit-btn";
+      editButton.type = "button";
+      editButton.innerText = "Edit";
+      editButton.setAttribute('user_id', userId);
+      actionsCell.appendChild(editButton);
+      let disableButton = document.createElement("button");
+      disableButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded popup-btn";
+      disableButton.type = "button";
+      disableButton.innerText = "Delete";
+      disableButton.setAttribute('user_id', userId);
+      disableButton.setAttribute('onclick', 'showDeletePopup('+userId+')');
+      actionsCell.appendChild(disableButton);
     }
     let promoteButton = document.createElement("button");
     promoteButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded promote-btn";
@@ -338,7 +350,7 @@ function pauseAuctionJs(auctionId) {
     resumeButton.type = "button";
     resumeButton.innerText = "Resume";
     resumeButton.setAttribute('auction_id', auctionId);
-    let actionsCell = auctionRow.querySelector(".flex.flex-row");
+    let actionsCell = auctionRow.querySelector(".btn");
     actionsCell.appendChild(resumeButton);
 
     let state = auctionRow.querySelector("#state");
@@ -354,7 +366,7 @@ function pauseAuctionJs(auctionId) {
 
 function resAuction(auctionId) {
   let auctionRow = document.getElementById("auction_row_" + auctionId);
-  if(auctionRow) {
+  if (auctionRow) {
     let index = Array.from(auctionRow.parentNode.children).indexOf(auctionRow);
     let resumeButton = auctionRow.querySelector(".resume-btn");
     resumeButton.remove();
@@ -365,19 +377,25 @@ function resAuction(auctionId) {
     pauseButton.type = "button";
     pauseButton.innerText = "Pause";
     pauseButton.setAttribute('auction_id', auctionId);
-    let actionsCell = auctionRow.querySelector(".flex.flex-row");
-    actionsCell.appendChild(pauseButton);
 
-    let state = auctionRow.querySelector("#state");
-    if(state) {
-      state.innerText = "active";
+    let actionsCell = auctionRow.querySelector(".btn");
+
+    if (actionsCell) {
+      actionsCell.appendChild(pauseButton);
+      let state = auctionRow.querySelector("#state");
+      if (state) {
+        state.innerText = "active";
+      } else {
+        console.error("Auction state not found:", auctionId);
+      }
     } else {
-      console.error("Auction state not found:", auctionId);
+      console.error("actionsCell not found:", auctionId);
     }
   } else {
     console.error("Auction row not found:", auctionId);
   }
 }
+
 
 function appAuction(auctionId) {
   let auctionRow = document.getElementById("auction_row_" + auctionId);
@@ -680,7 +698,7 @@ async function showEditProfilePopup(userInfo) {
 
   if (formValues && user && user.id) {
     if (formValues.password === "") {
-      formValues.password = null; // or delete formValues.password;
+      formValues.password = null; 
     }
     formValues.user_id = user.id;
     console.log("Updated Form Values:", formValues);
@@ -753,19 +771,16 @@ async function openBids(id) {
 
 async function openBidsPopup(bidsInfo) {
   console.log("Bids Info:", bidsInfo);
-
-  // Function to fetch profile image path
   const fetchProfileImagePath = async (userId) => {
     const response = await fetch(`/profile/${userId}/image`);
     const data = await response.json();
-    return data.path; // Assuming the response has a 'path' property
+    return data.path; 
   };
   const fetchUserName= async (userId) => {
     const response = await fetch(`/profile/${userId}/name`);
     const data = await response.json();
-    return data.name; // Assuming the response has a 'path' property
+    return data.name; 
   }
-  // Generate HTML for bidding history
   const bidsHTML = await Promise.all(bidsInfo.map(async bid => {
   const profileImagePath = await fetchProfileImagePath(bid.user_id);
   const name = await fetchUserName(bid.user_id);
@@ -796,6 +811,45 @@ async function openBidsPopup(bidsInfo) {
   });
 }
 
+async function openReports(auction_id,user_id) {
+  console.log("Auction ID:", auction_id);
+  console.log("User ID:", user_id);
+  const { value: text } = await Swal.fire({
+    title: "Report",
+    text: "Please describe the issue you found",
+    input: "textarea",
+    inputPlaceholder: "Type your message here...",
+    inputAttributes: {
+      "aria-label": "Type your message here"
+    },
+    showCancelButton: true,
+    showConfirmButton: true,
+    confirmButtonText: "Report",
+    cancelButtonText: "Cancel",
+    confirmButtonColor: "#FF0000",
+    cancelButtonColor: "#000000",
+    preConfirm: () => {
+      if(document.getElementById('swal2-textarea').value === "") {
+        Swal.showValidationMessage('Message is required');
+      }
+    }
+  });
+  if(text) {
+    const formData = { user_id: user_id, auction_id: auction_id, description: text};
+    sendAjaxRequest(
+      "POST",
+      `/auction/${auction_id}/report`,
+      formData
+    );
+    Swal.fire({
+      icon: 'success',
+      title: 'Report submitted successfully',
+      showConfirmButton: false,
+      timer: 2500
+    });
+  }
+  
+}
 addUserEventListeners();
 addTransferEventListeners();
 addAuctionEventListeners();
@@ -803,3 +857,4 @@ addReportEventListeners();
 addFollowEventListeners();
 addProfileEventListeners();
 addAuctionBidEventListeners();
+addAuctionReportEventListener();

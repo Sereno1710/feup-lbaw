@@ -235,9 +235,10 @@ class AuctionController extends Controller
         return redirect()->back()->with('message', 'Comment deleted successfully.');
     }
 
-    public function reportAuction(Request $request, $auctionId)
+    public function reportAuction(Request $request)
     {
         $validatedData = $request->validate([
+            'auction_id' => 'required|integer',
             'user_id' => 'required|integer',
             'description' => 'required|string',
         ]);
@@ -247,7 +248,7 @@ class AuctionController extends Controller
         }
 
         $existingReport = Report::where('user_id', $validatedData['user_id'])
-            ->where('auction_id', $auctionId)
+            ->where('auction_id', $request->auction_id)
             ->first();
 
         if ($existingReport) {
@@ -256,7 +257,7 @@ class AuctionController extends Controller
 
         Report::create([
             'user_id' => $validatedData['user_id'],
-            'auction_id' => $auctionId,
+            'auction_id' => $request->auction_id,
             'description' => $validatedData['description'],
         ]);
 

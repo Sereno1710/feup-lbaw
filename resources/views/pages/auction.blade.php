@@ -34,7 +34,7 @@
                 </form>
             @endif
             @if (Auth::check() && Auth::user()->id !== $auction->owner_id)
-                <div class="flex flex-row items-end">
+                <div class="flex flex-row items-end" id="icons">
                     <div title="Follow" class=" hover:cursor-pointer">
                         @if (Auth::user()->followedAuctions->contains($auction))
                             <img id="follow_icon" class="h-[2.5rem]" src="{{ asset('images/icons/full_heart.png') }}"
@@ -46,9 +46,9 @@
                                 data-auction-id="{{ $auction->id }}">
                         @endif
                     </div>
-                    <div title="Report" class="ml-2 hover:cursor-pointer" onclick="showReportPopup()">
-                        <img id="report_icon" class="h-[2.5rem]" src="{{ asset('images/icons/full_warning.png') }}"
-                            alt="Report Icon">
+                    <div title="Report" class="ml-2 hover:cursor-pointer">
+                        <img class="h-[2.5rem] report_icon"  auction_id="{{$auction->id}}" user_id="{{Auth::user()->id}}" src="{{ asset('images/icons/full_warning.png') }}"
+                            alt="Report Icon" type="button">
                     </div>
 
                 </div>
@@ -251,27 +251,9 @@
                 deleteConfirmation.classList.add('hidden');
             }
         }
-
-        function showBidsPopup() {
-            document.getElementById('overlay').classList.remove('hidden');
-            bidsPopup = document.getElementById('bidsPopup');
-            bidsPopup.classList.remove('hidden');
-            bidsPopup.classList.add('flex');
-        }
-
-        function closeBidsPopup() {
-            bidsPopup = document.getElementById('bidsPopup');
-            if (bidsPopup && bidsPopup.classList.contains('flex')) {
-                document.getElementById('overlay').classList.add('hidden');
-                bidsPopup.classList.remove('flex');
-                bidsPopup.classList.add('hidden');
-            }
-        }
-
         function closeAllPopUps() {
             cancelReport()
             cancelDelete()
-            closeBidsPopup()
         }
     </script>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />

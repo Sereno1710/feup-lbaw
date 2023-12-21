@@ -7,14 +7,21 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+use App\Models\Auction;
 
 class UserController extends Controller
 {
-    public function show()
+    public function show($auctionType)
     {
         $user = Auth::user();
-
-        return view('pages.profile', ['user' => $user]);
+        if($auctionType === "followed") {
+            $auctions = $user->belongstoMany(Auction::class, 'follows', 'user_id', 'auction_id')->paginate(8);
+            $type = "Followed";
+        } else if($auctionType === "owned") {
+            $auctions = $user->hasMany(Auction::class, 'owner_id')->orderBy('state', 'asc')->paginate(8);
+            $type = "Owned";
+        }   
+        return view('pages.profile', ['user' => $user, 'auctions' => $auctions, 'type' => $type]);
     }
 
     public function showProfile($userId)
@@ -23,10 +30,19 @@ class UserController extends Controller
             return redirect('/profile');
         }
         $user = User::findOrFail($userId);
-        $followedAuctions = $user->followedAuctions;
-        $ownedAuctions = $user->ownAuction;
+        $auctions = $user->hasMany(Auction::class, 'owner_id')
+            ->where(function ($query) {
+                $query->where('state', 'active')->orWhere('state', 'paused')->orWhere('state', 'finished');
+            })
+            ->orderBy('state', 'asc')->paginate(8);
+            $type = "Public";
         
-        return view('pages/profile', ['user' => $user, 'followedAuctions' => $followedAuctions, 'ownedAuctions' => $ownedAuctions]);
+        return view('pages.profile', ['user' => $user, 'auctions' => $auctions, 'type' => $type]);
+    }
+
+    public function redirectToProfile()
+    {
+        return redirect('/profile/followed');
     }
 
     public function edit()

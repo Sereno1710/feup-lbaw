@@ -35,54 +35,53 @@
                     <p class="text-xl">Rating: {{ $user->rating }}</p>
                 @endif
                 @if (!($user->biography == null))
-                    
                     <p class="text-sm mt-2"> {{ $user->biography }}</p>
                 @endif
                 @if (Auth::check() && Auth::user()->id == $user->id)
                     <div class="mt-2">
-                        <a class="mr-2 text-sm text-stone-700 underline" href="{{ route('profile.edit') }}">[edit profile]</a>
-                        <button class="text-sm text-stone-700 underline" onclick="showBidsPopup()">[my bidding
-                            history]</button>
+                        <a class="mr-2 text-sm text-stone-700 underline" href="{{ route('profile.edit') }}">[edit
+                            profile]</a>
+                        @if (Auth::user()->ownBids->count() > 0)
+                            <button class="text-sm text-stone-700 underline" onclick="showBidsPopup()">[my bidding
+                                history]</button>
+                        @endif
                     </div>
                 @endif
             </div>
         </div>
-        <div class="m-0 mx-auto flex flex-row items-start">
-            @if (Auth::check() && Auth::user()->id == $user->id)
-                @if ($user->followedAuctions->count() > 0)
-                    <div class="m-2 p-4 rounded-lg bg-stone-300">
-                        <h3 class="m-4 text-3xl font-bold">Followed Auctions</h3>
-                        <div class="grid grid-cols-2 gap-8">
-                            @foreach ($user->followedAuctions as $auction)
-                                @include('partials.card', ['auction' => $auction])
-                            @endforeach
-                        </div>
+        @if (isset($auctions) && isset($type))
+            <div class="flex flex-col m-2 p-4 rounded-lg bg-stone-300">
+                <div class="flex flex-row justify-between items-center">
+                    <h3 class="m-4 text-3xl font-bold"> {{ $type }} Auctions</h3>
+                    <div class="flex flex-row mt-4">
+                        @if ($type === 'Followed')
+                            <span class="mr-4 py-2 px-4 bg-stone-500 text-white rounded opacity-50 cursor-not-allowed">
+                                Followed
+                            </span>
+                            <a href="{{ route('profile', ['type' => 'owned']) }}"
+                                class="py-2 px-4 bg-stone-500 text-white rounded transition duration-300">
+                                Owned
+                            </a>
+                        @elseif($type === 'Owned')
+                            <a href="{{ route('profile', ['type' => 'followed']) }}"
+                                class="mr-4 py-2 px-4 bg-stone-500 text-white rounded transition duration-300">
+                                Followed
+                            </a>
+                            <span class="py-2 px-4 bg-stone-500 text-white rounded opacity-50 cursor-not-allowed">
+                                Owned
+                            </span>
+                        @endif
                     </div>
-                @endif
-                @if ($user->ownAuction->count() > 0)
-                    <div class="m-2 p-4 rounded-lg bg-stone-300">
-                        <h3 class="m-4 text-3xl font-bold">Owned Auctions</h3>
-                        <div class="grid grid-cols-2 gap-8">
-                            @foreach ($user->ownAuction as $auction)
-                                @include('partials.card', ['auction' => $auction])
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-            @else
-                @if ($user->ownPublicAuction->count() > 0)
-                    <div class="m-2 p-4 rounded-lg bg-stone-300">
-                        <h3 class="m-4 text-3xl font-bold">Owned Auctions</h3>
-                        <div class="grid grid-cols-4 gap-8">
-                            @foreach ($user->ownPublicAuction as $auction)
-                                @include('partials.card', ['auction' => $auction])
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-            @endif
-        </div>
+                </div>
+                <div class="mb-4 grid grid-cols-4 gap-8">
+                    @foreach ($auctions as $auction)
+                        @include('partials.card', ['auction' => $auction])
+                    @endforeach
 
+                </div>
+                {{ $auctions->links() }}
+            </div>
+        @endif
     </div>
 
     @if (Auth::check() && Auth::user()->id == $user->id)

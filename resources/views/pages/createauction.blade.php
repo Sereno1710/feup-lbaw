@@ -22,8 +22,8 @@
         <label class="mt-2 mb-1" for="description">Auction Description</label>
         <textarea class="p-2 mb-2 border border-stone-400 rounded" id="description" name="description" rows="4" required></textarea>
 
-        <label class="mt-2 mb-1" for="image">Auction Image</label>
-        <input class="p-2 mb-2 border border-stone-400 rounded" type="file" id="image" name="image">
+        <label class="mt-2 mb-1" for="images">Auction Images</label>
+        <input class="p-2 mb-2 border border-stone-400 rounded" type="file" id="images" name="images[]" multiple required>
 
         <label class="mt-2 mb-1" for="category">Auction Category</label>
         <select class="p-2 mb-2 border border-stone-400 rounded" id="category" name="category" required>

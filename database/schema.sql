@@ -238,6 +238,7 @@ CREATE TABLE Notification (
   notification_type notification_type NOT NULL,
   date TIMESTAMP NOT NULL CHECK (date <= NOW()),
   viewed BOOLEAN DEFAULT false,
+  flag BOOLEAN DEFAULT true,
   receiver_id INT REFERENCES users(id) ON UPDATE CASCADE,
   bid_id INT REFERENCES Bid(id) ON UPDATE CASCADE,
   auction_id INT REFERENCES Auction(id) ON UPDATE CASCADE,
@@ -634,7 +635,7 @@ BEGIN
   INSERT INTO Notification (notification_type, date, receiver_id, bid_id)
   SELECT 'auction_bid', NEW.time, f.user_id, NEW.id
   FROM follows AS f
-  WHERE f.auction_id = NEW.auction_id;
+  WHERE f.auction_id = NEW.auction_id AND f.user_id != NEW.user_id;
 
   RETURN NEW;
 END;

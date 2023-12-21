@@ -24,20 +24,6 @@ function addUserEventListeners() {
   }
 }
 
-function addPopupEventListeners() {
-  let popup = document.getElementById("pop");
-  if (popup) {
-    popup.addEventListener("click", function (event) {
-      let userId = event.target.getAttribute("user_id");
-      if (event.target.classList.contains("disable-btn")) {
-        disableUser(userId);
-      } else if (event.target.classList.contains("cancel-btn")) {
-        cancelDelete();
-      }
-    });
-  }
-}
-
 function addTransferEventListeners() {
   let transfersTable = document.getElementById("transfers_table");
   if (transfersTable) {
@@ -102,6 +88,20 @@ function addFollowEventListeners() {
   }
 }
 
+function addProfileEventListeners() {
+  let deleteButton = document.getElementById("delete_profile");
+  if (deleteButton) {
+    deleteButton.addEventListener("click", function (event) {
+      let userId = event.target.getAttribute("user_id");
+      let balance = event.target.getAttribute("balance");
+      if(event.target.classList.contains("delete-profile-btn")){
+        deleteProfile(userId,balance);
+      }
+    });
+  }
+}
+
+
 function encodeForAjax(data) {
   if (data == null) return null;
   return Object.keys(data)
@@ -130,6 +130,8 @@ function UserToSys(userId, role) {
   if (userRow) {
     let index = Array.from(userRow.parentNode.children).indexOf(userRow);;
     if(role == true) {
+    let editButton = userRow.querySelector(".edit-btn");
+    editButton.remove();
     let disableButton = userRow.querySelector(".popup-btn");
     disableButton.remove();
     }
@@ -174,6 +176,12 @@ function SysToUser(userId,role) {
     usersTable.querySelector("tbody").insertBefore(userRow, usersTable.querySelector("tbody").children[index]);
     let actionsCell = userRow.querySelector(".flex.flex-row");
     if(role == true) {
+    let editButton = document.createElement("button");
+    editButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded edit-btn";
+    editButton.type = "button";
+    editButton.innerText = "Edit";
+    editButton.setAttribute('user_id', userId);
+    actionsCell.appendChild(editButton);
     let disableButton = document.createElement("button");
     disableButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded popup-btn";
     disableButton.type = "button";
@@ -294,10 +302,8 @@ function showDeletePopup(userId, userName) {
     text: "You won't be able to recover " + userName + " account!",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonColor: "#000000",
-    cancelButtonColor: "ffffff",
-    cancelButtonBorderColor: "#000000",
-    cancelButtonBackground: "#ffffff",
+    confirmButtonColor: "#FF0000",
+    cancelButtonColor: "#0000FF",
     confirmButtonText: "Yes, delete it!",
   }).then((result) => {
     if (result.isConfirmed) {
@@ -572,6 +578,34 @@ function unfollowAuction(userId, auctionId) {
   });
 }
 
+function deleteProfile(userId,balance) {
+  console.log("User ID:", userId);
+  console.log("Balance:", balance);
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to recover your account! Your balance will NOT be refunded.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#FF0000",
+    cancelButtonColor: "#000000",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      let formData = { user_id: userId };
+      sendAjaxRequest(
+        "POST", 
+        "/profile/delete",
+        formData
+      );
+      window.location.href = "/logout"
+    }
+  });
+ }
+
+
+
+
 async function editUser(userId) {
   const response = await fetch(`/admin/users/${userId}`, {
       method: 'GET', 
@@ -606,8 +640,8 @@ async function showEditProfilePopup(userInfo) {
       showCancelButton: true,
       confirmButtonText: 'Save',
       cancelButtonText: 'Cancel',
-      confirmButtonColor: "#000000",
-      cancelButtonColor: "ffffff",
+      confirmButtonColor: "#0000FF",
+      cancelButtonColor: "#FF0000",
       preConfirm: () => {
         if(document.getElementById('new_name') === user.name && document.getElementById('new_username') === user.username && document.getElementById('new_email') === user.email && document.getElementById('new_password') === "") {
           Swal.showValidationMessage('No changes were made');
@@ -691,9 +725,11 @@ function updateUserRow(res) {
   });
 }
 
+
+
 addUserEventListeners();
-addPopupEventListeners();
 addTransferEventListeners();
 addAuctionEventListeners();
 addReportEventListeners();
 addFollowEventListeners();
+addProfileEventListeners();

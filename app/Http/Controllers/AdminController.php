@@ -167,6 +167,8 @@ class AdminController extends Controller
 
     public function getUserInfo(Request $request, $userId)
     {
+        $this->authorize('index', Admin::class);
+        
         try {
             $user = User::getUserInfo($userId);
     

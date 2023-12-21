@@ -102,14 +102,13 @@ class UserController extends Controller
     public function delete(Request $request)
     {
 
-        $user = Auth::user();
 
-        User::where(['id' => $user->id])->update(['state' => 'disabled']);
+        User::where(['id' => $request->user_id])->update(['state' => 'disabled']);
 
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('home')
-            ->withSuccess('You have logged out successfully!');
+            ->withSuccess('You have deleted your acount successfully!');
     }
 }

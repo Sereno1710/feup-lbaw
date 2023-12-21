@@ -43,11 +43,23 @@
             @endif
         </div>
         <div class="mt-4 w-full flex flex-row items-center justify-evenly">
-            @php
-                $auctionImagePath = $auction->auctionImagePath();
-            @endphp
-            <img class="m-4 max-w-[24rem] max-h-[16rem] rounded-lg object-contain" src="{{ asset($auctionImagePath) }}"
-                alt="auctionphoto">
+        @php
+            $auctionImagePaths = $auction->auctionImagePaths();
+        @endphp
+
+        <div class="swiper mySwiper max-w-[24rem] max-h-[16rem]">
+            <div class="swiper-wrapper">
+                @foreach ($auctionImagePaths as $imagePath)
+                    <div class="swiper-slide">
+                        <img src="{{ asset($imagePath) }}" alt="Auction Image" class="m-4 max-w-[24rem] max-h-[16rem] object-contain">
+                    </div>
+                @endforeach
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-next swiper-button-white"></div>
+            <div class="swiper-button-prev swiper-button-white"></div>
+
+        </div>
             @if (Auth::check() && Auth::user()->id !== $auction->owner_id && $auction->state === 'active')
                 <div class="bg-stone-200 m-2 p-4 flex flex-col rounded-lg">
                     <p><span class="font-bold">Current price:</span>{{ $auction->price }}</p>
@@ -258,5 +270,50 @@
             cancelDelete()
             closeBidsPopup()
         }
+    </script>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <style>
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: #A9A9A9;
+            margin-left: 10px;
+            margin-right: -5px;
+        }
+        .swiper-pagination{
+            margin-left: 15px;
+            margin-bottom: -9px;
+        }
+        .swiper-pagination-bullet {
+            width: 8px;
+            height: 8px;
+            display: inline-block;
+            margin: 0 5px; 
+            background-color: #ccc; 
+            border-radius: 50%; 
+            opacity: 0.8; 
+            cursor: pointer;
+            transition: background-color 0.3s ease; 
+        }
+
+        .swiper-pagination-bullet-active {
+            background-color: #333; 
+            opacity: 1; 
+        }   
+    </style>
+    <script>
+        var swiper = new Swiper(".mySwiper", {
+          slidesPerView: 1,
+          spaceBetween: 30,
+          loop: true,
+          pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+          },
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          },
+        });
     </script>
 @endsection

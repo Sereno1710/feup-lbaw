@@ -91,8 +91,13 @@ class AuctionController extends Controller
             $auction = new Auction($auctionData);
             $auction->save();
 
-            if ($request->hasFile('image')) {
-                $request->file('image')->move('images/auction', "{$auction->id}.jpg");
+            if ($request->hasFile('images')) {
+                $images = $request->file('images');
+                $key = 1;
+                foreach ($images as $image) {
+                    $image->move('images/auction', "{$auction->id}_{$key}.jpg");
+                    $key++;
+                }
             }
 
             $metaInfos = $request->input('categories', []);

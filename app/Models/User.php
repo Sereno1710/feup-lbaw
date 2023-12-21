@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Admin;
 use App\Models\Auction;
 use App\Models\Bid;
+use App\Models\Notification;
 
 class User extends Authenticatable
 {
@@ -66,6 +67,11 @@ class User extends Authenticatable
     public static function active()
     {
         return User::where('state', '!=', 'disabled')->orderBy('id', 'asc')->paginate(10);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'receiver_id')->orderBy('date', 'desc');
     }
 
     public function profileImagePath()

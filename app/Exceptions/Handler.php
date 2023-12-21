@@ -29,8 +29,5 @@ class Handler extends ExceptionHandler
         });
     }
 
-    public function render($request, Throwable $exception)
-    {
-        return response()->view('errors.error', [], 500);
-    }
+   
 }

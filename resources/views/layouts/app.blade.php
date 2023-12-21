@@ -22,157 +22,162 @@ use App\Models\Notification;
             <h1 class="text-4xl font-bold"><a href="{{ url('/home') }}">SoundSello</a></h1>
             <div class="flex justify-between items-center">
 
-                <form class="p-1 m-0 bg-stone-200 rounded-lg flex flex-row items-center" action="/search" method="GET">
+                <form class="p-1 m-0 bg-stone-200 rounded-lg flex flex-row items-center" action="/search"
+                    method="GET">
                     <input class="bg-stone-200 outline-none px-2 py-2" type="text" name="input"
                         placeholder="Search auctions and users" id="searchBar">
 
                     <span class="dropdown-button cursor-pointer mr-2">&#9660;</span>
 
-                        <div class="absolute w-[45rem] left-[-100%] mt-2 p-2 bg-gray-100 overflow-y-auto max-h-72 border rounded border-gray-300 rounded shadow-md hidden"
-                            id="categoriesDropdown">
-                            <h3 class="text-lg font-bold">Categories</h3>
-                            <div class="flex flex-wrap items-center space-x-4">
-                                <label for="strings" class="flex items-center">
-                                    <input type="checkbox" id="strings" name="categories[]" value="strings" class="mr-1"
-                                        checked>Strings</label>
-                                <label for="woodwinds" class="flex items-center">
-                                    <input type="checkbox" id="woodwinds" name="categories[]" value="woodwinds"
-                                        class="mr-1" checked>Woodwinds</label>
-                                <label for="brass" class="flex items-center">
-                                    <input type="checkbox" id="brass" name="categories[]" value="brass" class="mr-1"
-                                        checked>Brass</label>
-                                <label for="percussion" class="flex items-center">
-                                    <input type="checkbox" id="percussion" name="categories[]" value="percussion"
-                                        class="mr-1" checked>Percussion</label>
-                            </div>
+                    <div class="absolute w-[45rem] left-[-100%] mt-2 p-2 bg-gray-100 overflow-y-auto max-h-72 border rounded border-gray-300 rounded shadow-md hidden"
+                        id="categoriesDropdown">
+                        <h3 class="text-lg font-bold">Categories</h3>
+                        <div class="flex flex-wrap items-center space-x-4">
+                            <label for="strings" class="flex items-center">
+                                <input type="checkbox" id="strings" name="categories[]" value="strings" class="mr-1"
+                                    checked>Strings</label>
+                            <label for="woodwinds" class="flex items-center">
+                                <input type="checkbox" id="woodwinds" name="categories[]" value="woodwinds"
+                                    class="mr-1" checked>Woodwinds</label>
+                            <label for="brass" class="flex items-center">
+                                <input type="checkbox" id="brass" name="categories[]" value="brass" class="mr-1"
+                                    checked>Brass</label>
+                            <label for="percussion" class="flex items-center">
+                                <input type="checkbox" id="percussion" name="categories[]" value="percussion"
+                                    class="mr-1" checked>Percussion</label>
+                        </div>
 
-                            <div class="flex flex-wrap space-x-4 mt-6">
-                                @foreach ($metaInfos as $metaInfo)
+                        <div class="flex flex-wrap space-x-4 mt-6">
+                            @foreach ($metaInfos as $metaInfo)
                                 <div class="flex flex-col space-y-2 meta-info-container">
-                                    <h4 class="dropdown-button-filter text-lg font-bold" id="{{ $metaInfo->name }}Dropdown">{{
-                                        $metaInfo->name
-                                        }}<span class="cursor-pointer text-sm ml-1">&#9660;</span>
+                                    <h4 class="dropdown-button-filter text-lg font-bold"
+                                        id="{{ $metaInfo->name }}Dropdown">{{ $metaInfo->name }}<span
+                                            class="cursor-pointer text-sm ml-1">&#9660;</span>
                                     </h4>
 
                                     <div class="values hidden">
                                         @foreach ($metaInfo->values as $value)
-                                        <label for="{{ $value->value }}" class="flex items-center">
-                                            <input type="checkbox" id="{{ $value->value }}"
-                                                name="metaInfo{{ $metaInfo->name }}[]" value="{{ $value->value }}"
-                                                class="mr-2" checked>{{ $value->value }}</label>
+                                            <label for="{{ $value->value }}" class="flex items-center">
+                                                <input type="checkbox" id="{{ $value->value }}"
+                                                    name="metaInfo{{ $metaInfo->name }}[]" value="{{ $value->value }}"
+                                                    class="mr-2" checked>{{ $value->value }}</label>
                                         @endforeach
                                     </div>
                                     <input name="metaInfos[]" value="{{ $metaInfo->name }}"
                                         class="meta-info-input hidden">
                                 </div>
-                                @endforeach
-                            </div>
+                            @endforeach
                         </div>
+                    </div>
 
-                        <button type="submit">🔎</button>
-                    </form>
-                </div>
+                    <button type="submit">
+                        <button type="submit"><img class="h-[1.5rem] object-contain"
+                                src="{{ asset('images/icons/search.png') }}"></button>
+                    </button>
+                </form>
 
-            @if (Auth::check() && (Auth::user()->isAdmin() or Auth::user()->isSystemManager()))
-            <a href="{{ url('/admin/users') }}" class="ml-4">Admin</a>
-            @endif
-            <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
-            @if (Auth::check())
-            <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
-            @php
-            $unviewedNotificationsCount = Notification::where('receiver_id', Auth::user()->id)
-            ->where('viewed', false)
-            ->count();
-            $noflagNotificationsCount = Notification::where('receiver_id', Auth::user()->id)
-            ->where('flag', true)
-            ->count();
-            @endphp
-            <button class="notification-icon dropdown-button relative ml-4" id="notificationBtn">
-                <img class="h-[1.5rem] object-contain" src="{{ asset('images/icons/bell.png') }}">
-                @if ($unviewedNotificationsCount > 0)
-                <span
-                    class="notification-badge bg-red-500 text-white text-xs font-bold rounded-full p-1 absolute top-3 left-3">
-                    {{ $unviewedNotificationsCount }}
-                </span>
+                @if (Auth::check() && (Auth::user()->isAdmin() or Auth::user()->isSystemManager()))
+                    <a href="{{ url('/admin/users') }}" class="ml-4">Admin</a>
                 @endif
-            </button>
-            <div class="dropdown-content hidden bg-gray-100 absolute top-16 right-0 mt-2 p-4 border rounded max-h-40 overflow-y-auto"
-                id="notificationDropdown">
+                <a href="{{ url('/auctions') }}" class="ml-4">View Auctions</a>
                 @if (Auth::check())
-                <div class="notification-content">
-                    <div class="notifications-title inline flex flex-row justify-between mr-2">
-                        <h3 class="text-lg font-bold">Notifications</h3>
-                        @if ($noflagNotificationsCount != 0)
-                        <div>
-                            <form action="{{ route('notification.viewall') }}" method="POST"
-                                class="inline hover:text-gray-500">
-                                @csrf
-                                <button type="submit" class="btn-view">Mark all as read</button>
-                            </form>
-                            |
-                            <form action="{{ route('notification.deleteall') }}" method="POST"
-                                class="inline hover:text-gray-500">
-                                @csrf
-                                <button type="submit" class="btn-delete">Delete all</button>
-                            </form>
-                        </div>
+                    <a href="{{ url('/auction/submit') }}" class="ml-4">Submit Auction</a>
+                    @php
+                        $unviewedNotificationsCount = Notification::where('receiver_id', Auth::user()->id)
+                            ->where('viewed', false)
+                            ->count();
+                        $noflagNotificationsCount = Notification::where('receiver_id', Auth::user()->id)
+                            ->where('flag', true)
+                            ->count();
+                    @endphp
+                    <button class="notification-icon dropdown-button relative ml-4" id="notificationBtn">
+                        <img class="h-[1.5rem] object-contain" src="{{ asset('images/icons/bell.png') }}">
+                        @if ($unviewedNotificationsCount > 0)
+                            <span
+                                class="notification-badge bg-red-500 text-white text-xs font-bold rounded-full p-1 absolute top-3 left-3">
+                                {{ $unviewedNotificationsCount }}
+                            </span>
+                        @endif
+                    </button>
+                    <div class="dropdown-content hidden bg-gray-100 absolute top-16 right-0 mt-2 p-4 border rounded max-h-40 overflow-y-auto"
+                        id="notificationDropdown">
+                        @if (Auth::check())
+                            <div class="notification-content">
+                                <div class="notifications-title inline flex flex-row justify-between mr-2">
+                                    <h3 class="text-lg font-bold">Notifications</h3>
+                                    @if ($noflagNotificationsCount != 0)
+                                        <div>
+                                            <form action="{{ route('notification.viewall') }}" method="POST"
+                                                class="inline hover:text-gray-500">
+                                                @csrf
+                                                <button type="submit" class="btn-view">Mark all as read</button>
+                                            </form>
+                                            |
+                                            <form action="{{ route('notification.deleteall') }}" method="POST"
+                                                class="inline hover:text-gray-500">
+                                                @csrf
+                                                <button type="submit" class="btn-delete">Delete all</button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="notification-list">
+                                    <ul>
+                                        @foreach (Auth::user()->notifications as $notification)
+                                            @if ($notification->flag == false)
+                                                @continue
+                                            @endif
+                                            @include('partials.notification', [
+                                                'notification' => $notification,
+                                            ])
+                                        @endforeach
+                                        @if ($unviewedNotificationsCount == 0 && $noflagNotificationsCount == 0)
+                                            <div class="no-notifications mt-2">
+                                                You currently have zero notifications.
+                                            </div>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </div>
                         @endif
                     </div>
-                    <div class="notification-list">
-                        <ul>
-                            @foreach (Auth::user()->notifications as $notification)
-                            @if ($notification->flag == false)
-                            @continue
-                            @endif
-                            @include('partials.notification', [
-                            'notification' => $notification,
-                            ])
-                            @endforeach
-                            @if ($unviewedNotificationsCount == 0 && $noflagNotificationsCount == 0)
-                            <div class="no-notifications mt-2">
-                                You currently have zero notifications.
+                    <div class="user-info ml-4">
+                        @php
+                            $profileImagePath = Auth::user()->profileImagePath();
+                        @endphp
+                        <button class="m-2 p-2 dropdown-button flex flex-row items-center bg-stone-300 rounded-lg"
+                            id="profileBtn">
+                            <div class="flex flex-col">
+                                <p> {{ Auth::user()->name }} </p>
+                                <p class="text-sm">Balance: {{ Auth::user()->balance }} </p>
                             </div>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
-                @endif
-            </div>
-            <div class="user-info ml-4">
-                @php
-                $profileImagePath = Auth::user()->profileImagePath();
-                @endphp
-                <button class="m-2 p-2 dropdown-button flex flex-row items-center bg-stone-300 rounded-lg"
-                    id="profileBtn">
-                    <div class="flex flex-col">
-                        <p> {{ Auth::user()->name }} </p>
-                        <p class="text-sm">Balance: {{ Auth::user()->balance }} </p>
-                    </div>
-                    <img class="w-[3rem] h-[3rem] rounded-full object-cover ml-2" src="{{ asset($profileImagePath) }}">
-                </button>
-                <div class="dropdown-content hidden bg-stone-900 absolute top-16 mt-2 p-4 border max-h-30 max-w-20 overflow-y-auto rounded-lg"
-                    id="profileDropdown">
-                    <div class="profile-content">
-                        <div class="profile-list">
-                            <ul>
-                                <li class="border-b py-2 text-white">
-                                    <a href="{{ url('/profile') }}" class="hover:text-gray-400">Profile</a>
-                                </li>
-                                <li class="border-b py-2 text-white">
-                                    <a href="{{ url('/balance') }}" class="hover:text-gray-400">Deposit/Withdraw</a>
-                                </li>
-                                <li class="py-2 text-white">
-                                    <a href="{{ url('/logout') }}" class="hover:text-gray-400">Log out</a>
-                                </li>
-                            </ul>
+                            <img class="w-[3rem] h-[3rem] rounded-full object-cover ml-2"
+                                src="{{ asset($profileImagePath) }}">
+                        </button>
+                        <div class="dropdown-content hidden bg-stone-900 absolute top-16 mt-2 p-4 border max-h-30 max-w-20 overflow-y-auto rounded-lg"
+                            id="profileDropdown">
+                            <div class="profile-content">
+                                <div class="profile-list">
+                                    <ul>
+                                        <li class="border-b py-2 text-white">
+                                            <a href="{{ url('/profile') }}" class="hover:text-gray-400">Profile</a>
+                                        </li>
+                                        <li class="border-b py-2 text-white">
+                                            <a href="{{ url('/balance') }}"
+                                                class="hover:text-gray-400">Deposit/Withdraw</a>
+                                        </li>
+                                        <li class="py-2 text-white">
+                                            <a href="{{ url('/logout') }}" class="hover:text-gray-400">Log out</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            @else
-            <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
-            <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
-            @endif
+                @else
+                    <a href="{{ url('/login') }}" class="ml-4">Sign In</a>
+                    <a href="{{ url('/register') }}" class="ml-4">Sign Up</a>
+                @endif
             </div>
         </nav>
         <nav class="m-auto">

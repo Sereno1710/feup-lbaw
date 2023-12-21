@@ -24,20 +24,6 @@ function addUserEventListeners() {
   }
 }
 
-function addPopupEventListeners() {
-  let popup = document.getElementById("pop");
-  if (popup) {
-    popup.addEventListener("click", function (event) {
-      let userId = event.target.getAttribute("user_id");
-      if (event.target.classList.contains("disable-btn")) {
-        disableUser(userId);
-      } else if (event.target.classList.contains("cancel-btn")) {
-        cancelDelete();
-      }
-    });
-  }
-}
-
 function addTransferEventListeners() {
   let transfersTable = document.getElementById("transfers_table");
   if (transfersTable) {
@@ -102,6 +88,46 @@ function addFollowEventListeners() {
   }
 }
 
+function addProfileEventListeners() {
+  let deleteButton = document.getElementById("delete_profile");
+  if (deleteButton) {
+    deleteButton.addEventListener("click", function (event) {
+      let userId = event.target.getAttribute("user_id");
+      let balance = event.target.getAttribute("balance");
+      if(event.target.classList.contains("delete-profile-btn")){
+        deleteProfile(userId,balance);
+      }
+    });
+  }
+}
+
+function addAuctionBidEventListeners(){
+  let auctionBidTable = document.getElementById("BidsPopUp");
+  if(auctionBidTable) {
+    auctionBidTable.addEventListener("click", function (event) {
+      let auctionId = event.target.getAttribute("auction_id");
+      if (event.target.classList.contains("bids-history-btn")){
+        openBids(auctionId);
+      }
+    });
+  }
+
+}
+
+function addAuctionReportEventListener(){
+  let auctionReportTable = document.getElementById("icons");
+  if(auctionReportTable) {
+    auctionReportTable.addEventListener("click", function (event) {
+      let auctionId = event.target.getAttribute("auction_id");
+      let userId = event.target.getAttribute("user_id");
+      if (event.target.classList.contains("report_icon")){
+        openReports(auctionId,userId);
+      }
+    });
+  }
+
+}
+
 function encodeForAjax(data) {
   if (data == null) return null;
   return Object.keys(data)
@@ -126,12 +152,13 @@ function sendAjaxRequest(method, url, data, handler) {
 
 function UserToSys(userId, role) {
   let userRow = document.getElementById("user_row_" + userId);
-
   if (userRow) {
     let index = Array.from(userRow.parentNode.children).indexOf(userRow);;
     if(role == true) {
-    let disableButton = userRow.querySelector(".popup-btn");
-    disableButton.remove();
+      let editButton = userRow.querySelector(".edit-btn");
+      editButton.remove();
+      let disableButton = userRow.querySelector(".popup-btn");
+      disableButton.remove();
     }
     let promoteButton = userRow.querySelector(".promote-btn");
     let banButton = userRow.querySelector(".ban-btn");
@@ -173,14 +200,20 @@ function SysToUser(userId,role) {
     let usersTable = document.getElementById("users_table");
     usersTable.querySelector("tbody").insertBefore(userRow, usersTable.querySelector("tbody").children[index]);
     let actionsCell = userRow.querySelector(".flex.flex-row");
-    if(role == true) {
-    let disableButton = document.createElement("button");
-    disableButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded popup-btn";
-    disableButton.type = "button";
-    disableButton.innerText = "Delete";
-    disableButton.setAttribute('user_id', userId);
-    disableButton.setAttribute('onclick', 'showDeletePopup('+userId+')');
-    actionsCell.appendChild(disableButton);
+    if(role) {
+      let editButton = document.createElement("button");
+      editButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded edit-btn";
+      editButton.type = "button";
+      editButton.innerText = "Edit";
+      editButton.setAttribute('user_id', userId);
+      actionsCell.appendChild(editButton);
+      let disableButton = document.createElement("button");
+      disableButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded popup-btn";
+      disableButton.type = "button";
+      disableButton.innerText = "Delete";
+      disableButton.setAttribute('user_id', userId);
+      disableButton.setAttribute('onclick', 'showDeletePopup('+userId+')');
+      actionsCell.appendChild(disableButton);
     }
     let promoteButton = document.createElement("button");
     promoteButton.className = "m-2 py-1 px-2 text-white bg-stone-800 rounded promote-btn";
@@ -294,10 +327,8 @@ function showDeletePopup(userId, userName) {
     text: "You won't be able to recover " + userName + " account!",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonColor: "#000000",
-    cancelButtonColor: "ffffff",
-    cancelButtonBorderColor: "#000000",
-    cancelButtonBackground: "#ffffff",
+    confirmButtonColor: "#FF0000",
+    cancelButtonColor: "#0000FF",
     confirmButtonText: "Yes, delete it!",
   }).then((result) => {
     if (result.isConfirmed) {
@@ -319,7 +350,7 @@ function pauseAuctionJs(auctionId) {
     resumeButton.type = "button";
     resumeButton.innerText = "Resume";
     resumeButton.setAttribute('auction_id', auctionId);
-    let actionsCell = auctionRow.querySelector(".flex.flex-row");
+    let actionsCell = auctionRow.querySelector(".btn");
     actionsCell.appendChild(resumeButton);
 
     let state = auctionRow.querySelector("#state");
@@ -335,7 +366,7 @@ function pauseAuctionJs(auctionId) {
 
 function resAuction(auctionId) {
   let auctionRow = document.getElementById("auction_row_" + auctionId);
-  if(auctionRow) {
+  if (auctionRow) {
     let index = Array.from(auctionRow.parentNode.children).indexOf(auctionRow);
     let resumeButton = auctionRow.querySelector(".resume-btn");
     resumeButton.remove();
@@ -346,19 +377,25 @@ function resAuction(auctionId) {
     pauseButton.type = "button";
     pauseButton.innerText = "Pause";
     pauseButton.setAttribute('auction_id', auctionId);
-    let actionsCell = auctionRow.querySelector(".flex.flex-row");
-    actionsCell.appendChild(pauseButton);
 
-    let state = auctionRow.querySelector("#state");
-    if(state) {
-      state.innerText = "active";
+    let actionsCell = auctionRow.querySelector(".btn");
+
+    if (actionsCell) {
+      actionsCell.appendChild(pauseButton);
+      let state = auctionRow.querySelector("#state");
+      if (state) {
+        state.innerText = "active";
+      } else {
+        console.error("Auction state not found:", auctionId);
+      }
     } else {
-      console.error("Auction state not found:", auctionId);
+      console.error("actionsCell not found:", auctionId);
     }
   } else {
     console.error("Auction row not found:", auctionId);
   }
 }
+
 
 function appAuction(auctionId) {
   let auctionRow = document.getElementById("auction_row_" + auctionId);
@@ -572,6 +609,34 @@ function unfollowAuction(userId, auctionId) {
   });
 }
 
+function deleteProfile(userId,balance) {
+  console.log("User ID:", userId);
+  console.log("Balance:", balance);
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to recover your account! Your balance will NOT be refunded.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#FF0000",
+    cancelButtonColor: "#000000",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      let formData = { user_id: userId };
+      sendAjaxRequest(
+        "POST", 
+        "/profile/delete",
+        formData
+      );
+      window.location.href = "/logout"
+    }
+  });
+ }
+
+
+
+
 async function editUser(userId) {
   const response = await fetch(`/admin/users/${userId}`, {
       method: 'GET', 
@@ -606,8 +671,8 @@ async function showEditProfilePopup(userInfo) {
       showCancelButton: true,
       confirmButtonText: 'Save',
       cancelButtonText: 'Cancel',
-      confirmButtonColor: "#000000",
-      cancelButtonColor: "ffffff",
+      confirmButtonColor: "#0000FF",
+      cancelButtonColor: "#FF0000",
       preConfirm: () => {
         if(document.getElementById('new_name') === user.name && document.getElementById('new_username') === user.username && document.getElementById('new_email') === user.email && document.getElementById('new_password') === "") {
           Swal.showValidationMessage('No changes were made');
@@ -633,7 +698,7 @@ async function showEditProfilePopup(userInfo) {
 
   if (formValues && user && user.id) {
     if (formValues.password === "") {
-      formValues.password = null; // or delete formValues.password;
+      formValues.password = null; 
     }
     formValues.user_id = user.id;
     console.log("Updated Form Values:", formValues);
@@ -691,9 +756,105 @@ function updateUserRow(res) {
   });
 }
 
+async function openBids(id) {
+  const response = await fetch(`/auction/${id}/bids`, {
+    method: 'GET', 
+  });
+  if (response.status !== 200) {
+    console.error("Error fetching bidding history");
+    return;
+  }
+  const bidsInfo = await response.json();
+  openBidsPopup(bidsInfo);
+}
+
+
+async function openBidsPopup(bidsInfo) {
+  console.log("Bids Info:", bidsInfo);
+  const fetchProfileImagePath = async (userId) => {
+    const response = await fetch(`/profile/${userId}/image`);
+    const data = await response.json();
+    return data.path; 
+  };
+  const fetchUserName= async (userId) => {
+    const response = await fetch(`/profile/${userId}/name`);
+    const data = await response.json();
+    return data.name; 
+  }
+  const bidsHTML = await Promise.all(bidsInfo.map(async bid => {
+  const profileImagePath = await fetchProfileImagePath(bid.user_id);
+  const name = await fetchUserName(bid.user_id);
+    return `
+      <div class="w-full my-1 p-4 flex flex-row items-center bg-stone-100 rounded-lg shadow-sm">
+          <a class="w-[4rem] h-[3rem] mr-1" href="/user/${bid.user_id}">
+              <img class="w-[3rem] h-[3rem] rounded-full object-cover" src="${profileImagePath}">
+          </a>
+          <div class="w-full flex flex-col items-start">
+            <div class="w-full flex flex-row justify-between items-center">
+              <a href="/user/${bid.user_id}" class="font-bold text-lg">${name}</a>
+              <span class="text-stone-500 text-sm">${bid.time}</span>
+            </div>
+            <p class="text-stone-800 text-sm">Bidded ${bid.amount}</p>
+          </div>
+      </div>
+    `;
+  }));
+
+  Swal.fire({
+    title: 'Bidding History',
+    html: `<div class="w-full px-2 flex flex-col max-h-[42vh] overflow-y-auto items-center">${bidsHTML.join('')}</div>`,
+    showCloseButton: true,
+    showConfirmButton: false,
+    customClass: {
+      container: 'bids-popup-container',
+    },
+  });
+}
+
+async function openReports(auction_id,user_id) {
+  console.log("Auction ID:", auction_id);
+  console.log("User ID:", user_id);
+  const { value: text } = await Swal.fire({
+    title: "Report",
+    text: "Please describe the issue you found",
+    input: "textarea",
+    inputPlaceholder: "Type your message here...",
+    inputAttributes: {
+      "aria-label": "Type your message here"
+    },
+    showCancelButton: true,
+    showConfirmButton: true,
+    confirmButtonText: "Report",
+    cancelButtonText: "Cancel",
+    confirmButtonColor: "#FF0000",
+    cancelButtonColor: "#000000",
+    preConfirm: () => {
+      if(document.getElementById('swal2-textarea').value === "") {
+        Swal.showValidationMessage('Message is required');
+      }
+    }
+  });
+  if(text) {
+    const formData = { user_id: user_id, auction_id: auction_id, description: text};
+    sendAjaxRequest(
+      "POST",
+      `/auction/${auction_id}/report`,
+      formData
+    );
+    Swal.fire({
+      icon: 'success',
+      title: 'Report submitted successfully',
+      showConfirmButton: false,
+      timer: 2500
+    });
+  }
+  
+}
 addUserEventListeners();
-addPopupEventListeners();
 addTransferEventListeners();
 addAuctionEventListeners();
 addReportEventListeners();
 addFollowEventListeners();
+addProfileEventListeners();
+addAuctionBidEventListeners();
+addAuctionReportEventListener();

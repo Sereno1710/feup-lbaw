@@ -102,14 +102,25 @@ class UserController extends Controller
     public function delete(Request $request)
     {
 
-        $user = Auth::user();
 
-        User::where(['id' => $user->id])->update(['state' => 'disabled']);
+        User::where(['id' => $request->user_id])->update(['state' => 'disabled']);
 
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('home')
-            ->withSuccess('You have logged out successfully!');
+            ->withSuccess('You have deleted your acount successfully!');
+    }
+
+    public function profileImagePathJs($request){
+        $user = User::findOrFail($request);
+        $imagePath = $user->profileImagePath();
+        return response()->json(['path' => $imagePath]);
+    }
+
+    public function usernameJs($request){
+        $user = User::findOrFail($request);
+        $name = $user->name;
+        return response()->json(['name' => $name]);
     }
 }

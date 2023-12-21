@@ -57,13 +57,14 @@
                                         </button>
                                     @else
                                         @if(!$user->isAdmin() && !$user->isSystemManager() && Auth::user()->isAdmin() && Auth::user()->isSystemManager())
+                                            <button user_id="{{ $user->id }}"
+                                                class="m-2 py-1 px-2 text-white bg-stone-800 rounded edit-btn" type="button">
+                                                Edit </button>
                                             <button user_id="{{ $user->id }}" user_name="{{ $user->name }}"
                                                 class="m-2 py-1 px-2 text-white bg-stone-800 rounded popup-btn" type="button">
                                                 Delete
                                             </button>
-                                            <button user_id="{{ $user->id }}"
-                                                class="m-2 py-1 px-2 text-white bg-stone-800 rounded edit-btn" type="button">
-                                                Edit </button>
+                                            
                                             @if(!$user->isBanned())
                                                 <button user_id="{{ $user->id }}" role="{{ Auth::user()->isAdmin()? true : false }}"
                                                     class="m-2 py-1 px-2 text-white bg-stone-800 rounded promote-btn" type="button">

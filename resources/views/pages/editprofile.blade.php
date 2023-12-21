@@ -86,39 +86,8 @@
 
         <button class="mt-2 p-2 text-white bg-stone-800 rounded" type="submit">Save Changes</button>
 
-        <p class="mt-4 text-center">
-            If you want to delete your account click <span class="text-black-500 cursor-pointer underline"
-                onclick="showDeletePopup()">here</span>.
+        <p class="mt-4 text-center" id="delete_profile">
+            If you want to delete your account click <button user_id="{{ Auth::user()->id}}" balance="{{ Auth::user()->balance}}" class="text-black-500 cursor-pointer underline delete-profile-btn" type="button">here</button>.
         </p>
     </form>
-
-    <form id="deleteConfirmation" method="POST" action="{{ route('profile.delete') }}" enctype="multipart/form-data"
-        class="hidden flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg  text-center items-center justify-center">
-        @csrf
-        <p class="text-black-500 mb-4">Are you sure you want to delete your account? This action cannot be
-            reversed.</p>
-        <p class="text-black-500 mb-4">You currently have {{ Auth::user()->balance }} in your balance.</p>
-        <div class="flex flex-row">
-            <button class="m-2 p-2 text-white bg-red-500 rounded" type="sumbit">Yes, I
-                want to delete my account</button>
-            <button class="m-2 p-2 text-stone-500 bg-white border-stone-500 border rounded" type="button"
-                onclick="cancelDelete()">Cancel</button>
-        </div>
-    </form>
-
-    <script>
-        function showDeletePopup() {
-            document.getElementById('overlay').classList.remove('hidden');
-            deleteConfirmation = document.getElementById('deleteConfirmation');
-            deleteConfirmation.classList.remove('hidden');
-            deleteConfirmation.classList.add('flex');
-        }
-
-        function cancelDelete() {
-            document.getElementById('overlay').classList.add('hidden');
-            deleteConfirmation = document.getElementById('deleteConfirmation');
-            deleteConfirmation.classList.remove('flex');
-            deleteConfirmation.classList.add('hidden');
-        }
-    </script>
 @endsection

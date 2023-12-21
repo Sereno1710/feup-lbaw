@@ -37,7 +37,8 @@ Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit
 Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::get('/user/{userId}', [UserController::class, 'showProfile'])->name('profile.show');
 Route::post('/profile/delete', [UserController::class, 'delete'])->name('profile.delete');
-
+Route::get('/profile/{id}/image', [UserController::class, 'profileImagePathJs']);
+Route::get('/profile/{id}/name', [UserController::class, 'usernameJs']);
 // Balance
 Route::get('/balance', [BalanceController::class, 'index'])->name('balance')->middleware('auth');
 Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
@@ -61,6 +62,7 @@ Route::controller(AuctionController::class)->group(function () {
     Route::post('/auction/unfollow', 'unfollowAuction')->name('auction.unfollow');
     Route::get('/auction/{id}', 'showAuction');
     Route::post('/auction/{id}/bid', 'bidOnAuction');
+    Route::get('/auction/{id}/bids', 'bidFromAuction');    
     Route::post('/auction/{id}/start', 'startAuction');
     Route::post('/auction/{id}/rate', 'rateAuction');
     Route::post('/auction/{id}/report', 'reportAuction')->name('auction.report');

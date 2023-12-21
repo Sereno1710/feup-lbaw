@@ -234,9 +234,10 @@ class AuctionController extends Controller
         return redirect()->back()->with('message', 'Comment deleted successfully.');
     }
 
-    public function reportAuction(Request $request, $auctionId)
+    public function reportAuction(Request $request)
     {
         $validatedData = $request->validate([
+            'auction_id' => 'required|integer',
             'user_id' => 'required|integer',
             'description' => 'required|string',
         ]);
@@ -246,7 +247,7 @@ class AuctionController extends Controller
         }
 
         $existingReport = Report::where('user_id', $validatedData['user_id'])
-            ->where('auction_id', $auctionId)
+            ->where('auction_id', $request->auction_id)
             ->first();
 
         if ($existingReport) {
@@ -255,7 +256,7 @@ class AuctionController extends Controller
 
         Report::create([
             'user_id' => $validatedData['user_id'],
-            'auction_id' => $auctionId,
+            'auction_id' => $request->auction_id,
             'description' => $validatedData['description'],
         ]);
 
@@ -300,6 +301,25 @@ class AuctionController extends Controller
         $auction->update(['state' => 'disabled']);
 
         return redirect()->back()->with('message', 'Auction disabled successfully.');
+    }
+
+    public static function bidFromAuction($auctionId)
+    {
+
+        try {
+            $auction = Auction::findOrFail($auctionId);
+            $bids = $auction->bids()->orderBy('time', 'desc')->get();
+    
+            if (!$bids) {
+                return response()->json(['error' => 'bids not found'], 404);
+            }
+            if(!$auction) {
+                return response()->json(['error' => 'auction not found'], 404);
+            }
+            return response()->json($bids);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve info'], 500);
+        }
     }
 }
 

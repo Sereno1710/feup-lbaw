@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('content')
@@ -33,7 +34,7 @@
                 </form>
             @endif
             @if (Auth::check() && Auth::user()->id !== $auction->owner_id)
-                <div class="flex flex-row items-end">
+                <div class="flex flex-row items-end" id="icons">
                     <div title="Follow" class=" hover:cursor-pointer">
                         @if (Auth::user()->followedAuctions->contains($auction))
                             <img id="follow_icon" class="h-[2.5rem]" src="{{ asset('images/icons/full_heart.png') }}"
@@ -45,9 +46,9 @@
                                 data-auction-id="{{ $auction->id }}">
                         @endif
                     </div>
-                    <div title="Report" class="ml-2 hover:cursor-pointer" onclick="showReportPopup()">
-                        <img id="report_icon" class="h-[2.5rem]" src="{{ asset('images/icons/full_warning.png') }}"
-                            alt="Report Icon">
+                    <div title="Report" class="ml-2 hover:cursor-pointer">
+                        <img class="h-[2.5rem] report_icon"  auction_id="{{$auction->id}}" user_id="{{Auth::user()->id}}" src="{{ asset('images/icons/full_warning.png') }}"
+                            alt="Report Icon" type="button">
                     </div>
 
                 </div>
@@ -115,10 +116,10 @@
                         <h3 class="mx-2 my-1">Auction Description</h3>
                     </th>
                     <th>
-                        <div class="flex flex-row justify-between items-end">
+                        <div class="flex flex-row justify-between items-end" id="BidsPopUp">
                             <h3 class="mx-2 my-1">Bidding History</h3>
                             @if ($auction->bids->count() > 1)
-                                <button class="text-sm text-stone-500 underline" onclick="showBidsPopup()">View full
+                                <button class="text-sm text-stone-500 underline bids-history-btn" auction_id="{{$auction->id}}" type="button">View full
                                     history</button>
                             @endif
                         </div>
@@ -216,36 +217,9 @@
         </form>
     @endif
 
-    <div id="bidsPopup"
-        class="hidden fixed flex-col top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg items-center justify-center w-[40rem]">
-        <h2 class="mb-2 font-bold text-3xl text-center self-start">Bidding History</h2>
-        <div class="w-full px-2 flex flex-col max-h-[42vh] overflow-y-auto items-center">
-            @foreach ($auction->bids as $bid)
-                @include('partials.bidpublic', ['bid' => $bid])
-            @endforeach
-        </div>
-        <button class="mt-2 mx-2 px-3 py-2 text-stone-500 bg-white border-stone-500 border rounded"
-            onclick="closeBidsPopup()">Close</button>
-    </div>
-
 
 
     <script>
-        function showReportPopup() {
-            document.getElementById('overlay').classList.remove('hidden');
-            reportAuction = document.getElementById('reportAuction');
-            reportAuction.classList.remove('hidden');
-            reportAuction.classList.add('flex');
-        }
-
-        function cancelReport() {
-            reportAuction = document.getElementById('reportAuction');
-            if (reportAuction && reportAuction.classList.contains('flex')) {
-                document.getElementById('overlay').classList.add('hidden');
-                reportAuction.classList.remove('flex');
-                reportAuction.classList.add('hidden');
-            }
-        }
 
         function showDeletePopup() {
             document.getElementById('overlay').classList.remove('hidden');
@@ -262,27 +236,9 @@
                 deleteConfirmation.classList.add('hidden');
             }
         }
-
-        function showBidsPopup() {
-            document.getElementById('overlay').classList.remove('hidden');
-            bidsPopup = document.getElementById('bidsPopup');
-            bidsPopup.classList.remove('hidden');
-            bidsPopup.classList.add('flex');
-        }
-
-        function closeBidsPopup() {
-            bidsPopup = document.getElementById('bidsPopup');
-            if (bidsPopup && bidsPopup.classList.contains('flex')) {
-                document.getElementById('overlay').classList.add('hidden');
-                bidsPopup.classList.remove('flex');
-                bidsPopup.classList.add('hidden');
-            }
-        }
-
         function closeAllPopUps() {
             cancelReport()
             cancelDelete()
-            closeBidsPopup()
         }
     </script>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />

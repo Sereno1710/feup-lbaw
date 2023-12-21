@@ -45,7 +45,7 @@
                     <td class="p-2 border-b-2 border-slate-300">{{ $auction->initial_price }}</td>
                     <td class="p-2 border-b-2 border-slate-300">{{ $auction->price }}</td>
                     <td class="p-2 border-b-2 border-slate-300" id="state">{{ $auction->state }}</td>
-                    <td class="p-2 border-b-2 border-slate-300">
+                    <td class="p-2 border-b-2 border-slate-300 btn">
                     @if ($auction->state == 'paused')
                         <button auction_id="{{ $auction->id }}" class="m-2 py-1 px-2 text-white bg-stone-800 rounded resume-btn" type="button">Resume</button>
                     @elseif ($auction->state == 'active')

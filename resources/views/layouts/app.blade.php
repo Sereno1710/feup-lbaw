@@ -28,49 +28,49 @@ use App\Models\Notification;
 
                     <span class="dropdown-button cursor-pointer mr-2">&#9660;</span>
 
-                    <div class="absolute w-[40rem] left-[-100%] mt-2 p-2 bg-gray-100 overflow-y-auto max-h-72 border rounded border-gray-300 rounded shadow-md hidden"
-                        id="categoriesDropdown">
-                        <h3 class="text-lg font-bold">Categories</h3>
-                        <div class="flex flex-wrap items-center space-x-4">
-                            <label for="strings" class="flex items-center">
-                                <input type="checkbox" id="strings" name="categories[]" value="strings" class="mr-1"
-                                    checked>Strings</label>
-                            <label for="woodwinds" class="flex items-center">
-                                <input type="checkbox" id="woodwinds" name="categories[]" value="woodwinds" class="mr-1"
-                                    checked>Woodwinds</label>
-                            <label for="brass" class="flex items-center">
-                                <input type="checkbox" id="brass" name="categories[]" value="brass" class="mr-1"
-                                    checked>Brass</label>
-                            <label for="percussion" class="flex items-center">
-                                <input type="checkbox" id="percussion" name="categories[]" value="percussion"
-                                    class="mr-1" checked>Percussion</label>
-                        </div>
-
-                        <div class="flex flex-wrap space-x-4 mt-6">
-                            @foreach ($metaInfos as $metaInfo)
-                            <input name="metaInfos[]" value="{{ $metaInfo->name }}" class="hidden">
-                            <div class="flex flex-col space-y-2">
-                                <h4 class="h4 text-lg font-bold" id="{{ $metaInfo->name }}Dropdown">{{
-                                    $metaInfo->name
-                                    }}<span class="dropdown-button-metaInfo cursor-pointer text-sm ml-1">&#9660;</span>
-                                </h4>
-
-                                <div class="values hidden">
-                                    @foreach ($metaInfo->values as $value)
-                                    <label for="{{ $value->value }}" class="flex items-center">
-                                        <input type="checkbox" id="{{ $value->value }}"
-                                            name="metaInfos{{ $metaInfo->name }}[]" value="{{ $value->value }}"
-                                            class="mr-2" checked>{{ $value->value }}</label>
-                                    @endforeach
-                                </div>
+                        <div class="absolute w-[45rem] left-[-100%] mt-2 p-2 bg-gray-100 overflow-y-auto max-h-72 border rounded border-gray-300 rounded shadow-md hidden"
+                            id="categoriesDropdown">
+                            <h3 class="text-lg font-bold">Categories</h3>
+                            <div class="flex flex-wrap items-center space-x-4">
+                                <label for="strings" class="flex items-center">
+                                    <input type="checkbox" id="strings" name="categories[]" value="strings" class="mr-1"
+                                        checked>Strings</label>
+                                <label for="woodwinds" class="flex items-center">
+                                    <input type="checkbox" id="woodwinds" name="categories[]" value="woodwinds"
+                                        class="mr-1" checked>Woodwinds</label>
+                                <label for="brass" class="flex items-center">
+                                    <input type="checkbox" id="brass" name="categories[]" value="brass" class="mr-1"
+                                        checked>Brass</label>
+                                <label for="percussion" class="flex items-center">
+                                    <input type="checkbox" id="percussion" name="categories[]" value="percussion"
+                                        class="mr-1" checked>Percussion</label>
                             </div>
-                            @endforeach
+
+                            <div class="flex flex-wrap space-x-4 mt-6">
+                                @foreach ($metaInfos as $metaInfo)
+                                <div class="flex flex-col space-y-2 meta-info-container">
+                                    <h4 class="dropdown-button-filter text-lg font-bold" id="{{ $metaInfo->name }}Dropdown">{{
+                                        $metaInfo->name
+                                        }}<span class="cursor-pointer text-sm ml-1">&#9660;</span>
+                                    </h4>
+
+                                    <div class="values hidden">
+                                        @foreach ($metaInfo->values as $value)
+                                        <label for="{{ $value->value }}" class="flex items-center">
+                                            <input type="checkbox" id="{{ $value->value }}"
+                                                name="metaInfo{{ $metaInfo->name }}[]" value="{{ $value->value }}"
+                                                class="mr-2" checked>{{ $value->value }}</label>
+                                        @endforeach
+                                    </div>
+                                    <input name="metaInfos[]" value="{{ $metaInfo->name }}"
+                                        class="meta-info-input hidden">
+                                </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
-                    <button type="submit"><img class="h-[1.5rem] object-contain"
-                            src="{{ asset('images/icons/search.png') }}"></button>
-                </form>
-            </div>
+                        <button type="submit">🔎</button>
+                    </form>
+                </div>
 
             @if (Auth::check() && (Auth::user()->isAdmin() or Auth::user()->isSystemManager()))
             <a href="{{ url('/admin/users') }}" class="ml-4">Admin</a>

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-use App\Events\AuctionBid;
 use App\Models\Bid;
 use App\Models\Auction;
 use App\Models\MetaInfo;

@@ -13,8 +13,8 @@ use App\Models\Comment;
         @php
             $bid = Bid::where('id', $notification->bid_id)->first();
             $auction = $bid ? $bid->auction : null;
-            $formattedDate = \Carbon\Carbon::parse($notification->date)->format('F j, Y g:i
-                                                A');
+            $notificationDate = \Carbon\Carbon::parse($notification->date);
+            $formattedDate = $notificationDate->diffForHumans();
         @endphp
         @if ($auction && $notification->notification_type == 'auction_bid')
             @php

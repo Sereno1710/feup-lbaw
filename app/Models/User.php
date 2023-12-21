@@ -65,7 +65,7 @@ class User extends Authenticatable
 
     public static function active()
     {
-        return User::where('state', '!=', 'disabled')->orderBy('id', 'asc')->paginate(10);
+        return User::where('state', '!=', 'disabled')->orderBy('id', 'asc')->simplePaginate(10);
     }
 
     public function profileImagePath()
@@ -74,5 +74,10 @@ class User extends Authenticatable
         $default = "/images/profile/default.jpg";
         if(sizeof($files) < 1) return $default;
         return "/".$files[0];
+    }
+
+    public static function getUserInfo($userId)
+    {
+        return User::where('id', $userId)->get();
     }
 }

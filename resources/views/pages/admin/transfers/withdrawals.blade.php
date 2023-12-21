@@ -27,22 +27,22 @@
             <table id="transfers_table" class="min-w-full text-left text-sm font-light">
             <thead class="border-b font-medium dark:border-neutral-500">
             <tr>
-                <th class="py-2 px-4 border border-slate-300">ID</th> 
-                <th class="py-2 px-4 border border-slate-300">Username</th>
-                <th class="py-2 px-4 border border-slate-300">Balance</th>
-                <th class="py-2 px-4 border border-slate-300">Actions</th>
+                <th class="p-2 border-b-2 border-slate-300">ID</th> 
+                <th class="p-2 border-b-2 border-slate-300">Username</th>
+                <th class="p-2 border-b-2 border-slate-300">Balance</th>
+                <th class="p-2 border-b-2 border-slate-300">Actions</th>
 
             </tr>
         </thead>
         <tbody>
             @foreach ($withdrawals as $withdrawal)
             <tr id="transfer_row_{{$withdrawal->id}}">
-                <td class="py-2 px-4 border border-slate-300">{{ $withdrawal->id }}</td>
-                <td class="py-2 px-4 border border-slate-300">{{ $withdrawal->username }}</td>
-                <td class="py-2 px-4 border border-slate-300">{{ $withdrawal->amount }}</td>
-                <td class="py-2 px-4 border border-slate-300 flex flex-row">
-                    <button transfer_id="{{ $withdrawal->id }}" view="withdrawals" class="mx-2 p-2 text-white bg-stone-800 rounded approve-btn" type="button">Approve</button>
-                    <button transfer_id="{{ $withdrawal->id }}" view="withdrawals" class="mx-2 p-2 text-white bg-stone-800 rounded reject-btn" type="button">Reject</button>
+                <td class="p-2 border-b-2 border-slate-300">{{ $withdrawal->id }}</td>
+                <td class="p-2 border-b-2 border-slate-300">{{ $withdrawal->username }}</td>
+                <td class="p-2 border-b-2 border-slate-300">{{ $withdrawal->amount }}</td>
+                <td class="p-2 border-b-2 border-slate-300 flex flex-row">
+                    <button transfer_id="{{ $withdrawal->id }}" view="withdrawals" class="m-2 py-1 px-2 text-white bg-stone-800 rounded approve-btn" type="button">Approve</button>
+                    <button transfer_id="{{ $withdrawal->id }}" view="withdrawals" class="m-2 py-1 px-2 text-white bg-stone-800 rounded reject-btn" type="button">Reject</button>
                 </td>
             </tr>
             @endforeach

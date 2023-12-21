@@ -48,6 +48,7 @@ DROP FUNCTION IF EXISTS auto_follow;
 DROP FUNCTION IF EXISTS update_owner_rating;
 DROP FUNCTION IF EXISTS prevent_auction_winner_active;
 DROP FUNCTION IF EXISTS transfer_approved;
+DROP FUNCTION IF EXISTS pause_after_report;
 
 /*
 
@@ -743,3 +744,23 @@ CREATE TRIGGER transfer_approved
 AFTER UPDATE ON moneys
 FOR EACH ROW
 EXECUTE FUNCTION transfer_approved();
+
+
+-- Trigger (T18)
+CREATE FUNCTION pause_after_report()
+RETURNS TRIGGER AS
+$$
+BEGIN
+  IF NEW.state = 'reviewed' THEN
+    UPDATE Auction
+    SET state = 'paused'
+    WHERE id = NEW.auction_id;
+  END IF;
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+CREATE TRIGGER pause_after_report
+AFTER UPDATE ON Report
+FOR EACH ROW
+EXECUTE FUNCTION pause_after_report();

@@ -56,6 +56,9 @@ use Carbon\Carbon;
                         $unviewedNotificationsCount = \App\Models\Notification::where('receiver_id', Auth::user()->id)
                                 ->where('viewed', false)
                                 ->count();
+                        $noflagNotificationsCount = \App\Models\Notification::where('receiver_id', Auth::user()->id)
+                                ->where('flag', true)
+                                ->count();
                     @endphp
                     <button class="notification-icon dropdown-button relative" id="notificationBtn">
                         @if ($unviewedNotificationsCount > 0)
@@ -169,7 +172,7 @@ use Carbon\Carbon;
                                             </div>
                                     </li>
                                     @endforeach
-                                    @if ($unviewedNotificationsCount == 0)
+                                    @if ($unviewedNotificationsCount == 0 && $noflagNotificationsCount == 0)
                                         <div class="no-notifications mt-2">
                                             You currently have zero notifications.
                                         </div>

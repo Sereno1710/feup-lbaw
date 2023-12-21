@@ -32,18 +32,18 @@ Route::controller(HomeController::class)->group(function () {
 });
 
 // Profile
-Route::get('/profile', [UserController::class, 'show'])->name('profile');
-Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
+Route::get('/profile', [UserController::class, 'show'])->name('profile')->middleware('auth');
+Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit')->middleware('auth');;
 Route::match(['post', 'put'], '/profile/update', [UserController::class, 'update'])->name('profile.update');
 Route::get('/user/{userId}', [UserController::class, 'showProfile'])->name('profile.show');
 Route::post('/profile/delete', [UserController::class, 'delete'])->name('profile.delete');
 
 // Balance
-Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
+Route::get('/balance', [BalanceController::class, 'index'])->name('balance')->middleware('auth');
 Route::post('/balance/withdraw', [BalanceController::class, 'withdraw'])->name('balance.withdraw');
-Route::get('/checkout', [StripeController::class, 'checkout'])->name('checkout');
+Route::get('/checkout', [StripeController::class, 'checkout'])->name('checkout')->middleware('auth');
 Route::post('/balance/deposit', [StripeController::class, 'deposit'])->name('deposit.stripe');
-Route::get('/success/{depositAmount}', [StripeController::class, 'success'])->name('success');
+Route::get('/success/{depositAmount}', [StripeController::class, 'success'])->name('success')->middleware('auth');
 
 // Footer
 Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('aboutUs');
@@ -55,7 +55,7 @@ Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('p
 // Auction
 Route::controller(AuctionController::class)->group(function () {
     Route::get('/auctions', 'showActiveAuctions');
-    Route::get('/auction/submit', 'showAuctionForm');
+    Route::get('/auction/submit', 'showAuctionForm')->middleware('auth');
     Route::post('/auction/create', 'createAuction')->name('auction.create');
     Route::post('/auction/follow', 'followAuction')->name('auction.follow');
     Route::post('/auction/unfollow', 'unfollowAuction')->name('auction.unfollow');

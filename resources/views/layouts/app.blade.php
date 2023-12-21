@@ -97,35 +97,18 @@ use App\Models\Notification;
                                             @if ($notification->flag == false)
                                                 @continue
                                             @endif
-                                        @else
-                                            @continue
-                                        @endif
-                                            <div class="notification-buttons inline flex flex-row justify-between mr-2">
-                                                <p class="text-gray-600 text-sm">{{ $formattedDate }} </span>
-                                                <div>
-                                                    @if (!$notification->viewed)
-                                                    <form action="{{ route('notification.view', $notification->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        <button type="submit" class="btn-view">✔️</button>
-                                                    </form>
-                                                    @endif
-
-                                                    <form action="{{ route('notification.delete', $notification->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        <button type="submit" class="btn-delete">❌</button>
-                                                    </form>
-                                                </div>
+                                            @include('partials.notification', [
+                                                'notification' => $notification,
+                                            ])
+                                        @endforeach
+                                        @if ($unviewedNotificationsCount == 0 && $noflagNotificationsCount == 0)
+                                            <div class="no-notifications mt-2">
+                                                You currently have zero notifications.
                                             </div>
-                                    </li>
-                                    @endforeach
-                                    @if ($unviewedNotificationsCount == 0 && $noflagNotificationsCount == 0)
-                                        <div class="no-notifications mt-2">
-                                            You currently have zero notifications.
-                                        </div>
-                                    @endif
-                                </ul>
+                                        @endif
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
                         @endif
                     </div>
                     <div class="user-info ml-4">

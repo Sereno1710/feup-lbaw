@@ -101,7 +101,7 @@ use App\Models\Notification;
                     id="notificationDropdown">
                     @if (Auth::check())
                     <div class="notification-content">
-                        <div class="notifications-title inline flex flex-row justify-between mr-2">
+                        <div class="notifications-title inline flex flex-row justify-between border-b border-black">
                             <h3 class="text-lg font-bold">Notifications</h3>
                             @if ($noflagNotificationsCount != 0)
                             <div>

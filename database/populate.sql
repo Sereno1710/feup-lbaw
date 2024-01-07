@@ -364,9 +364,9 @@ INSERT INTO AuctionMetaInfoValue (auction_id, meta_info_value_id)
 VALUES
   (1, 1), 
   (1, 6),
-  (1, 14),
+  (1, 15),
   (1, 23),
-  (1, 35),
+  (1, 32),
   (2, 2),
   (2, 13),
   (2, 21),

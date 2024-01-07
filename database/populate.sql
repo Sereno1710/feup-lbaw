@@ -86,9 +86,9 @@ VALUES
 
 INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner_id)
 VALUES
-  /*  1 */('Rare Acoustic Guitar', 'A vintage acoustic guitar with a unique sound.', 80.00, 90.00,'2023-09-01 14:10:00', '2024-01-09 14:35:00', 'strings', 'active', 3),
-  /*  2 */('Handcrafted Flute', 'A beautifully handcrafted flute with exquisite details.', 70.00, 380.00, '2023-09-05 16:00:00', '2024-01-08 14:07:00', 'woodwinds', 'active', 1),
-  /*  3 */('Vintage Bass Guitar', 'An old-school bass guitar with a unique vibe.', 30.00, 290.00 , '2023-09-03 14:10:00', '2024-01-08 15:10:00', 'brass', 'active', 5),
+  /*  1 */('Rare Acoustic Guitar', 'A vintage acoustic guitar with a unique sound.', 80.00, 90.00,'2023-09-01 14:35:00', '2024-01-09 14:35:00', 'strings', 'active', 3),
+  /*  2 */('Handcrafted Flute', 'A beautifully handcrafted flute with exquisite details.', 70.00, 380.00, '2023-09-05 16:00:00', '2024-01-08 16:00:00', 'woodwinds', 'active', 1),
+  /*  3 */('Vintage Bass Guitar', 'An old-school bass guitar with a unique vibe.', 30.00, 290.00 , '2023-09-03 15:10:00', '2024-01-08 15:10:00', 'brass', 'active', 5),
   /*  4 */('Handmade Drum Set', 'A custom-made drum set for professional drummers.', 25.00, 250.00 , '2023-09-10 15:00:00', '2024-11-25 15:00:00', 'percussion', 'active', 6),
   /*  5 */('Grand Piano', 'A beautifully maintained grand piano with a rich, deep tone.', 60.00, 230.00 ,'2023-09-07 11:00:00', '2024-11-22 11:00:00', 'strings', 'active', 7),
   /*  6 */('Vintage Trumpet', 'A classic trumpet with a warm and mellow sound.', 27.00, 245.00 ,'2023-09-02 09:00:00', '2024-11-17 09:00:00', 'brass', 'active', 8),

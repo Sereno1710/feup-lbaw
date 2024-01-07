@@ -86,9 +86,9 @@ VALUES
 
 INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner_id)
 VALUES
-  /*  1 */('Rare Acoustic Guitar', 'A vintage acoustic guitar with a unique sound.', 80.00, 90.00,'2023-09-01 10:00:00', '2024-10-26 01:30:00', 'strings', 'active', 3),
-  /*  2 */('Handcrafted Flute', 'A beautifully handcrafted flute with exquisite details.', 70.00, 380.00, '2023-09-05 14:00:00', '2024-11-20 14:00:00', 'woodwinds', 'active', 1),
-  /*  3 */('Vintage Bass Guitar', 'An old-school bass guitar with a unique vibe.', 30.00, 290.00 , '2023-09-03 12:00:00', '2024-11-18 12:00:00', 'brass', 'active', 5),
+  /*  1 */('Rare Acoustic Guitar', 'A vintage acoustic guitar with a unique sound.', 80.00, 90.00,'2023-09-01 14:10:00', '2024-01-09 14:10:00', 'strings', 'active', 3),
+  /*  2 */('Handcrafted Flute', 'A beautifully handcrafted flute with exquisite details.', 70.00, 380.00, '2023-09-05 14:07:00', '2024-01-08 14:07:00', 'woodwinds', 'active', 1),
+  /*  3 */('Vintage Bass Guitar', 'An old-school bass guitar with a unique vibe.', 30.00, 290.00 , '2023-09-03 14:10:00', '2024-01-08 14:10:00', 'brass', 'active', 5),
   /*  4 */('Handmade Drum Set', 'A custom-made drum set for professional drummers.', 25.00, 250.00 , '2023-09-10 15:00:00', '2024-11-25 15:00:00', 'percussion', 'active', 6),
   /*  5 */('Grand Piano', 'A beautifully maintained grand piano with a rich, deep tone.', 60.00, 230.00 ,'2023-09-07 11:00:00', '2024-11-22 11:00:00', 'strings', 'active', 7),
   /*  6 */('Vintage Trumpet', 'A classic trumpet with a warm and mellow sound.', 27.00, 245.00 ,'2023-09-02 09:00:00', '2024-11-17 09:00:00', 'brass', 'active', 8),
@@ -135,14 +135,7 @@ VALUES
   /* 47 */('Piano Solo Performance', 'A live solo piano performance by a professional pianist.', 250.00, 250.00 ,'2023-11-17 16:00:00', '2023-12-01 16:00:00', 'strings', 'denied', 7),
   /* 48 */('Flute Solo', 'A live solo flute performance by a professional flutist.', 200.00, 200.00 ,'2023-11-18 17:00:00', '2023-12-02 17:00:00', 'woodwinds', 'denied', 9),
   /* 49 */('Trumpet Masterclass', 'A masterclass session with a renowned trumpet player.', 300.00, 300.00,'2023-11-19 18:00:00', '2023-12-03 18:00:00', 'brass', 'denied', 6),
-  /* 50 */('Accordion Workshop', 'A workshop on accordion playing for beginners.', 150.00, 150.00 ,'2023-11-20 19:00:00', '2023-12-04 19:00:00', 'woodwinds', 'denied', 23),
-  --(name, description, initial_price, price, initial_time, end_time, category, state, owner_id)
-  /* 51 */('Yamaha Guitar CS40 II', 'Spruce wood guitar with a length of 96.5cm.', 1300.00, 1300.00, '2024-01-02 19:00:00', '2024-02-02 19:00:00', 'strings', 'active', 7),
-  /* 52 */('Roland RP107-BKX Digital Piano', 'Roland digital piano that includes USB and Bluetooth and a compact and elegant design.' 920.00, 920.00, '2024-01-03 17:30:37', '2024-03-03 17:30:37', 'strings', 'active', 8),
-  /* 53 */('Yamaha YDP-145 WH Arius', 'This digital Yamaha piano is characterized by its great sound and its ease to play.' 836.00, 836.00, '2024-01-07 07:58:02', '2024-01-10 07:58:02', 'strings', 'active', 8),
-  /* 54 */('Roland FP-30X BK black portable piano', 'This portable piano includes a USB port and Bluetooth.', 250.00, 250.00, '2023-12-30 13:00:43', '2024-03-02 13:00:43', 'strings', 'active', 6);
-  /* 55 */--()
-
+  /* 50 */('Accordion Workshop', 'A workshop on accordion playing for beginners.', 150.00, 150.00 ,'2023-11-20 19:00:00', '2023-12-04 19:00:00', 'woodwinds', 'denied', 23);
 
 INSERT INTO AuctionWinner (user_id, auction_id, rating)
 VALUES
@@ -370,14 +363,16 @@ VALUES
 INSERT INTO AuctionMetaInfoValue (auction_id, meta_info_value_id)
 VALUES
   (1, 1), 
-  (1, 10),
+  (1, 6),
+  (1, 14),
+  (1, 23),
+  (1, 35),
   (2, 2),
   (2, 13),
+  (2, 21),
   (3, 3),
-  (3, 10),
-  (51, 1),
-  (51, 14),
-  (52, 4),
-  (53, 1),
-  (54, 4),
-  (54, 13);
+  (3, 24),
+  (7, 3),
+  (7, 15),
+  (7, 21),
+  (7, 34);

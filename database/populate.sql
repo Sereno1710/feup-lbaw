@@ -61,7 +61,28 @@ VALUES
   (2,200.00,false, 'denied'),
   (3, 400.00,true, 'accepted'),
   (4, 250.00,false, 'pending'),
-  (5, 100.00,true, 'accepted');
+  (5, 100.00,true, 'accepted'),
+  (6, 300.00 ,false , 'pending'),
+  (7, 500.00, false, 'pending'),
+  (8, 150.00, false, 'denied'),
+  (9, 800.00, false, 'accepted'),
+  (10, 350.00, false, 'pending'),
+  (11, 200.00,false, 'accepted'),
+  (12, 700.00, false, 'pending'),
+  (13, 1200.00, false, 'accepted'),
+  (14, 600.00, false, 'pending'),
+  (15, 950.00, false, 'pending'),
+  (16, 300.00, false, 'denied'),
+  (17, 450.00, false, 'pending'),
+  (18, 250.00, false, 'denied'),
+  (19, 700.00, false, 'accepted'),
+  (20, 180.00, false, 'pending'),
+  (21, 300.00, false, 'accepted'),
+  (22, 500.00, false, 'pending'),
+  (23, 120.00, false, 'accepted'),
+  (24, 900.00, false, 'pending'),
+  (25, 600.00, false, 'pending'),
+  (26, 350.00, false, 'denied');
 
 INSERT INTO Auction (name, description, initial_price, price, initial_time, end_time, category, state, owner_id)
 VALUES
@@ -285,7 +306,7 @@ VALUES
 INSERT INTO SystemManager (user_id)
 SELECT id
 FROM users
-WHERE id BETWEEN 2 AND 5;
+WHERE id BETWEEN 2 AND 6;
 
 INSERT INTO Admin (user_id)
 SELECT id

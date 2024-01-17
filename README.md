@@ -1,4 +1,4 @@
-# SoundSello
+# SoundSello (18.4/20)
 > An auctions website where you can bid or auction musical instruments of any kind.
 
 ## Project Components
